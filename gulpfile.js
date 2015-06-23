@@ -1,3 +1,5 @@
+// TODO: Clarify the situation with Sources.COFFEE and the full path in browserify
+
 var gulp       = require('gulp');
 var _          = require('lodash');
 var sass       = require('gulp-sass');
