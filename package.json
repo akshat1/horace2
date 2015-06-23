@@ -3,6 +3,9 @@
   "description": "Horace Two",
   "author": "SpeedySan",
   "private": true,
+  "scripts": {
+    "start": "coffee app/index.coffee"
+  },
   "dependencies": {
     "express": "^4.13.0",
     "express-winston": "^0.3.1",
