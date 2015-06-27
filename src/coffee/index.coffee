@@ -1,5 +1,8 @@
-tester = require './tester.coffee'
+
 Net = require './net.coffee'
 
-tester.test()
+Net.on 'ScanStarted', () ->
+  console.debug 'Scan Started'
+  console.debug arguments
+
 window.Net = Net

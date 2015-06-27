@@ -5,6 +5,7 @@ $Express     = require 'express'
 $ServeStatic = require 'serve-static'
 $SocketIO    = require 'socket.io'
 $FSExtra     = require 'fs-extra'
+_            = require 'lodash'
 
 
 console.log 'start gulp'
@@ -15,22 +16,16 @@ Gulp.start 'default'
 
 $Config = require './config.coffee'
 $Utils  = require './utils.coffee'
+$Horace = require './horace.coffee'
 
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
-console.log $Config
-
-logLevel      = $Config 'horace.logLevel'
+logLevel      = $Config 'horace.server.logLevel'
 serverTmpPath = $Path.join __dirname, '..', $Config('horace.tmpDirPath')
 # This is useful when configuring behind a reverse-proxy
 serverSubDir  = $Config('horace.urlSubDir').replace(/\/$/, '') or '/'
 webroot       = $Path.join __dirname, '..', $Config('horace.webroot')
 listenPort    = new Number($Config('horace.port')).valueOf()
-
-console.log 'listenPort    : ', listenPort
-console.log 'serverTmpPath : ', serverTmpPath
-console.log 'webroot       : ', webroot
-
 
 logger = new $Winston.Logger
   transports: [
@@ -38,9 +33,13 @@ logger = new $Winston.Logger
       level: logLevel
       }),
     new $Winston.transports.File({
-      filename: 'horace.log'
+      filename: 'horace-server.log'
       })
   ]
+
+logger.info 'listenPort    : ', listenPort
+logger.info 'serverTmpPath : ', serverTmpPath
+logger.info 'webroot       : ', webroot
 
 
 # Initialise FS
@@ -53,8 +52,8 @@ app = $Express()
 # File downloads
 downloadDirURL = $Path.join(serverSubDir, 'download')
 webrootURL     = $Path.join(serverSubDir, serverSubDir).replace(/\./, '/')
-console.log 'downloadDirURL : ', downloadDirURL
-console.log 'webrootURL     : ', webrootURL
+logger.info 'downloadDirURL : ', downloadDirURL
+logger.info 'webrootURL     : ', webrootURL
 app.use downloadDirURL, $ServeStatic serverTmpPath
 app.use webrootURL, $ServeStatic webroot
 
@@ -67,8 +66,15 @@ app.use '/config', (req, res) ->
   """
   res.send str
 
-# API
-# Sockets
+# Wire up API end-points
+apiRouter = $Express.Router()
+apiRouter.get '/command/StartScan', (request, response) ->
+  logger.debug 'Start Scan'
+  $Horace.startScan()
+  response.send 'OK'
+
+app.use '/api', apiRouter
+
 
 # Start HTTP Server
 server = app.listen listenPort, () ->
@@ -82,4 +88,14 @@ io = $SocketIO.listen server,
 io.on 'connection', (socket)->
   # Register socket events.
   socket.emit 'hello', {id:socket.id}
+
+  # Pass all Horace events to clients
+  eventNameKeys = _.keys $Horace.Event
+  _.each eventNameKeys, (key) ->
+      eventName = $Horace.Event[key]
+      $Horace.on eventName, (args...) ->
+        args.unshift eventName
+        socket.emit.apply socket, args
+
+$Horace.on 
 

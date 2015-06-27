@@ -7,6 +7,7 @@ $FS   = require 'fs'
 $Book = require '../book.coffee'
 
 DLI_MANIFEST_FILE = 'metadata.json'
+ADAPTER_ID = 'horace.dli'
 
 
 Pattern =
@@ -16,10 +17,11 @@ Pattern =
 
 
 getValuesForPattern = (metadata, pattern) ->
-  values = []
-  for key, value in metadata
-    values.push(value) if pattern.test key
-  values
+  values = {}
+  for key, value of metadata
+    #Someties they 'spell' a null out. Like 'null' 
+    values[value] = true if pattern.test(key) and value and typeof value is 'string' and value.toLowerCase() isnt 'null'
+  Object.keys values
 
 
 getTitle = (metadata) -> metadata.title
@@ -51,11 +53,11 @@ getBook = (path) ->
   p = new Promise (resolve, reject) ->
     handleDLIManifest = (manifestFileReadError, manifestFileContent) ->
       if manifestFileReadError
+        console.error manifestFileReadError
         reject manifestFileReadError
       else
         m = JSON.parse manifestFileContent
-        console.log metadata 
-        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getSubjects(m), getPublishers(m)
+        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getSubjects(m), getPublishers(m), ADAPTER_ID
         resolve book
 
     handleFileList = (fileListError, fileNames)->
@@ -65,7 +67,7 @@ getBook = (path) ->
         for fName in fileNames
           if fName is DLI_MANIFEST_FILE
             # Found dli metadata file. handle it.
-            $FS.readFile handleDLIManifest {encoding: 'utf8'}, fName
+            $FS.readFile $Path.join(path, fName), {encoding: 'utf8'}, handleDLIManifest
             break
         # We did not find the dli metadata file. return
         resolve null
@@ -76,14 +78,16 @@ getBook = (path) ->
       else if not stat.isDirectory()
         resolve null
       else
-        $FS.readdir handleFileList
+        $FS.readdir path, handleFileList
 
     $FS.stat path, handleStat
-  return p
+  p
 
 
 
 
 # --- --- --- EXPORTS --- --- --- #
 module.exports =
+  getAdapterId: () -> ADAPTER_ID
   getBook : getBook
+

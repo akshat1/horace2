@@ -10,15 +10,17 @@ nconf
   .file
     file: configFilePath
   .defaults
-    'horace.tmpDirPath' : 'tmp'
-    'horace.urlSubDir'  : '/'
-    'horace.logLevel'   : 'info'
-    'horace.webroot'    : 'dist'
-    'horace.port'       : 8080
-    'web.client.config' : {}
-    'horace.adapters'   : [
-      'adapters/dli-adapter.coffee'
+    'horace.tmpDirPath'      : 'tmp'
+    'horace.urlSubDir'       : '/'
+    'horace.logLevel'        : 'info'
+    'horace.server.logLevel' : 'info'
+    'horace.webroot'         : 'dist'
+    'horace.port'            : 8080
+    'web.client.config'      : {}
+    'horace.adapters'        : [
+      './adapters/dli-adapter.coffee'
       ]
+    'horace.folders'         : []
 
 
 module.exports = (key) -> nconf.get key
