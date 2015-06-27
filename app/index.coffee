@@ -8,19 +8,20 @@ $FSExtra     = require 'fs-extra'
 _            = require 'lodash'
 
 
-console.log 'start gulp'
-Gulp     = require 'gulp'
-GulpFile = require '../gulpfile.js'
-Gulp.start 'default'
-
-
 $Config = require './config.coffee'
 $Utils  = require './utils.coffee'
 $Horace = require './horace.coffee'
 
+if $Config 'horace.rebuildClientAtStartup'
+  console.log 'start gulp'
+  Gulp     = require 'gulp'
+  GulpFile = require '../gulpfile.js'
+  Gulp.start 'default'
+
 
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 logLevel      = $Config 'horace.server.logLevel'
+console.log 'logLevel: ', logLevel
 serverTmpPath = $Path.join __dirname, '..', $Config('horace.tmpDirPath')
 # This is useful when configuring behind a reverse-proxy
 serverSubDir  = $Config('horace.urlSubDir').replace(/\/$/, '') or '/'

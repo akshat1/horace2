@@ -2,18 +2,30 @@
 Will accept DLI books
 ###
 
-$Path = require 'path'
-$FS   = require 'fs'
-$Book = require '../book.coffee'
+$Path    = require 'path'
+$FS      = require 'fs'
+$Winston = require 'winston'
+
+$Book    = require '../book.coffee'
+
 
 DLI_MANIFEST_FILE = 'metadata.json'
-ADAPTER_ID = 'horace.dli'
-
-
+ADAPTER_ID        = 'horace.dli'
 Pattern =
   author    : /author\d*/
   subject   : /subject\d*/
   publisher : /publisher\d*/
+
+
+logger = new $Winston.Logger
+  transports: [
+    new $Winston.transports.Console({
+      level: 'warn'
+      }),
+    new $Winston.transports.File({
+      filename: $Path.join process.cwd(), 'horace-dli-adapter.log'
+      })
+  ]
 
 
 getValuesForPattern = (metadata, pattern) ->
@@ -58,27 +70,24 @@ getBook = (path) ->
       else
         m = JSON.parse manifestFileContent
         book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getSubjects(m), getPublishers(m), ADAPTER_ID
+        console.log 'New Book!!!'
         resolve book
-
-    handleFileList = (fileListError, fileNames)->
-      if fileListError
-        reject fileListError
-      else
-        for fName in fileNames
-          if fName is DLI_MANIFEST_FILE
-            # Found dli metadata file. handle it.
-            $FS.readFile $Path.join(path, fName), {encoding: 'utf8'}, handleDLIManifest
-            break
-        # We did not find the dli metadata file. return
-        resolve null
 
     handleStat = (statError, stat) ->
       if statError
         reject statError
       else if not stat.isDirectory()
+        logger.warn 'Not a directory'
         resolve null
       else
-        $FS.readdir path, handleFileList
+        manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE)
+        $FS.exists manifestFilePath, (fileExists) ->
+          if fileExists
+            console.log 'Found the manifest!'
+            $FS.readFile manifestFilePath, {encoding: 'utf8'}, handleDLIManifest
+          else
+            logger.warn 'No manifest file. Return null'
+            resolve null
 
     $FS.stat path, handleStat
   p
