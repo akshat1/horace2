@@ -4,6 +4,7 @@ $Winston     = require 'winston'
 $Express     = require 'express'
 $ServeStatic = require 'serve-static'
 $SocketIO    = require 'socket.io'
+$FSExtra     = require 'fs-extra'
 
 
 console.log 'start gulp'
@@ -19,7 +20,7 @@ $Utils  = require './utils.coffee'
 # ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 console.log $Config
 
-logLevel      = $Config 'horace.loglevel'
+logLevel      = $Config 'horace.logLevel'
 serverTmpPath = $Path.join __dirname, '..', $Config('horace.tmpDirPath')
 # This is useful when configuring behind a reverse-proxy
 serverSubDir  = $Config('horace.urlSubDir').replace(/\/$/, '') or '/'
@@ -43,8 +44,8 @@ logger = new $Winston.Logger
 
 
 # Initialise FS
-$Utils.ensureFSDirectory serverTmpPath
-$Utils.ensureFSDirectory webroot
+$FSExtra.ensureDir serverTmpPath
+$FSExtra.ensureDir webroot
 
 
 # Initialise Express
