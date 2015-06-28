@@ -5,6 +5,7 @@ _        = require 'lodash'
 
 $Config   = require './config.coffee'
 $Adapters = require './adapter.coffee'
+$DB       = require './db.coffee'
 
 
 logLevel = $Config 'horace.scanner.logLevel'
@@ -30,8 +31,15 @@ scanPath = (path) ->
       else
         logger.info "Scanning #{files.length} files"
         promises = _.map files, (f) ->
-          newPath = $Path.join path, f
-          $Adapters.getBook newPath
+          p1 = new Promise (resolve, reject) ->
+            newPath = $Path.join path, f
+            getBookPromise = $Adapters.getBook newPath
+            getBookPromise
+              .catch (err) -> reject err
+              .then (book) ->
+                console.log 'Save book'
+                resolve $DB.saveBook book
+          p1
         resolve Promise.all promises
 
     $Adapters.getBook path
