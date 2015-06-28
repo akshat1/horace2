@@ -70,7 +70,6 @@ getBook = (path) ->
       else
         m = JSON.parse manifestFileContent
         book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getSubjects(m), getPublishers(m), ADAPTER_ID
-        console.log 'New Book!!!'
         resolve book
 
     handleStat = (statError, stat) ->
@@ -83,7 +82,7 @@ getBook = (path) ->
         manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE)
         $FS.exists manifestFilePath, (fileExists) ->
           if fileExists
-            console.log 'Found the manifest!'
+            logger.info 'Found the manifest: ', manifestFilePath
             $FS.readFile manifestFilePath, {encoding: 'utf8'}, handleDLIManifest
           else
             logger.warn 'No manifest file. Return null'

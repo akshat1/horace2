@@ -26,7 +26,7 @@ logger = new $Winston.Logger
 
 
 watchedFolders = $Config 'horace.folders'
-logger.info "watchedFolders:"
+logger.info 'watchedFolders:'
 logger.info watchedFolders
 horace = new $Events.EventEmitter()
 
@@ -60,6 +60,13 @@ startScan = () ->
 getBooks = (opts) ->
   $DB.getBooks opts
 
+
+# -------------------  ------------------- -------------------  -------------------
+if $Config 'horace.scan.serverstart'
+  logger.info 'horace.scan.serverstart set to true. Scanning now.'
+  startScan()
+else
+  logger.info 'horace.scan.serverstart set to false.'
 
 _.extend horace, 
   Event     : Event

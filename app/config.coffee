@@ -14,9 +14,10 @@ $nconf
     'horace.rebuildClientAtStartup' : false
     'horace.tmpDirPath'        : 'tmp'
     'horace.urlSubDir'         : '/'
-    'horace.logLevel'          : 'warn'
+    'horace.logLevel'          : 'debug'
     'horace.server.logLevel'   : 'warn'
     'horace.scanner.logLevel'  : 'warn'
+    'horace.scan.serverstart'  : true,
     'horace.adapters.logLevel' : 'warn'
     'horace.db.logLevel'       : 'warn'
     'horace.webroot'           : 'dist'
