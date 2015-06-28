@@ -8,6 +8,7 @@ $Winston = require 'winston'
 $Config  = require './config.coffee'
 $Utils   = require './utils.coffee'
 $Scanner = require './scanner.coffee'
+$DB      = require './db.coffee'
 
 
 Event = 
@@ -56,10 +57,13 @@ startScan = () ->
   return
 
 
+getBooks = (opts) ->
+  $DB.getBooks opts
 
 
 _.extend horace, 
   Event     : Event
   startScan : startScan
+  getBooks  : getBooks
 
 module.exports = horace

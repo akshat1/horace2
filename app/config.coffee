@@ -1,10 +1,11 @@
-nconf = require 'nconf'
-Path  = require 'path'
+$nconf = require 'nconf'
+$Path  = require 'path'
 
-configFilePath = Path.join process.cwd(), "config.json"
+configFilePath = $Path.join process.cwd(), 'config.json'
+dbLocation = $Path.join process.cwd(), 'db'
 
 # See https://github.com/indexzero/nconf
-nconf
+$nconf
   .argv()
   .env()
   .file
@@ -13,10 +14,11 @@ nconf
     'horace.rebuildClientAtStartup' : false
     'horace.tmpDirPath'        : 'tmp'
     'horace.urlSubDir'         : '/'
-    'horace.logLevel'          : 'info'
+    'horace.logLevel'          : 'warn'
     'horace.server.logLevel'   : 'warn'
     'horace.scanner.logLevel'  : 'warn'
     'horace.adapters.logLevel' : 'warn'
+    'horace.db.logLevel'       : 'warn'
     'horace.webroot'           : 'dist'
     'horace.port'              : 8080
     'web.client.config'        : {}
@@ -24,6 +26,7 @@ nconf
       './adapters/dli-adapter.coffee'
       ]
     'horace.folders'           : []
+    'horace.db.location'       : dbLocation
 
 
-module.exports = (key) -> nconf.get key
+module.exports = (key) -> $nconf.get key

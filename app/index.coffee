@@ -74,6 +74,19 @@ apiRouter.get '/command/StartScan', (request, response) ->
   $Horace.startScan()
   response.send 'OK'
 
+
+apiRouter.get '/books', (request, response) ->
+  logger.debug 'getBooks'
+  $Horace.getBooks()
+    .catch (err) ->
+      logger.error 'Error fetching books from Horace %o', error
+      response.status(500).send err
+
+    .then (books = []) ->
+      logger.debug 'Got %d books', books.length
+      response.json books
+
+
 app.use '/api', apiRouter
 
 
