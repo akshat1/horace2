@@ -11,4 +11,4 @@ module.exports =
       ch = path.charCodeAt i
       hash = ((hash << 5) - hash) + ch
       hash = hash & hash
-    hash.toString()
+    hash

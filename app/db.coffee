@@ -46,7 +46,7 @@ saveBook = (book) ->
 
     logger.debug 'run upsert'
     collectionBooks.update(
-      {id: book.id}, 
+      {_id: book._id}, 
       book, 
       {upsert: true}, 
       handleUpsert
