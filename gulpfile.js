@@ -74,6 +74,15 @@ gulp.task('css-lib', ['mkdir-setup'], function() {
 });
 
 
+gulp.task('js-lib', ['mkdir-setup'], function() {
+  return gulp.src('./bower.json')
+    .pipe(bower())
+    .pipe(gulpFilter(['**/*.js']))
+    .pipe(concat('lib.js', {newLine: '\r\n/* ******************************************************* */\r\n'}))
+    .pipe(gulp.dest(Destinations.CSSLIB));
+});
+
+
 gulp.task('haml', ['mkdir-setup'], function() {
   return gulp.src(Sources.HAML)
     .pipe(haml())
@@ -87,7 +96,7 @@ gulp.task('resources', ['mkdir-setup'], function() {
 });
 
 
-gulp.task('build', ['js', 'sass', 'haml', 'resources', 'css-lib']);
+gulp.task('build', ['js', 'sass', 'haml', 'resources', 'css-lib', 'js-lib']);
 
 
 gulp.task('default', ['build']);
