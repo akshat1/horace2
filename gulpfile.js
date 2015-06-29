@@ -16,10 +16,10 @@ var gulpFilter = require('gulp-filter');
 
 var Sources = {
   BOWER     : 'bower_components',
-  HAML      : 'src/haml/**/*.haml',
-  SASS      : 'src/sass/**/*.scss',
-  COFFEE    : 'src/coffee/**/*.coffee',
-  RESOURCES : 'src/resources/**/*'
+  HAML      : 'client/haml/**/*.haml',
+  SASS      : 'client/sass/**/*.scss',
+  COFFEE    : 'client/coffee/**/*.coffee',
+  RESOURCES : 'client/resources/**/*'
 };
 
 var Destinations = {
@@ -48,7 +48,7 @@ gulp.task('mkdir-setup', ['clean'], function(cb) {
 
 
 gulp.task('js', ['mkdir-setup'], function() {
-  return gulp.src('src/coffee/index.coffee')
+  return gulp.src('client/coffee/index.coffee')
     .pipe(browserify({
       fileName: 'horace.js',
       transform: [require('coffeeify')]
