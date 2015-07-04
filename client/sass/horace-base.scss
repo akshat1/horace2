@@ -1,3 +1,42 @@
 @charset "UTF-8";
 
-body {}
+$color-red    : #E74C3C;
+$color-gray   : #2C3E50;
+$color-white  : #ECF0F1;
+$color-blue-1 : #3498DB;
+$color-blue-2 : #2980B9;
+
+$space-S: 5px;
+$space-M: 10px;
+$space-XL: 20px;
+
+
+
+body {
+  background-color: $color-white;
+  color: $color-gray;
+}
+
+
+#topNav {
+  background-color: $color-blue-1;
+  color: $color-white;
+  padding: 5px;
+  margin-bottom: 10px;
+
+  .pure-menu-link {
+    color: $color-white;
+    &:hover {
+      color: $color-gray;
+    }
+    &:focus {
+      background-color: $color-gray;
+      &:hover {
+        color: $color-red;
+      }
+    }
+    &:active {
+      color: $color-red;
+    }
+  }
+}
