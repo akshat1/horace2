@@ -6,6 +6,9 @@
   "scripts": {
     "start": "coffee app/index.coffee"
   },
+  "bugs": {
+    "url": "https://tree.taiga.io/project/speedysan-horace-2/issues"
+  },
   "dependencies": {
     "express": "^4.13.0",
     "express-winston": "^0.3.1",
