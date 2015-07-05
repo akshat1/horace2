@@ -39,16 +39,19 @@ getValuesForPattern = (metadata, pattern) ->
 getTitle = (metadata) -> metadata.title
 
 
-getAuthors = (metadata) -> getValuesForPattern metadata, Pattern.author
+getAuthors = (metadata) -> metadata.authors or getValuesForPattern metadata, Pattern.author
 
 
 getSizeInBytes = (metadata) -> -1
 
 
-getSubjects = (metadata) -> getValuesForPattern metadata, Pattern.subject
+getSubjects = (metadata) -> metadata.subjects or getValuesForPattern metadata, Pattern.subject
 
 
-getPublishers = (metadata) -> getValuesForPattern metadata, Pattern.publisher
+getPublishers = (metadata) -> metadata.publishers or getValuesForPattern metadata, Pattern.publisher
+
+
+getYear = (metadata) -> metadata.year
 
 
 ###
@@ -69,7 +72,7 @@ getBook = (path) ->
         reject manifestFileReadError
       else
         m = JSON.parse manifestFileContent
-        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getSubjects(m), getPublishers(m), ADAPTER_ID
+        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublishers(m), ADAPTER_ID
         resolve book
 
     handleStat = (statError, stat) ->

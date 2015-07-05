@@ -1,8 +1,8 @@
 
-Net = require './net.coffee'
+Library = require './library.coffee'
 
-Net.on 'ScanStarted', () ->
-  console.debug 'Scan Started'
-  console.debug arguments
 
-window.Net = Net
+document.addEventListener 'DOMContentLoaded', () ->
+  # TODO: routing
+  oLibrary = window.oLibrary = new Library()
+  ko.applyBindings oLibrary

@@ -19,4 +19,25 @@
         %li.pure-menu-item.pure-menu-disabled Subjects
         %li.pure-menu-item.pure-menu-disabled Tags
 
-    XYZ
+    -#activeQueryInfo
+
+    #bookList
+      %table
+        %thead
+          %tr
+            %th.h-name Name
+            %th.h-year Year
+            %th.h-authors Authors
+            %th.h-subjects Subjects
+
+        %tbody(data-bind='foreach: booksB')
+          %tr
+            %td.h-name(data-bind='text: title')
+            %td.h-year(data-bind='text: year')
+            %td.h-authors(data-bind='foreach: authors')
+              %span.h-author(data-bind='text: $data')
+            %td.h-subjects(data-bind='foreach: subjects')
+              %span.h-subject(data-bind='text: $data')
+
+    #footer Horace. The simian librarian of the unseen university.
+

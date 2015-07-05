@@ -7,3 +7,4 @@ tmp
 db
 config.json
 .idea
+*.sublime-workspace

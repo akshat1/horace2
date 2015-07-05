@@ -1,9 +1,11 @@
-Net = module.exports
+$H = require './http.coffee'
+_ = require 'lodash'
 
+_socket = null
 
 # Create an iframe to download a file
 # TODO: Destroy IFrame post download
-Net.downloadFile = (url, success) ->
+downloadFile = (url, success) ->
   _frame = document.createElement 'iframe'
   _frame.className = 'downloadFrame'
   _frame.height = '100px'
@@ -13,24 +15,36 @@ Net.downloadFile = (url, success) ->
 
 
 getSocket = () ->
-  unless Net._socket
-    Net._socket = io.connect window.location.origin,
+  unless _socket
+    _socket = io.connect window.location.origin,
       path: HoraceConf.socketIOURL
-
-  Net._socket
-Net.getSocket = getSocket
+  _socket
 
 
-Net.dispatch = (eventName, args) ->
+dispatch = (eventName, args) ->
   socket = getSocket()
   socket.emit eventName, args
 
 
-Net.on = (eventName, callback) ->
+_on = (eventName, callback) ->
   getSocket().on eventName, callback
 
 
-Net.off = (eventName, callback) ->
+_off = (eventName, callback) ->
   getSocket().off eventName, callback
 
 
+getBooks = (query) ->
+  opts =
+    url: '/api/books'
+    responseType: $H.ResponseType.JSON
+  # remember get returns a promise
+  $H.get opts
+
+
+
+_.extend module.exports,
+  dispatch : dispatch
+  'on'     : _on
+  'off'    : _off
+  getBooks : getBooks

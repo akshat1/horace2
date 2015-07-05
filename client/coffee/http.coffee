@@ -66,7 +66,7 @@ _inferResponseType = (request) ->
 
 
 _extractResult = (request, opts) ->
-  responseType = (opts.responseTypeResolver or _inferResponseType) request
+  responseType = opts.responseType # (opts.responseTypeResolver or _inferResponseType) request
   console.debug "request.responseType: #{request.responseType}"
   console.debug "request.headers['content-type']: "
   window._xr = request
@@ -130,15 +130,16 @@ _getAjaxPromiseExecutor = (request, opts) ->
 ajax = (opts) ->
   payload = _preparePayload opts.data, opts.contentType, opts.method
   method  = opts.method or Method.GET
-  isAsync = if opts.hasOwnProperty('async') then opts.async else false
+  isAsync = if opts.hasOwnProperty('async') then opts.async else true
 
   request = new XMLHttpRequest()
   _setHeaders request
   request.timeout = opts.timeout if opts.hasOwnProperty 'timeout'
-  promise = new Promise _getAjaxPromiseExecutor request, opts
+  #if opts.hasOwnProperty 'responseType'
+  #  request.overrideMimeType opts.responseType
+  console.debug "open(#{method}, #{opts.url}, #{isAsync})"
   request.open method, opts.url, isAsync, opts.user, opts.password
-  if opts.hasOwnProperty 'responseType'
-    request.overrideMimeType opts.responseType
+  promise = new Promise _getAjaxPromiseExecutor request, opts
   request.send()
   promise
 
@@ -151,6 +152,7 @@ module.exports =
   ReadyState   : ReadyState
   ajax         : ajax
   get : (opts) ->
+    console.log 'get(%o)', opts
     opts.method = Method.GET
     ajax opts
 
