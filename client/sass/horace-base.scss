@@ -99,6 +99,11 @@ body {
     &:nth-child(odd) {
       background: darken($color-white, 5%);
     }
+
+    &:hover {
+      outline: 1px solid $border-color;
+      outline-offset: $space-S;
+    }
   }
 
   .h-year {
