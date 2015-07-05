@@ -59,10 +59,8 @@ Will accept an absolute path which may refer to a file, or a directory.
 
 @param path : String. Absolute path to the file / directory
 @returns Promise. The promise will either
-  resolve with 
-    - a Book object if the adapter identifies the book
-    - null if the adapter does not identify the book
-  or reject with error if any errors occurr
+  resolve with a Book object if the adapter identifies the book
+  or reject with error if any errors occurr or null if the books isnt identified.
 ###
 getBook = (path) ->
   p = new Promise (resolve, reject) ->
@@ -80,7 +78,7 @@ getBook = (path) ->
         reject statError
       else if not stat.isDirectory()
         logger.warn 'Not a directory'
-        resolve null
+        reject null
       else
         manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE)
         $FS.exists manifestFilePath, (fileExists) ->
@@ -89,7 +87,7 @@ getBook = (path) ->
             $FS.readFile manifestFilePath, {encoding: 'utf8'}, handleDLIManifest
           else
             logger.warn 'No manifest file. Return null'
-            resolve null
+            reject null
 
     $FS.stat path, handleStat
   p
