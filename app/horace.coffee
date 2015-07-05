@@ -44,8 +44,6 @@ startScan = () ->
     resolve Promise.all promises
 
   p.then (args) ->
-    console.log 'Scanning ended with'
-    console.log args
     isScanning = false
     horace.emit Event.ScanStopped
 

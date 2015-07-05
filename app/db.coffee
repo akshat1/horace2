@@ -55,10 +55,13 @@ saveBook = (book) ->
 
 
 # TODO: opts -> query
-getBooks = (opts) ->
+getBooks = (opts = {}) ->
   p = new Promise (resolve, reject) ->
     logger.info 'getBooks(%o)', opts
-    collectionBooks.find().toArray (curErr, books) ->
+    sortOpts = {}
+    sortOpts[opts.sortBy or 'title'] = 1
+    cur = collectionBooks.find().sort sortOpts
+    cur.toArray (curErr, books) ->
       if curErr
         logger.error 'Error converting to array', curErr
         reject curErr
