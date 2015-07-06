@@ -37,7 +37,7 @@ scanPath = (path) ->
             getBookPromise
               .catch (err) -> reject err
               .then (book) ->
-                logger.info 'Save book'
+                logger.info 'Save book(%o)', book
                 resolve $DB.saveBook book
           p1
         resolve Promise.all promises
