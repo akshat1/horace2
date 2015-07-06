@@ -16,7 +16,7 @@ $nconf
     'horace.urlSubDir'         : '/'
     'horace.logLevel'          : 'debug'
     'horace.server.logLevel'   : 'warn'
-    'horace.scanner.logLevel'  : 'warn'
+    'horace.scanner.logLevel'  : 'debug'
     'horace.scan.serverstart'  : true,
     'horace.adapters.logLevel' : 'warn'
     'horace.db.logLevel'       : 'warn'
@@ -24,7 +24,8 @@ $nconf
     'horace.port'              : 8080
     'web.client.config'        : {}
     'horace.adapters'          : [
-      './adapters/dli-adapter.coffee'
+      './adapters/dli-adapter.coffee',
+      './adapters/pdf-adapter.coffee'
       ]
     'horace.folders'           : []
     'horace.db.location'       : dbLocation
