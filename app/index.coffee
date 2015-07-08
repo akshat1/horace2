@@ -5,6 +5,7 @@ $Express     = require 'express'
 $ServeStatic = require 'serve-static'
 $SocketIO    = require 'socket.io'
 $FSExtra     = require 'fs-extra'
+$URL         = require 'url'
 _            = require 'lodash'
 
 
@@ -77,7 +78,8 @@ apiRouter.get '/command/StartScan', (request, response) ->
 
 apiRouter.get '/books', (request, response) ->
   logger.debug 'getBooks'
-  $Horace.getBooks()
+  query = $URL.parse(request.url, true).query
+  $Horace.getBooks query
     .catch (err) ->
       logger.error 'Error fetching books from Horace %o', error
       response.status(500).send err

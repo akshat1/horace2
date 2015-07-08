@@ -2,7 +2,7 @@
 %html
   %head
     %title Horace. Dos.
-    %link(rel='stylesheet' type='text/css' href='/lib/lib.css')
+    -#%link(rel='stylesheet' type='text/css' href='/lib/lib.css')
     %link(rel='stylesheet' type='text/css' href='/css/horace.css')
     %script(src='./config')
     %script(src='socket.io/socket.io.js')
@@ -14,7 +14,11 @@
 
     #activeQueryInfo Showing Books
 
-    #bookList
+    #bookList(data-bind='with: bookList')
+      .h-pagination-control
+        %button.h-previous(data-bind='click: pagePreviousC, enable: pagePreviousEnabledB') ◀
+        %span(data-bind='text: currentPageNumberB')
+        %button.h-next(data-bind='click: pageNextC, enable: pageNextEnabledB') ▶︎
       %table
         %thead
           %tr

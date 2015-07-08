@@ -67,9 +67,6 @@ _inferResponseType = (request) ->
 
 _extractResult = (request, opts) ->
   responseType = opts.responseType # (opts.responseTypeResolver or _inferResponseType) request
-  console.debug "request.responseType: #{request.responseType}"
-  console.debug "request.headers['content-type']: "
-  window._xr = request
   switch responseType
     when ResponseType.JSON
       JSON.parse request.response
@@ -85,7 +82,14 @@ _extractError = (request, opts) ->
 
 
 _preparePayload = (data, contentType, method) ->
-  console.warn 'Implement ME...'
+  if method is Method.GET
+    payloadItems = []
+    for key, value of data
+      payloadItems.push "#{encodeURIComponent key}=#{encodeURIComponent value}"
+    return payloadItems.join '&'
+
+  else
+    console.error 'Implement Me!'
 
 
 _setHeaders = (request, headers = {}) ->
@@ -137,8 +141,11 @@ ajax = (opts) ->
   request.timeout = opts.timeout if opts.hasOwnProperty 'timeout'
   #if opts.hasOwnProperty 'responseType'
   #  request.overrideMimeType opts.responseType
-  console.debug "open(#{method}, #{opts.url}, #{isAsync})"
-  request.open method, opts.url, isAsync, opts.user, opts.password
+  if opts.method is Method.GET
+    url = "#{opts.url}?#{payload}"
+  else
+    url = opts.url
+  request.open method, url, isAsync, opts.user, opts.password
   promise = new Promise _getAjaxPromiseExecutor request, opts
   request.send()
   promise
@@ -152,7 +159,6 @@ module.exports =
   ReadyState   : ReadyState
   ajax         : ajax
   get : (opts) ->
-    console.log 'get(%o)', opts
     opts.method = Method.GET
     ajax opts
 

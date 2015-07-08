@@ -36,7 +36,7 @@ collectionBooks = database.collection Collection.Books
 saveBook = (book) ->
   logger.info 'saveBook(%o)', book.id
   p = new Promise (resolve, reject) ->
-    handleUpsert = (err) -> 
+    handleUpsert = (err) ->
       if err
         logger.error 'Upsert error %o', err
         reject err
@@ -46,9 +46,9 @@ saveBook = (book) ->
 
     logger.debug 'run upsert'
     collectionBooks.update(
-      {_id: book._id}, 
-      book, 
-      {upsert: true}, 
+      {_id: book._id},
+      book,
+      {upsert: true},
       handleUpsert
       )
   p
@@ -56,6 +56,8 @@ saveBook = (book) ->
 
 # TODO: opts -> query
 getBooks = (opts = {}) ->
+  console.log '\n\n\nGET BOOKS (%o)\n\n', opts
+  console.log '\n\n\n\n'
   p = new Promise (resolve, reject) ->
     logger.info 'getBooks(%o)', opts
     sortOpts = {}
@@ -66,8 +68,16 @@ getBooks = (opts = {}) ->
         logger.error 'Error converting to array', curErr
         reject curErr
       else
-        logger.info 'Resolve promise with books %o', books
-        resolve books
+        from       = parseInt opts.from
+        to         = from + parseInt opts.numItems
+        totalBooks = books.length
+        books      = books[from ... to]
+        #logger.info 'Resolve promise with books %o', books
+        logger.info "Return #{books.length} books %o", books
+        resolve
+          from       : from
+          totalItems : totalBooks
+          books      : books
   p
 
 
@@ -78,4 +88,3 @@ getBooks = (opts = {}) ->
 module.exports =
   saveBook : saveBook
   getBooks : getBooks
-  
