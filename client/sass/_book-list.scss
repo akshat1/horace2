@@ -1,0 +1,17 @@
+@charset 'UTF-8';
+
+@include exports('book_list') {
+  #bookList {
+    flex-grow   : 1;
+    flex-shrink : 0;
+
+    .h-year {
+      width      : 50px;
+      text-align : center;
+    }
+
+    .h-subjects, .h-authors {
+      width : 15%;
+    }
+  }
+}

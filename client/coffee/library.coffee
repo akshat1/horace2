@@ -21,4 +21,8 @@ class Library
       @booksB books
 
 
+  columnHeaderClickedC: () =>
+    console.log arguments
+
+
 module.exports = Library

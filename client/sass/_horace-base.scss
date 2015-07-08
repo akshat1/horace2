@@ -1,0 +1,95 @@
+@charset 'UTF-8';
+/**
+Default styles, followed by major elements of the page.
+*/
+
+@import 'lib/sass_import_once';
+@import 'variables';
+
+@include exports('horace_base') {
+
+  html, body {
+    margin      : 0;
+    padding     : 0;
+    box-sizing  : border-box;
+    height      : 100%;
+    font-size   : 13px;
+    font-family : sans-serif;
+  }
+
+
+  body {
+    background-color : $background-color-main;
+    color            : $content-text-color;
+    display          : flex;
+    flex-direction   : column;
+    align-items      : stretch;
+    align-content    : stretch;
+  }
+
+
+  table {
+    width           : 100%;
+    border          : 1px solid $border-color;
+    border-collapse : collapse;
+    table-layout    : fixed;
+  }
+
+  tr {
+    &:nth-child(even) {
+      background-color : $background-color-dark;
+    }
+  }
+
+  td, th {
+    padding       : $space-S;
+    border-right  : 1px solid $border-color;
+    overflow      : hidden;
+    text-overflow : ellipsis;
+    white-space   : nowrap;
+    &:last-child {
+      border-right : none;
+    }
+  }
+
+  th {
+    font-size   : larger;
+    background  : lighten($background-color-nav, 10%);
+    text-align  : left;
+    font-weight : normal;
+  }
+
+  body > div {
+    margin-bottom: $space-M;
+    padding: 0 $space-M;
+    &:last-child {
+      margin-bottom : 0;
+    }
+  }
+
+
+  #topNav {
+    background-color : $background-color-nav;
+    color            : $inverse-text-color;
+    padding          : $space-S;
+    margin-bottom    : $space-M;
+    flex-grow        : 0;
+    flex-shrink      : 0;
+  }
+
+
+  #activeQueryInfo {
+    flex-grow: 0;
+    flex-shrink: 0;
+  }
+
+
+  #footer {
+    flex-grow   : 0;
+    flex-shrink : 0;
+    padding     : $space-S;
+    background  : $background-color-nav;
+  }
+
+
+}
