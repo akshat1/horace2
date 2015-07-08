@@ -36,8 +36,11 @@ _off = (eventName, callback) ->
 
 getBooks = (query) ->
   opts =
-    url: '/api/books'
-    responseType: $H.ResponseType.JSON
+    url : '/api/books'
+    responseType : $H.ResponseType.JSON
+    data :
+      from : query.from
+      numItems : query.numItems
   # remember get returns a promise
   $H.get opts
 
