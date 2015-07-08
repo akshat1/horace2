@@ -1,0 +1,19 @@
+@charset 'UTF-8';
+
+$color-black  : #333;
+$color-red    : #E74C3C;
+$color-gray   : #2C3E50;
+$color-white  : #ECF0F1;
+$color-blue-1 : #3498DB;
+$color-blue-2 : #2980B9;
+
+$border-color : lighten($color-black, 50%);
+$background-color-main: $color-white;
+$background-color-nav: $color-blue-1;
+$background-color-dark: rgba(52, 152, 219, 0.13);
+$content-text-color: $color-black;
+$inverse-text-color: $color-white;
+
+$space-S: 5px;
+$space-M: 10px;
+$space-XL: 20px;

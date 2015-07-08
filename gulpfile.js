@@ -36,7 +36,7 @@ gulp.task('clean', function(cb) {
 });
 
 
-gulp.task('mkdir-setup', ['clean'], function(cb) {
+gulp.task('mkdir-setup', function(cb) {
   var directories = _.values(Destinations);
   for(var i = 0; i < directories.length; i++) {
     var d = directories[i];
@@ -97,7 +97,6 @@ gulp.task('resources', ['mkdir-setup'], function() {
 
 
 gulp.task('build', ['js', 'sass', 'haml', 'resources', 'css-lib', 'js-lib']);
-
 
 gulp.task('default', ['build']);
 
