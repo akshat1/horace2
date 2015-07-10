@@ -1,8 +1,10 @@
 
 SortColumn =
-  Title   : 'title'
-  Year    : 'year'
-  Adapter : 'adapterId'
+  Title    : 'title'
+  Year     : 'year'
+  Adapter  : 'adapterId'
+  Authors  : 'sortStringAuthors'
+  Subjects : 'sortStringSubjects'
 
 
 SortDirection =

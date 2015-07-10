@@ -34,6 +34,8 @@ class BookList
     @isSortedByTitleB      = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Title
     @isSortedByYearB       = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Year
     @isSortedByAdapterB    = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Adapter
+    @isSortedByAuthorsB    = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Authors
+    @isSortedBySubjectsB   = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Subjects
     @isSortedDESCB         = $C.from @currentSortDirectionB, (sDir) ->
       console.debug "Sort Direction: #{sDir}"
       sDir is SortDirection.DESC
@@ -96,6 +98,12 @@ class BookList
 
 
   sortByAdapterC: () -> @sortColumnClicked SortColumn.Adapter
+
+
+  sortByAuthorsC: () -> @sortColumnClicked SortColumn.Authors
+
+
+  sortBySubjectsC: () -> @sortColumnClicked SortColumn.Subjects
 
 
 

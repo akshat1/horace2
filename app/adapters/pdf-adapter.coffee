@@ -42,7 +42,7 @@ getTitle = (exifdata) -> exifdata['Title'] or exifdata['FileName']
 getAuthors = (exifdata) -> [exifdata['Author']]
 getSizeInBytes = (exifdata) -> -1
 getSubjects = (exifdata) -> [exifdata['Subject']]
-getPublishers = () -> []
+getPublisher = () -> ''
 getYear = () -> -1
 
 getBook = (path) ->
@@ -57,7 +57,7 @@ getBook = (path) ->
         .then (exifdata) ->
           logger.info 'Got exif %o', exifdata
           try
-          	book = new $Book path, getTitle(exifdata), getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublishers(exifdata), ADAPTER_ID
+          	book = new $Book path, getTitle(exifdata), getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID
           catch err1
             logger.error 'Error occurred: %o', err1
             reject err1

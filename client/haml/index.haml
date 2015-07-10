@@ -25,8 +25,8 @@
             %th.h-name.h-is-sortable(data-bind='click: sortByTitleC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByTitleB}') Name
             %th.h-year.h-is-sortable(data-bind='click: sortByYearC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByYearB}') Year
             %th.h-adapter.h-is-sortable(data-bind='click: sortByAdapterC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByAdapterB}') Adapter
-            %th.h-authors Authors
-            %th.h-subjects Subjects
+            %th.h-authors.h-is-sortable(data-bind='click: sortByAuthorsC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByAuthorsB}') Authors
+            %th.h-subjects.h-is-sortable(data-bind='click: sortBySubjectsC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedBySubjectsB}') Subjects
 
         %tbody(data-bind='foreach: booksB')
           %tr
