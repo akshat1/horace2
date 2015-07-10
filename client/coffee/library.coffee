@@ -33,6 +33,7 @@ class BookList
     @currentSortDirectionB = $C.o null
     @isSortedByTitleB      = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Title
     @isSortedByYearB       = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Year
+    @isSortedByAdapterB    = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Adapter
     @isSortedDESCB         = $C.from @currentSortDirectionB, (sDir) ->
       console.debug "Sort Direction: #{sDir}"
       sDir is SortDirection.DESC
@@ -92,6 +93,9 @@ class BookList
 
 
   sortByYearC: () -> @sortColumnClicked SortColumn.Year
+
+
+  sortByAdapterC: () -> @sortColumnClicked SortColumn.Adapter
 
 
 

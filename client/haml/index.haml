@@ -24,6 +24,7 @@
           %tr
             %th.h-name.h-is-sortable(data-bind='click: sortByTitleC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByTitleB}') Name
             %th.h-year.h-is-sortable(data-bind='click: sortByYearC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByYearB}') Year
+            %th.h-adapter.h-is-sortable(data-bind='click: sortByAdapterC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByAdapterB}') Adapter
             %th.h-authors Authors
             %th.h-subjects Subjects
 
@@ -31,6 +32,7 @@
           %tr
             %td.h-name(data-bind='text: title')
             %td.h-year(data-bind='text: year')
+            %td.h-adapter(data-bind='text: adapterId')
             %td.h-authors(data-bind='foreach: authors')
               %span.h-author(data-bind='text: $data')
             %td.h-subjects(data-bind='foreach: subjects')
