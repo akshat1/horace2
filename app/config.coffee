@@ -23,10 +23,10 @@ $nconf
     'horace.webroot'           : 'dist'
     'horace.port'              : 8080
     'web.client.config'        : {}
-    'horace.adapters'          : [
-      './adapters/dli-adapter.coffee',
+    'horace.defaultAdapters'   : [
       './adapters/pdf-adapter.coffee'
-      ]
+    ]
+    'horace.adapters'          : []
     'horace.folders'           : []
     'horace.db.location'       : dbLocation
 

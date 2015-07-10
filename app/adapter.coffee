@@ -13,7 +13,10 @@ logger = new $Winston.Logger
 
 
 logger.info 'Loading adapters. . .'
-adapterPaths = $Config 'horace.adapters'
+# Some adapters are default and will always be loaded by horace
+# While others are optional and may be added/removed by users.
+adapterPaths = $Config 'horace.defaultAdapters'
+adapterPaths = adapterPaths.concat $Config 'horace.adapters'
 logger.info "adapters to be loaded: \n\t#{adapterPaths.join '\n\t'}"
 
 adapters = _.map adapterPaths, (adapterPath) ->
