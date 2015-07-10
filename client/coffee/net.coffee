@@ -38,9 +38,7 @@ getBooks = (query) ->
   opts =
     url : '/api/books'
     responseType : $H.ResponseType.JSON
-    data :
-      from : query.from
-      numItems : query.numItems
+    data : query
   # remember get returns a promise
   $H.get opts
 

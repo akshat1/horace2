@@ -4,6 +4,7 @@ _        = require 'lodash'
 $FSExtra = require 'fs-extra'
 
 $Config = require './config.coffee'
+$Sorting = require './sorting.coffee'
 
 
 Collection =
@@ -61,7 +62,7 @@ getBooks = (opts = {}) ->
   p = new Promise (resolve, reject) ->
     logger.info 'getBooks(%o)', opts
     sortOpts = {}
-    sortOpts[opts.sortBy or 'title'] = 1
+    sortOpts[opts.sortcolumnName or $Sorting.SortColumn.Title] = if opts.sortDirection is $Sorting.SortDirection.ASC then 1 else -1
     cur = collectionBooks.find().sort sortOpts
     cur.toArray (curErr, books) ->
       if curErr

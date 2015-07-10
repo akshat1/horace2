@@ -22,8 +22,8 @@
       %table
         %thead
           %tr
-            %th.h-name Name
-            %th.h-year Year
+            %th.h-name.h-is-sortable(data-bind='click: sortByTitleC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByTitleB}') Name
+            %th.h-year.h-is-sortable(data-bind='click: sortByYearC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByYearB}') Year
             %th.h-authors Authors
             %th.h-subjects Subjects
 
