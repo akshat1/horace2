@@ -5,6 +5,10 @@
     flex-grow   : 1;
     flex-shrink : 0;
 
+    td, th {
+      text-transform: capitalize;
+    }
+
     .h-year {
       width      : 50px;
       text-align : center;
