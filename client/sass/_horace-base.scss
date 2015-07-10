@@ -60,6 +60,24 @@ Default styles, followed by major elements of the page.
     background  : lighten($background-color-nav, 10%);
     text-align  : left;
     font-weight : normal;
+
+    &.h-is-sortable {
+      cursor: pointer;
+    }
+
+    &.h-is-sorted {
+      &:after {
+        float: right;
+        //ascending by default
+        content: '\25B2';
+      }
+
+      &.h-is-sorted-desc {
+        &:after {
+          content: '\25BC';
+        }
+      }
+    }
   }
 
 

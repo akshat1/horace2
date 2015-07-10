@@ -1,34 +1,60 @@
 
 $N = require './net.coffee'
 $C = Compute
+$Sorting = require '../../app/sorting.coffee'
+
 
 $N.on 'ScanStarted', () ->
   console.debug 'Scan Started'
   console.debug arguments
 
 
+SortColumn    = $Sorting.SortColumn
+SortDirection = $Sorting.SortDirection
+
+
+###
+TODO: The sorting code is extremely verbose. Better to move it into a widget.
+###
 class BookList
   constructor: () ->
-    @pageSizeB = $C.o 24 # TODO: calculate optimum number of rows
-    @currentPageNumberB = $C.o 1
-    @isBusyB = $C.o false
-    @booksB = $C.oa []
-    @getBooks @currentPageNumberB()
-    @totalBooksB = $C.o -1
-    @pageNextEnabledB = $C.from @currentPageNumberB, @pageSizeB, @totalBooksB, (pageNumber, pageSize, totalBooks) ->
-      (pageNumber * pageSize) + pageSize < totalBooks
-    @pagePreviousEnabledB = $C.from @currentPageNumberB, (pageNumber) ->
-      pageNumber > 1
+    @booksB               = $C.oa []
+    @isBusyB              = $C.o false
+
+    # pagination.
+    @pageSizeB            = $C.o 24 # TODO: calculate optimum number of rows
+    @currentPageNumberB   = $C.o 1
+    @totalBooksB          = $C.o -1
+    @pageNextEnabledB     = $C.from @currentPageNumberB, @pageSizeB, @totalBooksB, (pageNumber, pageSize, totalBooks) -> (pageNumber * pageSize) + pageSize < totalBooks
+    @pagePreviousEnabledB = $C.from @currentPageNumberB, (pageNumber) -> pageNumber > 1
+
+    # sorting
+    @currentSortColumnB    = $C.o null
+    @currentSortDirectionB = $C.o null
+    @isSortedByTitleB      = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Title
+    @isSortedByYearB       = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Year
+    @isSortedDESCB         = $C.from @currentSortDirectionB, (sDir) ->
+      console.debug "Sort Direction: #{sDir}"
+      sDir is SortDirection.DESC
+
+    # get set
+    # @getBooks = _.debounce @getBooks, 25
     @pageNextEnabledB.$fire()
     @pagePreviousEnabledB.$fire()
 
+    # go
+    @sortColumnClicked SortColumn.Title
+    # @getBooks @currentPageNumberB()
 
-  getBooks: (pageNumber) ->
+
+  getBooks: (pageNumber, sortColumnName, sortDirection) =>
     @isBusyB true
     from = (pageNumber - 1) * @pageSizeB()
     opts =
-      from     : from
-      numItems : @pageSizeB()
+      from           : from
+      numItems       : @pageSizeB()
+      sortColumnName : sortColumnName
+      sortDirection  : sortDirection
     p = $N.getBooks opts
     p.catch (err) =>
       alert err
@@ -45,12 +71,29 @@ class BookList
       @isBusyB false
 
 
-  pageNextC: () ->
-    @getBooks @currentPageNumberB() + 1
+  sortColumnClicked: (newSortColumn) ->
+    if newSortColumn is @currentSortColumnB()
+      @currentSortDirectionB SortDirection.flip @currentSortDirectionB()
+
+    else
+      @currentSortDirectionB SortDirection.ASC
+      @currentSortColumnB newSortColumn
+
+    @getBooks @currentPageNumberB(), @currentSortColumnB(), @currentSortDirectionB()
 
 
-  pagePreviousC: () ->
-    @getBooks @currentPageNumberB() - 1
+  pageNextC: () -> @getBooks @currentPageNumberB() + 1
+
+
+  pagePreviousC: () -> @getBooks @currentPageNumberB() - 1
+
+
+  sortByTitleC: () -> @sortColumnClicked SortColumn.Title
+
+
+  sortByYearC: () -> @sortColumnClicked SortColumn.Year
+
+
 
 
 class Library
