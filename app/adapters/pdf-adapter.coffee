@@ -50,7 +50,8 @@ getBook = (path) ->
   p = new Promise (resolve, reject) ->
     extension = $Path.extname path
     if extension.toLowerCase() isnt '.pdf'
-      reject new Error "horace.pdf: Not a pdf file (#{extension})."
+      logger.info "#{path} is not a pdf file."
+      resolve null
     else
       getExif path
         .catch (err) -> reject err

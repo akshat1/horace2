@@ -42,7 +42,7 @@ saveBook = (book) ->
         logger.error 'Upsert error %o', err
         reject err
       else
-        logger.info 'Saved book'
+        logger.info "Saved book #{book.id}"
         resolve()
 
     logger.debug 'run upsert'
@@ -57,24 +57,24 @@ saveBook = (book) ->
 
 # TODO: opts -> query
 getBooks = (opts = {}) ->
-  console.log '\n\n\nGET BOOKS (%o)\n\n', opts
-  console.log '\n\n\n\n'
   p = new Promise (resolve, reject) ->
     logger.info 'getBooks(%o)', opts
     sortOpts = {}
     sortOpts[opts.sortcolumnName or $Sorting.SortColumn.Title] = if opts.sortDirection is $Sorting.SortDirection.ASC then 1 else -1
+    logger.debug 'sortOpts: ', sortOpts
     cur = collectionBooks.find().sort sortOpts
     cur.toArray (curErr, books) ->
       if curErr
         logger.error 'Error converting to array', curErr
         reject curErr
       else
-        from       = parseInt opts.from
+        from       = parseInt(opts.from) or 0
         to         = from + parseInt opts.numItems
         totalBooks = books.length
-        books      = books[from ... to]
+        unless isNaN to
+          books = books[from ... to]
         #logger.info 'Resolve promise with books %o', books
-        logger.info "Return #{books.length} books %o", books
+        logger.debug "Return #{books.length} books", books
         resolve
           from       : from
           totalItems : totalBooks

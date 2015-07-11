@@ -25,7 +25,7 @@ class BookList
     @pageSizeB            = $C.o 24 # TODO: calculate optimum number of rows
     @currentPageNumberB   = $C.o 1
     @totalBooksB          = $C.o -1
-    @pageNextEnabledB     = $C.from @currentPageNumberB, @pageSizeB, @totalBooksB, (pageNumber, pageSize, totalBooks) -> (pageNumber * pageSize) + pageSize < totalBooks
+    @pageNextEnabledB     = $C.from @currentPageNumberB, @pageSizeB, @totalBooksB, (pageNumber, pageSize, totalBooks) -> (pageNumber * pageSize) < totalBooks
     @pagePreviousEnabledB = $C.from @currentPageNumberB, (pageNumber) -> pageNumber > 1
 
     # sorting
@@ -50,14 +50,14 @@ class BookList
     # @getBooks @currentPageNumberB()
 
 
-  getBooks: (pageNumber, sortColumnName, sortDirection) =>
+  getBooks: (pageNumber) =>
     @isBusyB true
     from = (pageNumber - 1) * @pageSizeB()
     opts =
       from           : from
       numItems       : @pageSizeB()
-      sortColumnName : sortColumnName
-      sortDirection  : sortDirection
+      sortColumnName : @currentSortColumnB()
+      sortDirection  : @currentSortDirectionB()
     p = $N.getBooks opts
     p.catch (err) =>
       alert err
@@ -82,7 +82,7 @@ class BookList
       @currentSortDirectionB SortDirection.ASC
       @currentSortColumnB newSortColumn
 
-    @getBooks @currentPageNumberB(), @currentSortColumnB(), @currentSortDirectionB()
+    @getBooks @currentPageNumberB()
 
 
   pageNextC: () -> @getBooks @currentPageNumberB() + 1
