@@ -85,10 +85,10 @@ class BookList
     @getBooks @currentPageNumberB(), @currentSortColumnB(), @currentSortDirectionB()
 
 
-  pageNextC: () -> @getBooks @currentPageNumberB() + 1
+  pageNextC: () -> @getBooks @currentPageNumberB() + 1, @currentSortColumnB(), @currentSortDirectionB()
 
 
-  pagePreviousC: () -> @getBooks @currentPageNumberB() - 1
+  pagePreviousC: () -> @getBooks @currentPageNumberB() - 1, @currentSortColumnB(), @currentSortDirectionB()
 
 
   sortByTitleC: () -> @sortColumnClicked SortColumn.Title
