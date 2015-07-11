@@ -25,7 +25,7 @@ class BookList
     @pageSizeB            = $C.o 24 # TODO: calculate optimum number of rows
     @currentPageNumberB   = $C.o 1
     @totalBooksB          = $C.o -1
-    @pageNextEnabledB     = $C.from @currentPageNumberB, @pageSizeB, @totalBooksB, (pageNumber, pageSize, totalBooks) -> (pageNumber * pageSize) + pageSize < totalBooks
+    @pageNextEnabledB     = $C.from @currentPageNumberB, @pageSizeB, @totalBooksB, (pageNumber, pageSize, totalBooks) -> (pageNumber * pageSize) < totalBooks
     @pagePreviousEnabledB = $C.from @currentPageNumberB, (pageNumber) -> pageNumber > 1
 
     # sorting
