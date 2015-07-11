@@ -50,14 +50,14 @@ class BookList
     # @getBooks @currentPageNumberB()
 
 
-  getBooks: (pageNumber, sortColumnName, sortDirection) =>
+  getBooks: (pageNumber) =>
     @isBusyB true
     from = (pageNumber - 1) * @pageSizeB()
     opts =
       from           : from
       numItems       : @pageSizeB()
-      sortColumnName : sortColumnName
-      sortDirection  : sortDirection
+      sortColumnName : @currentSortColumnB()
+      sortDirection  : @currentSortDirectionB()
     p = $N.getBooks opts
     p.catch (err) =>
       alert err
@@ -82,13 +82,13 @@ class BookList
       @currentSortDirectionB SortDirection.ASC
       @currentSortColumnB newSortColumn
 
-    @getBooks @currentPageNumberB(), @currentSortColumnB(), @currentSortDirectionB()
+    @getBooks @currentPageNumberB()
 
 
-  pageNextC: () -> @getBooks @currentPageNumberB() + 1, @currentSortColumnB(), @currentSortDirectionB()
+  pageNextC: () -> @getBooks @currentPageNumberB() + 1
 
 
-  pagePreviousC: () -> @getBooks @currentPageNumberB() - 1, @currentSortColumnB(), @currentSortDirectionB()
+  pagePreviousC: () -> @getBooks @currentPageNumberB() - 1
 
 
   sortByTitleC: () -> @sortColumnClicked SortColumn.Title

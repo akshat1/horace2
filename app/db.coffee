@@ -57,13 +57,11 @@ saveBook = (book) ->
 
 # TODO: opts -> query
 getBooks = (opts = {}) ->
-  console.log '\n\n\nGET BOOKS (%o)\n\n', opts
-  console.log '\n\n\n\n'
   p = new Promise (resolve, reject) ->
     logger.info 'getBooks(%o)', opts
     sortOpts = {}
     sortOpts[opts.sortcolumnName or $Sorting.SortColumn.Title] = if opts.sortDirection is $Sorting.SortDirection.ASC then 1 else -1
-    console.log "\n\n", sortOpts, "\n\n"
+    logger.debug 'sortOpts: ', sortOpts
     cur = collectionBooks.find().sort sortOpts
     cur.toArray (curErr, books) ->
       if curErr
