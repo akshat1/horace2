@@ -70,7 +70,13 @@ getBook = (path) ->
         reject manifestFileReadError
       else
         m = JSON.parse manifestFileContent
-        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID
+        try
+          book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID
+        catch err
+          if err
+            console.error 'DLI adapter encountered an error', err
+            reject err
+            return
         resolve book
 
     handleStat = (statError, stat) ->
@@ -78,7 +84,7 @@ getBook = (path) ->
         console.error 'file stat error', statError
         reject statError
       else if not stat.isDirectory()
-        logger.warn 'Not a directory'
+        logger.info 'Not a directory'
         resolve null
       else
         manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE)
@@ -87,7 +93,7 @@ getBook = (path) ->
             logger.info 'Found the manifest: ', manifestFilePath
             $FS.readFile manifestFilePath, {encoding: 'utf8'}, handleDLIManifest
           else
-            logger.warn 'No manifest file. Return null'
+            logger.info 'No manifest file. Return null'
             resolve null
 
     $FS.stat path, handleStat
