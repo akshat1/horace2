@@ -41,8 +41,16 @@ getBook = (path) ->
         .then (book) ->
           logger.debug 'resolved with %o', book
           resolve book
-  p = $Utils.conditionalRace promises, (x) -> !!x
-  p
+  p0 = $Utils.conditionalRace promises, (x) -> !!x
+  new Promise (resolve, reject) ->
+    p0.catch (err) ->
+      if err
+        logger.error 'Throwing error to scanner: ', err
+        reject err
+      else
+        resolve null
+
+    p0.then (x) -> resolve x
 
 
 getBookForDownload = (bookId) ->

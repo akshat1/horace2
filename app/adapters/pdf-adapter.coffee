@@ -34,7 +34,11 @@ getExif = (path) ->
         if stdErrBuff
           reject stdErrBuff.toString()
         else
-          resolve JSON.parse(stdOutBuff.toString())[0]
+          exifData = JSON.parse(stdOutBuff.toString())[0]
+          if exifData
+            resolve exifData
+          else
+            reject new Error 'Unknown error. No exifdata.'
   p
 
 
