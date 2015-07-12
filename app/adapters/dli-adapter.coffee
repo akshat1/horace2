@@ -48,7 +48,7 @@ getSizeInBytes = (metadata) -> -1
 getSubjects = (metadata) -> metadata.subjects or getValuesForPattern metadata, Pattern.subject
 
 
-getPublishers = (metadata) -> metadata.publishers or getValuesForPattern metadata, Pattern.publisher
+getPublisher = (metadata) -> metadata.publisher  #or getValuesForPattern metadata, Pattern.publisher
 
 
 getYear = (metadata) -> metadata.year
@@ -66,19 +66,20 @@ getBook = (path) ->
   p = new Promise (resolve, reject) ->
     handleDLIManifest = (manifestFileReadError, manifestFileContent) ->
       if manifestFileReadError
-        console.error manifestFileReadError
+        console.error 'Manifest file read error', manifestFileReadError
         reject manifestFileReadError
       else
         m = JSON.parse manifestFileContent
-        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublishers(m), ADAPTER_ID
+        book = new $Book path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID
         resolve book
 
     handleStat = (statError, stat) ->
       if statError
+        console.error 'file stat error', statError
         reject statError
       else if not stat.isDirectory()
         logger.warn 'Not a directory'
-        reject null
+        resolve null
       else
         manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE)
         $FS.exists manifestFilePath, (fileExists) ->
@@ -87,7 +88,7 @@ getBook = (path) ->
             $FS.readFile manifestFilePath, {encoding: 'utf8'}, handleDLIManifest
           else
             logger.warn 'No manifest file. Return null'
-            reject null
+            resolve null
 
     $FS.stat path, handleStat
   p
