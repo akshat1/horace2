@@ -45,6 +45,9 @@ getBook = (path) ->
   p
 
 
+getBookForDownload = (bookId) ->
+
+
 module.exports =
   toArray : toArray
   getBook : getBook

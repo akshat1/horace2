@@ -13,9 +13,9 @@ Meant as a spec. Adapters may extend it.
 id : simply path for now.
 ###
 class Book
-  constructor: (@id, title, authors = [], @sizeInBytes, year = -1, subjects = [], publisher = '', @adapterId) ->
+  constructor: (@path, title, authors = [], @sizeInBytes, year = -1, subjects = [], publisher = '', @adapterId) ->
     # Numeric id for indexing.
-    @_id   = $Utils.getHash @id
+    @id   = $Utils.getHash @path
 
     # strings should always be lower case.
     @title      = title.toLowerCase()
