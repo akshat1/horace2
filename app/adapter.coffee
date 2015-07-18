@@ -23,8 +23,19 @@ adapters = _.map adapterPaths, (adapterPath) ->
   logger.info "adapterPath: #{adapterPath}"
   require adapterPath
 
+adapters = []
+adapterMap = {}
+for adapterPath in adapterPaths
+  adapter = require adapterPath
+  adapterId = adapter.getAdapterId()
+  adapterMap[adapterId] = adapter
+  adapters.push adapter
+
 
 toArray = () -> adapters
+
+
+getAdapterForBook = (book) -> adapterMap[book.adapterId]
 
 
 getBook = (path) ->
@@ -45,9 +56,27 @@ getBook = (path) ->
   p
 
 
-getBookForDownload = (bookId) ->
+###*
+ * Get a stream containing data for the indicated book in the target format.
+ * @param {object} Book object
+ * @param {string} target format
+ * @return {Promise}
+ * @resolves {Stream} Stream with the data for the book and format. May be simply piped to the http response
+ * @rejects {Error}
+###
+getBookForDownload = (book, targetFormat) ->
+  new Promise (resolve, reject) ->
+    adapter = getAdapterForBook book
+    unless adapter
+      err = new Error "Adapter >#{book.adapterId}< not found."
+      logger.error new Error "Adapter >#{book.adapterId}< not found."
+      reject err
+
+    resolve adapter.getBookForDownload book, targetFormat
 
 
 module.exports =
-  toArray : toArray
-  getBook : getBook
+  toArray            : toArray
+  getBook            : getBook
+  getBookForDownload : getBookForDownload
+

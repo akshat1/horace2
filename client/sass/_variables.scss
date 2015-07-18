@@ -7,13 +7,13 @@ $color-white  : #ECF0F1;
 $color-blue-1 : #3498DB;
 $color-blue-2 : #2980B9;
 
-$border-color : lighten($color-black, 50%);
-$background-color-main: $color-white;
-$background-color-nav: $color-blue-1;
-$background-color-dark: rgba(52, 152, 219, 0.13);
-$content-text-color: $color-black;
-$inverse-text-color: $color-white;
+$border-color          : lighten($color-black, 50%);
+$background-color-main : $color-white;
+$background-color-nav  : $color-blue-1;
+$background-color-dark : rgba(52, 152, 219, 0.13);
+$content-text-color    : $color-black;
+$inverse-text-color    : $color-white;
 
-$space-S: 5px;
-$space-M: 10px;
-$space-XL: 20px;
+$space-S  : 5px;
+$space-M  : 10px;
+$space-XL : 20px;

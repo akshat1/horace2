@@ -1,5 +1,6 @@
 $H = require './http.coffee'
 _ = require 'lodash'
+$ServerEvents = require '../../app/server-events.coffee'
 
 _socket = null
 
@@ -22,6 +23,7 @@ getSocket = () ->
 
 
 dispatch = (eventName, args) ->
+  console.debug 'dispatch(%s, %o)', eventName, args
   socket = getSocket()
   socket.emit eventName, args
 
@@ -43,9 +45,23 @@ getBooks = (query) ->
   $H.get opts
 
 
+requestDownload = (book) ->
+  console.debug 'requestDownload(%o)', book
+  ###
+  opts =
+    url : '/api/requestDownload'
+    data :
+      id : book.id
+  $H.get opts
+  ###
+  dispatch $ServerEvents.REQUEST_BOOK_DOWNLOAD,
+    bookId: book.id
+
+
 
 _.extend module.exports,
   dispatch : dispatch
   'on'     : _on
   'off'    : _off
   getBooks : getBooks
+  requestDownload: requestDownload

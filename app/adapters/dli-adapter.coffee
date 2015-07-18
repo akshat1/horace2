@@ -78,7 +78,7 @@ getBook = (path) ->
         console.error 'file stat error', statError
         reject statError
       else if not stat.isDirectory()
-        logger.warn 'Not a directory'
+        logger.debug 'Not a directory'
         resolve null
       else
         manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE)
@@ -87,7 +87,7 @@ getBook = (path) ->
             logger.info 'Found the manifest: ', manifestFilePath
             $FS.readFile manifestFilePath, {encoding: 'utf8'}, handleDLIManifest
           else
-            logger.warn 'No manifest file. Return null'
+            logger.debug 'No manifest file. Return null'
             resolve null
 
     $FS.stat path, handleStat

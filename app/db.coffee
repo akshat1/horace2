@@ -82,6 +82,30 @@ getBooks = (opts = {}) ->
   p
 
 
+###*
+ * @param {number} id of the book being requested
+ * @return {Promise}
+ * @resolves {Book}
+ * @rejects {Error}
+###
+getBook = (id) ->
+  p = new Promise (resolve, reject) ->
+    try
+      cur = collectionBooks.find
+        id: id
+      cur.toArray (curErr, books) ->
+        if curErr
+          reject curErr
+        else
+          console.log '(from db) resolve'
+          resolve books[0]
+
+    catch err
+      logger.error "Error occurred while trying to fetch id: #{id}\n", err
+      reject err
+  p
+
+
 
 
 # ---------------- ---------------- ----------------
@@ -89,3 +113,4 @@ getBooks = (opts = {}) ->
 module.exports =
   saveBook : saveBook
   getBooks : getBooks
+  getBook  : getBook
