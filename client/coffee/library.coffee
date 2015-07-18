@@ -2,6 +2,8 @@
 $N = require './net.coffee'
 $C = Compute
 $Sorting = require '../../app/sorting.coffee'
+$ServerEvents = require '../../app/server-events.coffee'
+$PubSub = require './pubsub.coffee'
 
 
 $N.on 'ScanStarted', () ->
@@ -37,7 +39,6 @@ class BookList
     @isSortedByAuthorsB    = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Authors
     @isSortedBySubjectsB   = $C.from @currentSortColumnB, (sCol) -> sCol is SortColumn.Subjects
     @isSortedDESCB         = $C.from @currentSortDirectionB, (sDir) ->
-      console.debug "Sort Direction: #{sDir}"
       sDir is SortDirection.DESC
 
     # get set
@@ -48,6 +49,16 @@ class BookList
     # go
     @sortColumnClicked SortColumn.Title
     # @getBooks @currentPageNumberB()
+
+    @setupSocketListeners()
+
+
+  setupSocketListeners: () ->
+    $N.on $ServerEvents.BOOK_READY_FOR_DOWNLOAD, (payload) ->
+      $PubSub.broadcast 'book_download',
+        message: "Book ready for download <a href='#{payload.path}'>here</a>."
+        timeout: -1
+      console.debug "Book ready for download at %o", payload
 
 
   getBooks: (pageNumber) =>
@@ -104,6 +115,10 @@ class BookList
 
 
   sortBySubjectsC: () -> @sortColumnClicked SortColumn.Subjects
+
+
+  downloadC: (book) ->
+    $N.requestDownload book
 
 
 

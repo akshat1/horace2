@@ -7,11 +7,12 @@ $Exec    = require('child_process').exec
 $Winston = require 'winston'
 
 $Book = require '../book.coffee'
+$Formats = require '../formats.coffee'
 
 
-ADAPTER_ID = 'horace.pdf'
-CMD = 'exiftool'
-
+ADAPTER_ID               = 'horace.pdf'
+CMD                      = 'exiftool'
+SUPPORTED_EXPORT_FORMATS = [$Formats.PDF]
 
 
 logger = new $Winston.Logger
@@ -72,8 +73,22 @@ getBook = (path) ->
   p
 
 
+getBookForDownload = (book, targetFormat) ->
+  console.log 'getBookForDownload(%o)', book
+  new Promise (resolve, reject) ->
+    unless targetFormat in SUPPORTED_EXPORT_FORMATS
+      err = new Error "Target format not supported (>#{targetFormat}<)"
+      logger.error err
+      reject err
+      return
+
+    # For now we know targetFormat is PDF
+    logger.debug "create readstream for path: >#{book.path}<"
+    rStream = $FS.createReadStream book.path
+    resolve rStream
 
 
 module.exports =
-  getAdapterId: () -> ADAPTER_ID
-  getBook : getBook
+  getAdapterId       : () -> ADAPTER_ID
+  getBook            : getBook
+  getBookForDownload : getBookForDownload

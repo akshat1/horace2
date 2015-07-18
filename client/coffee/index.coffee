@@ -1,5 +1,7 @@
+require './widgets/announcer.coffee'
 
 Library = require './library.coffee'
+
 
 
 document.addEventListener 'DOMContentLoaded', () ->

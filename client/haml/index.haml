@@ -10,6 +10,7 @@
     %script(src='js/horace.js')
 
   %body
+    %h-announcer.h-book-download-message(params='key: "book_download"')
     #topNav Horace. The simian librarian of the unseen university.
 
     #activeQueryInfo Showing Books
@@ -30,7 +31,8 @@
 
         %tbody(data-bind='foreach: booksB')
           %tr
-            %td.h-name(data-bind='text: title')
+            %td.h-name
+              %a(href='#' data-bind='text: title, click: $parent.downloadC')
             %td.h-year(data-bind='text: year')
             %td.h-adapter(data-bind='text: adapterId')
             %td.h-authors(data-bind='foreach: authors')

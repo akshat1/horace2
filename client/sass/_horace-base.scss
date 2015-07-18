@@ -84,11 +84,22 @@ Default styles, followed by major elements of the page.
   button {}
 
 
-  body > div {
-    margin-bottom: $space-M;
-    padding: 0 $space-M;
-    &:last-child {
-      margin-bottom : 0;
+  body {
+    > div {
+      margin-bottom: $space-M;
+      padding: 0 $space-M;
+      &:last-child {
+        margin-bottom : 0;
+      }
+    }
+
+    > h-announcer{
+      background  : lime;
+      flex-grow   : 0;
+      flex-shrink : 0;
+      .h-announcer-inner {
+        padding       : 0 $space-S;
+      }
     }
   }
 
