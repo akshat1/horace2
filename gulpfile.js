@@ -12,6 +12,8 @@ var browserify = require('gulp-browserify2');
 var rename     = require('gulp-rename');
 var bower      = require('gulp-main-bower-files');
 var gulpFilter = require('gulp-filter');
+var coffeelint = require('gulp-coffeelint');
+
 
 
 var Sources = {
@@ -96,7 +98,16 @@ gulp.task('resources', ['mkdir-setup'], function() {
 });
 
 
+gulp.task('coffee-lint', function () {
+  return gulp.src(Sources.COFFEE)
+    //TODO USer Path.join etc. to get this correct.
+    .pipe(coffeelint(__dirname + '/build-config/coffeelint.json'))
+    .pipe(coffeelint.reporter());
+});
+
+
 gulp.task('build', ['js', 'sass', 'haml', 'resources', 'css-lib', 'js-lib']);
+gulp.task('test', ['coffee-lint']);
 
 gulp.task('default', ['build']);
 
