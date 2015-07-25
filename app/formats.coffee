@@ -1,4 +1,6 @@
+### istanbul ignore next ### 
 
-module.exports =
-  PDF: 'PDF'
-  ZIP: 'ZIP'
+do 
+  module.exports =
+    PDF: 'PDF'
+    ZIP: 'ZIP'
