@@ -1,3 +1,4 @@
+# istanbul ignore next
 
 SortColumn =
   Title    : 'title'
