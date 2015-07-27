@@ -16,11 +16,24 @@ Unfortunately there is no simple install for Horace at the moment, as it is stil
 1. Checkout this repository
 2. run npm install
 3. Create a config.json file in the project root with path to your books folder
+4. Run npm start
+4. Point your browser to localhost:8080
 
 ### Configuration
 Configuration options for Horace can be seen in app/config.coffee. One may create a config.json file in the project root to override these settings.
 
 The most important setting is 'horace.folders'. This is a string array containing paths to all the folders that you want to monitor and that may contain books. Folders are scanned recursively.
+
+Here's a sample config.json file
+
+```
+{
+	"horace.folders": "~/AllBooks",
+	"horace.adapters": [
+		"./adapters/pdf-adapter.coffee"
+	]
+}
+```
 
 ### Contributing
 Contributions to Horace are welcome. If you would like to contribute code then
