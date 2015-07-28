@@ -47,11 +47,12 @@ startScan = () ->
     resolve Promise.all promises
 
   p.then (args) ->
+    logger.info 'Scanning Finished'
     isScanning = false
     horace.emit Event.ScanStopped
 
   p.catch (err) ->
-    logger.error 'Error scanning folders'
+    logger.error 'Error scanning folders. Stop.'
     logger.error err
     isScanning = false
     horace.emit Event.Error, err
@@ -59,6 +60,7 @@ startScan = () ->
 
 
 getBooks = (opts) ->
+  logger.info 'getBooks'
   $DB.getBooks opts
 
 
@@ -70,12 +72,12 @@ requestDownload = (id) ->
   new Promise (resolve, reject) ->
     getBook id
       .then (book) ->
-        console.log 'Download >>> ', book
+        logger.info 'Download >>> ', book
         tmpFilePath = $Path.join tmpFolderPath, "id_#{Date.now()}_#{$Path.basename(book.path)}"
-        console.log 'write to tmp location: ', tmpFilePath
+        logger.debug 'write to tmp location: ', tmpFilePath
         $Adapter.getBookForDownload book, 'PDF'
           .then (bookRStream) ->
-            console.log 'Got book read stream', bookRStream
+            logger.debug 'Got book read stream', bookRStream
             try
               tmpFileWStream = $FS.createWriteStream tmpFilePath
               bookRStream.pipe tmpFileWStream

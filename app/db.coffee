@@ -97,7 +97,7 @@ getBook = (id) ->
         if curErr
           reject curErr
         else
-          console.log '(from db) resolve'
+          logger.info '(from db) resolve'
           resolve books[0]
 
     catch err

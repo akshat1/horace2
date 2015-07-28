@@ -15,26 +15,27 @@ module.exports =
   ###*
    * @param {array} Array of Promises
    * @param {function} A function that accepts the result of each promise, and returns a boolean value.
+   * @param {boolean} whether or not to break on error. default false (i.e. exceptions will be eaten)
    * @return {promise}
-   * @resolve with the first value that satisfies the test condition
-   * @reject rejects when no valid values have been received
+   * @resolve with the first value that satisfies the test condition, or null if no valid values are found
+   * @reject rejects with the first error encountered iff breakOnError is true
   ###
-  conditionalRace: (promises, condition) ->
+  conditionalRace: (promises, condition, breakOnError) ->
     unless condition
       condition = (x) -> x
     pending = promises.length
     primary = new Promise (resolve, reject) ->
-      errors = []
       checkCompletion = () ->
         if pending is 0
-          reject new Error 'No valid values'
+          resolve()
 
       for p, index in promises
         p.catch (err) ->
-          console.error 'Error occurred', err
           pending--
-          errors.push err
-          checkCompletion()
+          if breakOnError
+            reject err
+          else
+            checkCompletion()
 
         p.then (result) ->
           pending--

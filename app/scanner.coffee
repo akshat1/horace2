@@ -19,57 +19,77 @@ logger = new $Winston.Logger
       })
   ]
 
-
-scanPath = (path) ->
-  logger.info "scanPath(#{path})"
+### ----
+So scanning is going to be a two step process.
+1. scanPath: We get a path, and we try $Adapters.getBook;
+2. If somebody identified the path, then great and we store it.
+3. Otherwise, check if this is a directory.
+4. If this is a directory, then send it to scanInsideDirectory.
+5. this is where we get the list of files and callscanPath for 
+   each one (and repeat the process).
+###
+scanInsideDirectory = (path) ->
+  logger.debug "scanInsideDirectory(#{path})"
   p = new Promise (resolve, reject) ->
-    onFileListReceived = (error, files) ->
-      logger.info 'onFileListReceived(...)'
-      if error
-        logger.error "Error fetching file listing for >#{path}<"
-        reject error
-      else
-        logger.info "Scanning #{files.length} files"
-        promises = _.map files, (f) ->
-          p1 = new Promise (resolve, reject) ->
-            newPath = $Path.join path, f
-            getBookPromise = $Adapters.getBook newPath
-            getBookPromise
-              .catch (err) -> reject err
-              .then (book) ->
-                logger.info 'Save book(%o)', book
-                resolve $DB.saveBook book
-          p1
-        resolve Promise.all promises
-
-    $Adapters.getBook path
-      .catch (err) -> 
-        logger.error "Got an error from the adapter"
+    $FS.readdir path, (dirReadError, files) ->
+      if dirReadError
+        err = new Error "Error reading directory: #{path}", dirReadError
+        console.error err
         logger.error err
         reject err
-      .then (book) ->
-        if book
-          # got a book. no need to do anything else.
-          logger.info 'Received book from the adapter'
-          resolve book
-        else
-          logger.info 'Received no book. Get stats'
-          # no book. check if this was a directory. If so, scan the directory.
-          onStatReceived = (error, stat) ->
-            logger.info 'onStatReceived(...)'
-            if error
-              logger.error "Error obtaining stats for the file >#{path}<"
-              reject error
-            else if stat.isDirectory()
-              logger.info 'is a directory. Delve into it.'
-              # path is a directory, and we must examine each file in it.
-              $FS.readdir path, onFileListReceived
-            else
-              logger.info "No adapters identify #{path}"
-              # path is a file, but we have no adapters that may identify it.
-              resolve null
 
-          $FS.stat path, onStatReceived
+      else
+        for f in files
+          filePath = $Path.join path, f
+          resolve scanPath filePath
+
+  p
+
+
+scanPath = (path, isSecondPassOfDirectory) ->
+  logger.info "scanPath(#{path}, #{isSecondPassOfDirectory})"
+  p = new Promise (resolve, reject) ->
+    if isSecondPassOfDirectory
+      logger.debug 'this is the second pass'
+      # We already know path refers to a directory, and no adapters identified it.
+      $FS.stat path, (err, stats) ->
+        if err
+          err = new Error "Getting stats for path: #{path}", err
+          console.error err
+          logger.error err
+          reject err
+
+        else
+          if stats.isDirectory()
+            logger.debug 'Yup this is a directory and we are descending into it.'
+            resolve scanInsideDirectory path
+
+          else
+            logger.debug 'This isnt a directory. Nothing more to do with this.'
+            resolve()
+
+    else
+      # First pass. Could be a directory, or a file. But we don't care.
+      $Adapters.getBook path
+        .then (oBook) ->
+          if oBook
+            logger.debug "We have a book object for #{path}"
+            resolve $DB.saveBook oBook
+
+          else
+            logger.debug "Nobody identified #{path}. Call ourselves for another pass."
+            resolve scanPath path, true
+
+        .catch (adapterError) ->
+          err = new Error "Adapter error for path #{path}", adapterError
+          console.error err
+          logger.error err
+          reject err
+
+  p
+
+
+
 
 module.exports =
   scanPath : scanPath

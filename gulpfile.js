@@ -105,7 +105,7 @@ gulp.task('resources', ['mkdir-setup'], function() {
 
 gulp.task('coffee-lint', function () {
   return gulp.src(Sources.COFFEE)
-    //TODO USer Path.join etc. to get this correct.
+    //TODO User Path.join etc. to get this correct.
     .pipe(coffeelint(__dirname + '/build-config/coffeelint.json'))
     .pipe(coffeelint.reporter());
 });

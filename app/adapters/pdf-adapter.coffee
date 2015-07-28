@@ -62,19 +62,24 @@ getBook = (path) ->
         .catch (err) -> reject err
         .then (exifdata) ->
           logger.info 'Got exif %o', exifdata
-          try
-          	book = new $Book path, getTitle(exifdata), getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID
-          catch err1
-            logger.error 'Error occurred: %o', err1
-            reject err1
-            return
-          logger.debug 'resolve with: %o', book
-          resolve book
+          if exifdata
+            try
+            	book = new $Book path, getTitle(exifdata), getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID
+            catch err1
+              logger.error 'Error occurred: %o', err1
+              reject err1
+              return
+            logger.debug 'resolve with: %o', book
+            resolve book
+            
+          else
+            logger.debug "No exifdata for #{path}"
+            resolve()
   p
 
 
 getBookForDownload = (book, targetFormat) ->
-  console.log 'getBookForDownload(%o)', book
+  logger.info 'getBookForDownload(%o)', book
   new Promise (resolve, reject) ->
     unless targetFormat in SUPPORTED_EXPORT_FORMATS
       err = new Error "Target format not supported (>#{targetFormat}<)"

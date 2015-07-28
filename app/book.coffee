@@ -24,8 +24,9 @@ class Book
 
     # strings should always be lower case.
     @title      = title.toLowerCase()
-    @authors    = _.map authors, (a) -> a.toLowerCase()
-    @subjects   = _.map subjects, (s) -> s.toLowerCase()
+    # Sometimes some of these are undefined
+    @authors    = _.map authors, (a) -> (a or '').toLowerCase()
+    @subjects   = _.map subjects, (s) -> (s or '').toLowerCase()
     @publisher  = publisher.toLowerCase()
 
     #year should always be numeric

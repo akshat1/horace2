@@ -14,7 +14,7 @@ $nconf
     'horace.rebuildClientAtStartup' : false
     'horace.tmpDirPath'        : 'tmp'
     'horace.urlSubDir'         : '/'
-    'horace.logLevel'          : 'warn'
+    'horace.logLevel'          : 'info'
     'horace.server.logLevel'   : 'warn'
     'horace.scanner.logLevel'  : 'warn'
     'horace.scan.serverstart'  : true,
@@ -24,6 +24,7 @@ $nconf
     'horace.port'              : 8080
     'web.client.config'        : {}
     'horace.defaultAdapters'   : [
+      './adapters/dli-adapter.coffee',
       './adapters/pdf-adapter.coffee'
     ]
     'horace.adapters'          : []

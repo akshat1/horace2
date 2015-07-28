@@ -50,18 +50,19 @@ getBook = (path) ->
           reject err
 
         .then (book) ->
-          logger.debug 'resolved with %o', book
+          logger.debug "** resolved #{path} with %o", book
           resolve book
   p0 = $Utils.conditionalRace promises, (x) -> !!x
   new Promise (resolve, reject) ->
     p0.catch (err) ->
+      logger.error "Caught error for path: #{path}"
       if err
         logger.error 'Throwing error to scanner: ', err
         reject err
-      else
-        resolve null
 
-    p0.then (x) -> resolve x
+    p0.then (x) -> 
+      logger.debug "Resolved for path: #{path}"
+      resolve x
 
 
 ###*
