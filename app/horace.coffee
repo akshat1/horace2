@@ -50,6 +50,9 @@ startScan = () ->
     logger.info 'Scanning Finished'
     isScanning = false
     horace.emit Event.ScanStopped
+    # call getBooks once so that stuff gets loaded into memory.
+    # might not need to do this with a real DB
+    getBook()
 
   p.catch (err) ->
     logger.error 'Error scanning folders. Stop.'
