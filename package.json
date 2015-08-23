@@ -39,6 +39,7 @@
     "gulp-sass": "^2.0.1",
     "lodash": "^3.9.3",
     "mocha": "^2.2.5",
+    "mockery": "^1.4.0",
     "node-fs-extra": "^0.8.1",
     "sinon": "^1.15.4"
   }

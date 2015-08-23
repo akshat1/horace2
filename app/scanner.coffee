@@ -36,6 +36,7 @@ _scanPath = (path) ->
         else
           logger.debug 'Check if path is a directory'
           $FS.stat path, (statErr, oStat) ->
+            # istanbul ignore if 
             if statErr
               logger.error "Error stating path #{path}", statErr
 
