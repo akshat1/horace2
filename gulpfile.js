@@ -15,6 +15,9 @@ var gulpFilter = require('gulp-filter');
 var coffeelint = require('gulp-coffeelint');
 var istanbul   = require('gulp-coffee-istanbul');
 var mocha      = require('gulp-mocha');
+var nconf      = require('nconf');
+nconf.argv()
+
 
 
 
@@ -111,13 +114,20 @@ gulp.task('coffee-lint', function () {
 });
 
 
+var coffeeTestOptions = {};
+var coffeeTestGrep = nconf.get('ct-grep');
+console.log('coffeeTestGrep: ', coffeeTestGrep);
+if(coffeeTestGrep){
+  coffeeTestOptions['grep'] = coffeeTestGrep;
+}
+console.log('coffeeTestOptions: ', coffeeTestOptions);
 gulp.task('coffee-test', function (cb) {
   return gulp.src([Sources.COFFEE, Sources.APP_COFFEE])
     .pipe(istanbul({includeUntested: true}))
     .pipe(istanbul.hookRequire())
     .on('finish', function () {
       gulp.src(Sources.TEST)
-        .pipe(mocha())
+        .pipe(mocha(coffeeTestOptions))
         .pipe(istanbul.writeReports({
           dir: Destinations.COVERAGE
         }))
