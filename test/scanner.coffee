@@ -18,93 +18,93 @@ TestPath = 'aye/bee/see'
 
 TIMEOUT = 100
 
+describe 'scanner', () ->
+  describe 'scanner.scanPath', () ->
+    testScannerShouldSaveRecognizedBook = () ->
+      expectedBook = {'expected': 'book'}
+      FakeAdapter = 
+        getBook: (path) -> $Utils.toPromise expectedBook
 
-describe '#_scanPath', () ->
-  testScannerShouldSaveRecognizedBook = () ->
-    expectedBook = {'expected': 'book'}
-    FakeAdapter = 
-      getBook: (path) -> $Utils.toPromise expectedBook
+      FakeDB =
+        saveBook: $Sinon.spy()
 
-    FakeDB =
-      saveBook: $Sinon.spy()
+      $Mockery.registerAllowable RequirePath.Scanner
+      $Mockery.registerMock RequirePath.Adapter, FakeAdapter
+      $Mockery.registerMock RequirePath.DB, FakeDB
+      $Mockery.enable 
+        useCleanCache      : true
+        warnOnUnregistered : false
 
-    $Mockery.registerAllowable RequirePath.Scanner
-    $Mockery.registerMock RequirePath.Adapter, FakeAdapter
-    $Mockery.registerMock RequirePath.DB, FakeDB
-    $Mockery.enable 
-      useCleanCache      : true
-      warnOnUnregistered : false
+      $Scanner = require RequirePath.Scanner
+      $Scanner.scanPath TestPath
+        .then () ->
+          FakeDB.saveBook.callCount.should.equal 1
+          FakeDB.saveBook.firstCall.args[0].should.equal expectedBook
+          $Mockery.deregisterAll()
+          $Mockery.disable()
 
-    $Scanner = require RequirePath.Scanner
-    $Scanner.scanPath TestPath
-      .then () ->
-        FakeDB.saveBook.callCount.should.equal 1
-        FakeDB.saveBook.firstCall.args[0].should.equal expectedBook
-        $Mockery.deregisterAll()
-        $Mockery.disable()
-
-  it 'tests that scanPath saves a book recognized by an Adapter', testScannerShouldSaveRecognizedBook
-  
-
-  testScanPathCallsScanPathOnNonRecognition = () ->  
-    FakeAdapter = 
-      getBook: $Sinon.stub().returns $Utils.toPromise()
-
-    FakeStat = 
-      isDirectory: () -> false
+    it 'tests that scanPath saves a book recognized by an Adapter', testScannerShouldSaveRecognizedBook
     
-    FakeFS =
-      #stat = (path, cb) ->
-      stat: $Sinon.stub().callsArgWith 1, null, FakeStat
-    $Mockery.registerAllowable RequirePath.Scanner
-    $Mockery.registerMock RequirePath.Adapter, FakeAdapter
-    $Mockery.registerMock RequirePath.FS, FakeFS
-    $Mockery.registerMock RequirePath.DB, {}
-    $Mockery.enable
-      useCleanCache      : true
-      warnOnUnregistered : false
-    $Scanner = require RequirePath.Scanner
-    $Scanner.scanPath TestPath
-      .then () ->
-        FakeAdapter.getBook.callCount.should.equal 1
-        FakeFS.stat.callCount.should.equal 1
-        FakeFS.stat.firstCall.args[0].should.equal TestPath
 
-        $Mockery.deregisterAll()
-        $Mockery.disable()
+    testScanPathCallsScanPathOnNonRecognition = () ->  
+      FakeAdapter = 
+        getBook: $Sinon.stub().returns $Utils.toPromise()
 
-  it 'tests that scanPath calls fs.stat when no adapter recognizes a path', testScanPathCallsScanPathOnNonRecognition
+      FakeStat = 
+        isDirectory: () -> false
       
+      FakeFS =
+        #stat = (path, cb) ->
+        stat: $Sinon.stub().callsArgWith 1, null, FakeStat
+      $Mockery.registerAllowable RequirePath.Scanner
+      $Mockery.registerMock RequirePath.Adapter, FakeAdapter
+      $Mockery.registerMock RequirePath.FS, FakeFS
+      $Mockery.registerMock RequirePath.DB, {}
+      $Mockery.enable
+        useCleanCache      : true
+        warnOnUnregistered : false
+      $Scanner = require RequirePath.Scanner
+      $Scanner.scanPath TestPath
+        .then () ->
+          FakeAdapter.getBook.callCount.should.equal 1
+          FakeFS.stat.callCount.should.equal 1
+          FakeFS.stat.firstCall.args[0].should.equal TestPath
 
-  testScanPathReadsDirectoryOnNonRecognition = () ->
-    FakeAdapter = 
-      getBook: $Sinon.stub().returns $Utils.toPromise()
+          $Mockery.deregisterAll()
+          $Mockery.disable()
 
-    FakeStat = 
-      isDirectory: () -> true
+    it 'tests that scanPath calls fs.stat when no adapter recognizes a path', testScanPathCallsScanPathOnNonRecognition
+        
 
-    FakeFS =
-      stat: $Sinon.stub().callsArgWith 1, null, FakeStat
-      readdir: $Sinon.stub().callsArgWith 1, null, []
+    testScanPathReadsDirectoryOnNonRecognition = () ->
+      FakeAdapter = 
+        getBook: $Sinon.stub().returns $Utils.toPromise()
 
-    $Mockery.registerAllowable RequirePath.Scanner
-    $Mockery.registerMock RequirePath.Adapter, FakeAdapter
-    $Mockery.registerMock RequirePath.FS, FakeFS
-    $Mockery.registerMock RequirePath.DB, {}
-    $Mockery.enable
-      useCleanCache      : true
-      warnOnUnregistered : false
+      FakeStat = 
+        isDirectory: () -> true
 
-    $Scanner = require RequirePath.Scanner
-    $Scanner.scanPath TestPath
-      .then () ->
-        FakeAdapter.getBook.callCount.should.equal 1
-        FakeFS.stat.callCount.should.equal 1
-        FakeFS.stat.firstCall.args[0].should.equal TestPath
-        FakeFS.readdir.callCount.should.equal 1
+      FakeFS =
+        stat: $Sinon.stub().callsArgWith 1, null, FakeStat
+        readdir: $Sinon.stub().callsArgWith 1, null, []
 
-        $Mockery.deregisterAll()
-        $Mockery.disable()
+      $Mockery.registerAllowable RequirePath.Scanner
+      $Mockery.registerMock RequirePath.Adapter, FakeAdapter
+      $Mockery.registerMock RequirePath.FS, FakeFS
+      $Mockery.registerMock RequirePath.DB, {}
+      $Mockery.enable
+        useCleanCache      : true
+        warnOnUnregistered : false
 
-  it 'tests that scanPath descends into a directory when no adapter recognizes it', testScanPathReadsDirectoryOnNonRecognition
+      $Scanner = require RequirePath.Scanner
+      $Scanner.scanPath TestPath
+        .then () ->
+          FakeAdapter.getBook.callCount.should.equal 1
+          FakeFS.stat.callCount.should.equal 1
+          FakeFS.stat.firstCall.args[0].should.equal TestPath
+          FakeFS.readdir.callCount.should.equal 1
+
+          $Mockery.deregisterAll()
+          $Mockery.disable()
+
+    it 'tests that scanPath descends into a directory when no adapter recognizes it', testScanPathReadsDirectoryOnNonRecognition
 

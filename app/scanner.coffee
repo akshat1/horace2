@@ -24,7 +24,7 @@ logger = new $Winston.Logger
 
 
 _scanPath = (path) ->
-  logger.info "_scanPath(#{path})"
+  logger.debug "_scanPath(#{path})"
   new Promise (resolve, reject) ->
     $Adapters.getBook path
       .then (oBook) ->

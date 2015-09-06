@@ -12,24 +12,29 @@ logger = new $Winston.Logger
   ]
 
 
-logger.info 'Loading adapters. . .'
-# Some adapters are default and will always be loaded by horace
-# While others are optional and may be added/removed by users.
-adapterPaths = $Config 'horace.defaultAdapters'
-adapterPaths = adapterPaths.concat $Config 'horace.adapters'
-logger.info "adapters to be loaded: \n\t#{adapterPaths.join '\n\t'}"
-
-adapters = _.map adapterPaths, (adapterPath) ->
-  logger.info "adapterPath: #{adapterPath}"
-  require adapterPath
-
 adapters = []
 adapterMap = {}
-for adapterPath in adapterPaths
-  adapter = require adapterPath
-  adapterId = adapter.getAdapterId()
-  adapterMap[adapterId] = adapter
-  adapters.push adapter
+loadAdapters = () ->
+  logger.info 'Loading adapters. . .'
+  # Some adapters are default and will always be loaded by horace
+  # While others are optional and may be added/removed by users.
+  adapterPaths = $Config 'horace.defaultAdapters'
+  adapterPaths = adapterPaths.concat $Config 'horace.adapters'
+  logger.info "adapters to be loaded: \n\t#{adapterPaths.join '\n\t'}"
+
+  adapters = _.map adapterPaths, (adapterPath) ->
+    logger.info "adapterPath: #{adapterPath}"
+    require adapterPath
+
+  adapters = []
+  adapterMap = {}
+  for adapterPath in adapterPaths
+    adapter = require adapterPath
+    adapterId = adapter.getAdapterId()
+    adapterMap[adapterId] = adapter
+    adapters.push adapter
+
+loadAdapters()
 
 
 toArray = () -> adapters
@@ -88,4 +93,5 @@ module.exports =
   toArray            : toArray
   getBook            : getBook
   getBookForDownload : getBookForDownload
+  getAdapterForBook  : getAdapterForBook
 
