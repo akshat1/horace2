@@ -28,7 +28,7 @@ logger = new $Winston.Logger
 
 getExif = (path) ->
   p = new Promise (resolve, reject) ->
-    $Exec "#{CMD} -j '#{path}'", (err, stdOutBuff, stdErrBuff) ->
+    $Exec """#{CMD} -j "#{path}" """, (err, stdOutBuff, stdErrBuff) ->
       if err
         reject err
       else
@@ -78,7 +78,7 @@ getBook = (path) ->
   p
 
 
-getBookForDownload = (book, targetFormat) ->
+getBookForDownload = (book, targetFormat = $Formats.PDF) ->
   logger.info 'getBookForDownload(%o)', book
   new Promise (resolve, reject) ->
     unless targetFormat in SUPPORTED_EXPORT_FORMATS
