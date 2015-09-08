@@ -5,6 +5,7 @@
 $Path    = require 'path'
 $FS      = require 'fs'
 $Winston = require 'winston'
+$Utils   = require '../utils.coffee'
 
 $Book = require '../book.coffee'
 $Formats = require '../formats.coffee'
@@ -13,16 +14,47 @@ ADAPTER_ID = 'horace.txt'
 SUPPORTED_EXPORT_FORMATS = [$Formats.TXT]
 DEFAULT_ENCODING = 'utf8'
 
+GUTENBERG_LICENSE_TEXT = 'This eBook is for the use of anyone anywhere at no 
+  cost and with almost no restrictions whatsoever.  You may copy it, give it 
+  away or re-use it under the terms of the Project Gutenberg License included 
+  with this eBook or online at www.gutenberg.net'
+
+
+GUTENBERG_START_TAG = /\*\*\*\s*START OF (THE|THIS) PROJECT GUTENBERG EBOOK.*\s*.*\*\*\*/
+
+GutenbergSearchPattern = 
+  Title: /Title:[\s\S]*/
+  Author: /Author:[\sS]*/
+
+GutenbergReplacePattern =
+  Title: /Title:\s*/
+  Author: /Author:\s*/
+
+
+
 
 logger = new $Winston.Logger
   transports: [
     new $Winston.transports.Console({
-      level: 'warn'
+      level: 'debug'
       }),
     new $Winston.transports.File({
       filename: $Path.join process.cwd(), 'horace-txt.log'
       })
   ]
+
+
+getAdapterId = () -> ADAPTER_ID
+
+
+getGutenbergInfoBlock = (text) ->
+  sample = text.substr(0, 1500)
+  match = sample.match GUTENBERG_START_TAG
+  if match
+    sample.substr 0, match.index
+
+  else
+    null
 
 
 ###*
@@ -48,10 +80,13 @@ isTextFile = (path) ->
 
 ###*
 # extract the title from the given text
+# @param {string} path - the path of the text file
 # @param {string} text - the contents of the text file
 # @returns {string} the title of the book
 ###
-getTitle = (fileName, text) -> 'Unknown'
+getTitle = (path, text) ->
+  filename = $Path.basename path
+  $Utils.toPromise filename
 
 
 ###*
@@ -59,7 +94,7 @@ getTitle = (fileName, text) -> 'Unknown'
 # @param {string} text - the contents of the text file
 # @returns {Array} - An array of author names (string)
 ###
-getAuthors = (text) -> ['Unknown']
+getAuthors = (text) -> $Utils.toPromise ['Unknown']
 
 
 ###*
@@ -68,7 +103,7 @@ getAuthors = (text) -> ['Unknown']
 # @returns {Promise}
 # @resolves {Number} - the size of file in bytes
 ###
-getSizeInBytes = (path) -> _.toPromise -1
+getSizeInBytes = (path) -> $Utils.toPromise -1
 
 
 ###*
@@ -76,7 +111,7 @@ getSizeInBytes = (path) -> _.toPromise -1
 # @param {string} text - the contents of the text file
 # @returns {Number} - the year
 ###
-getYear = (text) -> -1
+getYear = (text) -> $Utils.toPromise -1
 
 
 ###*
@@ -84,7 +119,7 @@ getYear = (text) -> -1
 # @param {string} text - the contents of the text file
 # @returns {Array} - An array of subject names (string)
 ###
-getSubjects = () -> []
+getSubjects = () -> $Utils.toPromise []
 
 
 ###*
@@ -92,7 +127,73 @@ getSubjects = () -> []
 # @param {string} text - the contents of the text file
 # @returns {String} - the publisher
 ###
-getPublisher = () -> 'Unknown'
+getPublisher = () -> $Utils.toPromise 'Unknown'
+
+
+# --------------------------------------------------------------------
+
+getTitleForGutenberg = (tag) -> 
+  tag.replace GutenbergReplacePattern.Title, ''
+    .replace /\s+/, ' '
+
+
+getAuthorsForGutenberg = (tag) -> 
+  tag = tag.replace GutenbergReplacePattern.Author, ''
+  tag.split '\n'
+    .map (a) -> a.trim()
+
+
+getYearForGutenberg = () -> $Utils.toPromise -1
+
+
+getSubjectsForGutenberg = () -> $Utils.toPromise ['GBSubject']
+
+
+getPublisherForGutenberg = () -> $Utils.toPromise 'GBPublisher'
+
+
+getGutenbergBook = (path, infoBlock, text) ->
+  new Promise (resolve, reject) ->
+    title = null
+    authors = []
+    tags = infoBlock.split /\r\n\r\n/
+    for tag, index in tags
+      if GutenbergSearchPattern.Title.test tag
+        title = getTitleForGutenberg tag
+
+      else if GutenbergSearchPattern.Author.test tag
+        authors = getAuthorsForGutenberg tag
+
+    unless title
+      throw new Error "Did not find title :( out of #{tags.length} tags (tags was #{typeof tags})\n\n#{JSON.stringify(tags)}"
+
+    unless authors?.length
+      authors = ['Unknown']
+    
+    Promise.all [getSizeInBytes(path),
+      getYearForGutenberg(infoBlock),
+      getSubjectsForGutenberg(infoBlock),
+      getPublisherForGutenberg(infoBlock)]
+      .then (infoArr) ->
+        resolve new $Book path, title, authors, infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()
+
+      .catch reject
+
+
+getUnidentifiedBookInfo = (path, text) ->
+  new Promise (resolve, reject) ->
+    Promise.all [getTitle(path, text),
+      getAuthors(text),
+      getSizeInBytes(path),
+      getYear(text),
+      getSubjects(text),
+      getPublisher(text)]
+      .then (infoArr) ->
+        console.log infoArr unless infoArr[0]
+        #resolve new $Book path, infoArr[0], infoArr[1], infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()
+        resolve()
+      
+      .catch reject
 
 
 ###*
@@ -101,30 +202,33 @@ getPublisher = () -> 'Unknown'
 # @resolves {Book}
 ###
 getBook = (path) ->
+  logger.info "TxtAdapter.getBook(#{path})"
   new Promise (resolve, reject) ->
     isTextFile path
       .then (isText) ->
         if isText
+          logger.debug 'This is a text file'
           $FS.readFile path, (readErr, buff) ->
             if readErr
               reject readErr
 
             else
-              getSizeInBytes path
-                .then (sizeInBytes) ->
-                  text        = buff.toString DEFAULT_ENCODING
-                  title       = getTitle text
-                  authors     = getAuthors text
-                  year        = getYear text
-                  subjects    = getSubjects text
-                  publisher   = getPublisher text
-                  adapterId   = getAdapterId()
-                  resolve new $Book path, title, authors, sizeInBytes, year, subjects, publisher, adapterId
+              text = buff.toString DEFAULT_ENCODING
+              gutenbergInfo = getGutenbergInfoBlock text
+              if gutenbergInfo
+                console.log 'this is a guttenberg file'
+                resolve getGutenbergBook path, gutenbergInfo, text
+
+              else
+                resolve getUnidentifiedBookInfo path, text
 
         else
+          logger.debug 'not a text file'
           resolve()
 
-      .catch reject    
+      .catch (isTextFileErr) ->
+        logger.error 'Error occurred while trying to find out if this a text file'
+        reject isTextFileErr
 
 
 ###*
@@ -133,14 +237,14 @@ getBook = (path) ->
 # @returns {Promise}
 # @resolves {ReadStream}
 ###
-getBookForDownload = (book, format = $Format.TXT) ->
+getBookForDownload = (book, format = $Formats.TXT) ->
   new Promise (resolve, reject) ->
     if book.adapterId isnt getAdapterId()
       reject new Error "This book does not belong to this adapter [#{ADAPTER_ID}]"
       return
 
     unless format in SUPPORTED_EXPORT_FORMATS
-      reject new Error "Target format not supported (>#{targetFormat}<)"
+      reject new Error "Target format not supported (>#{format}<)"
       return
 
     # ATM We know format is TXT
@@ -152,7 +256,7 @@ getBookForDownload = (book, format = $Format.TXT) ->
 
 module.exports =
   # API
-  getAdapterId       : () -> ADAPTER_ID
+  getAdapterId       : getAdapterId
   getBook            : getBook
   getBookForDownload : getBookForDownload
 
@@ -164,3 +268,4 @@ module.exports =
   getYear            : getYear
   getSubjects        : getSubjects
   getPublisher       : getPublisher
+  getBookForDownload : getBookForDownload
