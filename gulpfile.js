@@ -16,19 +16,22 @@ var coffeelint = require('gulp-coffeelint');
 var istanbul   = require('gulp-coffee-istanbul');
 var mocha      = require('gulp-mocha');
 var nconf      = require('nconf');
+var jsdoc      = require('gulp-jsdoc');
 nconf.argv()
 
 
 
 
 var Sources = {
-  BOWER     : 'bower_components',
-  HAML      : 'client/haml/**/*.haml',
-  SASS      : 'client/sass/**/*.scss',
-  COFFEE    : 'client/coffee/**/*.coffee',
-  APP_COFFEE: 'app/**/*.coffee',
-  RESOURCES : 'client/resources/**/*',
-  TEST      : 'test/**/*.coffee'
+  BOWER               : 'bower_components',
+  HAML                : 'client/haml/**/*.haml',
+  SASS                : 'client/sass/**/*.scss',
+  CLIENT_COFFEE       : 'client/coffee/**/*.coffee',
+  CLIENT_COFFEE_ENTRY : 'client/coffee/index.coffee',
+  APP_COFFEE          : 'app/**/*.coffee',
+  RESOURCES           : 'client/resources/**/*',
+  TEST                : 'test/**/*.coffee',
+  TMPJS               : 'tmpjs'
 };
 
 var Destinations = {
@@ -37,7 +40,9 @@ var Destinations = {
   JS        : 'dist/js/',
   RESOURCES : 'dist/resources/',
   CSSLIB    : 'dist/lib',
-  COVERAGE  : 'coverage'
+  COVERAGE  : 'coverage',
+  TMPJS     : 'tmpjs',
+  JSDOC     : 'documentation'
 };
 
 
@@ -57,8 +62,33 @@ gulp.task('mkdir-setup', function(cb) {
 });
 
 
+gulp.task('app-js-for-jsdoc', ['mkdir-setup'], function() {
+  return gulp.src(Sources.APP_COFFEE)
+    .pipe(coffee({bare: true}))
+    //destination, template, infos, buildOptions
+    .pipe(gulp.dest(Destinations.TMPJS + '/app', null, null, {}));
+});
+
+gulp.task('client-js-for-jsdoc', ['mkdir-setup'], function() {
+  return gulp.src(Sources.CLIENT_COFFEE)
+    .pipe(coffee({bare: true}))
+    .pipe(gulp.dest(Destinations.TMPJS + '/client'));
+});
+
+gulp.task ('app-jsdoc', ['app-js-for-jsdoc'], function() {
+  return gulp.src(Destinations.TMPJS + '/app/**/*.js')
+    .pipe(jsdoc(Destinations.JSDOC + '/app'));
+})
+
+gulp.task ('client-jsdoc', ['client-js-for-jsdoc'], function() {
+  return gulp.src(Destinations.TMPJS + '/client/**/*.js')
+    .pipe(jsdoc(Destinations.JSDOC + '/client'));
+})
+
+gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
+
 gulp.task('js', ['mkdir-setup'], function() {
-  return gulp.src('client/coffee/index.coffee')
+  return gulp.src(CLIENT_COFFEE_ENTRY)
     .pipe(browserify({
       fileName: 'horace.js',
       transform: [require('coffeeify')]
@@ -107,7 +137,7 @@ gulp.task('resources', ['mkdir-setup'], function() {
 
 
 gulp.task('coffee-lint', function () {
-  return gulp.src(Sources.COFFEE)
+  return gulp.src([Sources.CLIENT_COFFEE, Sources.APP_COFFEE])
     //TODO User Path.join etc. to get this correct.
     .pipe(coffeelint(__dirname + '/build-config/coffeelint.json'))
     .pipe(coffeelint.reporter());
@@ -122,7 +152,7 @@ if(coffeeTestGrep){
 }
 console.log('coffeeTestOptions: ', coffeeTestOptions);
 gulp.task('coffee-test', function (cb) {
-  return gulp.src([Sources.COFFEE, Sources.APP_COFFEE])
+  return gulp.src([Sources.CLIENT_COFFEE, Sources.APP_COFFEE])
     .pipe(istanbul({includeUntested: true}))
     .pipe(istanbul.hookRequire())
     .on('finish', function () {
