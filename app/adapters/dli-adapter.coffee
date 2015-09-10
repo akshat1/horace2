@@ -1,5 +1,6 @@
 ###
 Will accept DLI books
+@module DLI adapter
 ###
 
 $Path    = require 'path'

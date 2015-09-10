@@ -1,5 +1,6 @@
-###
-General utilities
+###*
+# General utilities
+# @module utils
 ###
 getHash = (path)->
   throw new Error 'Missing argument to generate hash from' unless path?.length

@@ -1,3 +1,7 @@
+###*
+# @module sorting
+###
+
 # istanbul ignore next
 
 SortColumn =

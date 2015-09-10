@@ -1,3 +1,7 @@
+###*
+# Base book class
+###
+
 $Utils = require './utils.coffee'
 
 _ = require 'lodash'
@@ -5,17 +9,23 @@ _ = require 'lodash'
 
 
 
-###
-Adapters may extend this class.
-
-id : simply path for now.
-###
 class Book
   @makeSortStringFromArray: (arr) ->
     arr.sort()
       .join '_$_'
 
-
+  ###*
+  # Adapters may extend this class in order to add custom data
+  # @constructor Book
+  # @param {string} path
+  # @param {string} title
+  # @param {Array} authors
+  # @param {Number} sizeInBytes
+  # @param {Number} year
+  # @param {Array} subjects
+  # @param {string} publisher
+  # @param {string} adapterId
+  ###
   constructor: (@path, title, authors = [], @sizeInBytes, year = -1, subjects = [], publisher = '', @adapterId) ->
     ### istanbul ignore next ###
     throw new Error 'adapterId must be a non-empty string' unless @adapterId and typeof @adapterId is 'string'

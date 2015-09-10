@@ -1,3 +1,7 @@
+###*
+# @module scanner
+###
+
 $Path    = require 'path'
 $FS      = require 'graceful-fs'
 $Winston = require 'winston'

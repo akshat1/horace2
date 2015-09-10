@@ -1,3 +1,8 @@
+###*
+# Deals with all adapters. Sits between the Horace app and all adapters.
+# @module adapter
+###
+
 $Config  = require './config.coffee'
 $Winston = require 'Winston'
 _       = require 'lodash'

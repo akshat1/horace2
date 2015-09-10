@@ -1,3 +1,7 @@
+###*
+# @module index
+###
+
 $Path = require 'path'
 
 $Winston     = require 'winston'

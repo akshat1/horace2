@@ -1,3 +1,7 @@
+###*
+# @module config
+###
+
 $nconf = require 'nconf'
 $Path  = require 'path'
 
@@ -31,5 +35,8 @@ $nconf
     'horace.folders'           : []
     'horace.db.location'       : dbLocation
 
-
+###*
+# @param {string} key
+# @returns {Object|string}
+###
 module.exports = (key) -> $nconf.get key

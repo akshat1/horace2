@@ -1,3 +1,7 @@
+###*
+# @module horace
+###
+
 $Path   = require 'path'
 $Events = require 'events'
 $FS     = require 'fs'
