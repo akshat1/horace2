@@ -1,5 +1,8 @@
+###*
 # Requires exiftool to be installed
-# http://www.sno.phy.queensu.ca/~phil/exiftool/install.html
+# @see http://www.sno.phy.queensu.ca/~phil/exiftool/install.html
+# @module pdf adapter
+###
 
 $Path    = require 'path'
 $FS      = require 'fs'

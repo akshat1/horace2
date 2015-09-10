@@ -9,3 +9,5 @@ config.json
 .idea
 *.sublime-workspace
 coverage
+documentation
+tmpjs

@@ -1,3 +1,7 @@
+###*
+# @module db
+###
+
 $Tingo   = require 'tingodb'
 $Winston = require 'winston'
 _        = require 'lodash'
