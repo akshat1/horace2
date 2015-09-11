@@ -88,7 +88,7 @@ gulp.task ('client-jsdoc', ['client-js-for-jsdoc'], function() {
 gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
 
 gulp.task('js', ['mkdir-setup'], function() {
-  return gulp.src(CLIENT_COFFEE_ENTRY)
+  return gulp.src(Sources.CLIENT_COFFEE_ENTRY)
     .pipe(browserify({
       fileName: 'horace.js',
       transform: [require('coffeeify')]
