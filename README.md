@@ -48,3 +48,16 @@ Contributions to Horace are welcome. If you would like to contribute code then
 
 ### More Information
 Horace uses the beautiful taiga.io for project management. Visit our wiki at https://tree.taiga.io/project/speedysan-horace-2/wiki/home to know more about Horace including its architecture and other details. If you have a question which is not answered in the wiki then feel free to drop me a line and I will respond as soon as I can.
+
+### Debugging
+To debug with the wonderful node-inspector, run
+
+```
+node-inspector & coffee --nodejs --debug-brk ./app/index.coffee
+```
+
+To stop the debugger, run
+
+```
+killall node
+```
