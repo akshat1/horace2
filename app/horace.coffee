@@ -82,7 +82,7 @@ requestDownload = (id) ->
         logger.info 'Download >>> ', book
         tmpFilePath = $Path.join tmpFolderPath, "id_#{Date.now()}_#{$Path.basename(book.path)}"
         logger.debug 'write to tmp location: ', tmpFilePath
-        $Adapter.getBookForDownload book, 'PDF'
+        $Adapter.getBookForDownload book
           .then (bookRStream) ->
             logger.debug 'Got book read stream', bookRStream
             try
