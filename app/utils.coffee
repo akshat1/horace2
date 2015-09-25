@@ -47,6 +47,41 @@ conditionalRace = (promises, condition, breakOnError) ->
 
 
 ###*
+# @param {Array} arr - Array of the objets to be processed
+# @param {function} fnGetter - function which returns a Promise which resolves, hopefully 
+                    in a value that satisifes fnCondition. Of the form (arr[i], i) ->
+# @param {function} fnCondition - function which returns a boolean, or a promise which 
+                    resolves in a boolean about the fitness of the result of fnGetter
+# @param {boolean} breakOnError - whether any errors will break all execution and cause 
+                   the returned promise to fail
+# @returns {Promise} - A promise which resolves in the value which satisfied fnCondition
+###
+findPromise = (arr, fnGetter, fnCondition, breakOnError) ->
+  new Promise (resolve, reject) ->
+    index = 0
+    tick = () ->
+      fnGetter.call null, arr[index], index
+        .then (obj) ->
+          toPromise fnCondition.call null, obj
+            .then (isValid) -> if isValid then obj else null
+
+        .then (obj) ->
+          if obj
+            resolve obj
+
+          else
+            index++
+            tick()
+          return
+
+        .catch (err) ->
+          console.error err
+          reject err if breakOnError
+
+    tick()
+
+
+###*
 # Returns a boolean indidicating whether or not the param is a Promise
 # Uses instanceof
 # @param {object} x
@@ -73,3 +108,4 @@ module.exports =
   conditionalRace : conditionalRace
   isPromise       : isPromise
   toPromise       : toPromise
+  findPromise     : findPromise
