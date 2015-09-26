@@ -6,16 +6,21 @@ $Path   = require 'path'
 $Events = require 'events'
 $FS     = require 'fs'
 
-$FSExtra = require 'fs-extra'
-_        = require 'lodash'
-$Winston = require 'winston'
+$IPC          = require 'node-ipc'
+$ChildProcess = require 'child_process'
+$FSExtra      = require 'fs-extra'
+_             = require 'lodash'
+$Winston      = require 'winston'
 
-$Config  = require './config.coffee'
-$Utils   = require './utils.coffee'
-$Scanner = require './scanner.coffee'
-$DB      = require './db.coffee'
-$Adapter = require './adapter.coffee'
+$Config   = require './config.coffee'
+$Utils    = require './utils.coffee'
+$IPCUtils = require './ipc.coffee'
+#$Scanner = require './scanner.coffee'
+$DB       = require './db.coffee'
+$Adapter  = require './adapter.coffee'
 
+
+IPCEvent = $IPCUtils.Event
 
 Event = 
   ScanStarted : 'Horace.ScanStarted'
@@ -38,32 +43,19 @@ logger.info watchedFolders
 horace = new $Events.EventEmitter()
 
 
-isScanning = false
+_isScanning = false
 startScan = () ->
-  return if isScanning
-  logger.info 'Horace.startScan'
-  isScanning = true
-  horace.emit Event.ScanStarted
-  p = new Promise (resolve, reject) ->
-    promises = _.map watchedFolders, (folder) -> 
-      logger.debug "Scan #{folder}"
-      $Scanner.scanPath folder
-    resolve Promise.all promises
+  logger.info 'startScanning'
+  new Promise (resolve, reject) ->
+    try
+      logger.info 'broadcast event : ', IPCEvent.SCANNER_DOSCAN
+      $IPC.server.broadcast IPCEvent.SCANNER_DOSCAN, 
+        paths: watchedFolders
+      logger.info 'done'
+      resolve()
 
-  p.then (args) ->
-    logger.info 'Scanning Finished'
-    isScanning = false
-    horace.emit Event.ScanStopped
-    # call getBooks once so that stuff gets loaded into memory.
-    # might not need to do this with a real DB
-    getBook()
-
-  p.catch (err) ->
-    logger.error 'Error scanning folders. Stop.'
-    logger.error err
-    isScanning = false
-    horace.emit Event.Error, err
-  return
+    catch err
+      reject err
 
 
 getBooks = (opts) ->
@@ -114,12 +106,50 @@ requestDownload = (id) ->
 
 
 
+
+# - Launch IPC Server
+$IPC.config.id     = $IPCUtils.ID.HORACE
+$IPC.config.silent = true
+$IPC.config.retry  = 1500
+
+_ipcServer = () ->
+  $IPC.server.on IPCEvent.HELLOFROM_SCANNER, (data, socket) ->
+    if $Config 'horace.scan.serverstart'
+      logger.info 'horace.scan.serverstart set to true. Scanning now.'
+      startScan()
+
+
+  $IPC.server.on IPCEvent.ERROR_OCCURRED, (data, socket) ->
+    # data should have a .error property
+    logger.error 'Somebody had an error', data
+    console.error data
+
+
+  $IPC.server.on IPCEvent.SCANNER_SCANSTARTED, (data, socket) ->
+    # We completely ignore data
+    _isScanning = true
+
+
+  $IPC.server.on IPCEvent.SCANNER_SCANSTOPPED, (data, socket) ->
+    # We completely ignore data
+    _isScanning = false
+    horace.emit Event.ScanStopped
+    getBook()
+
+
+$IPC.serve _ipcServer
+$IPC.server.define.listen[IPCEvent.ERROR_OCCURRED]      = 'Some error occurred'
+$IPC.server.define.listen[IPCEvent.HELLOFROM_SCANNER]   = 'Hello from scanner'
+$IPC.server.define.listen[IPCEvent.SCANNER_SCANSTARTED] = 'The scanner has started scanning'
+$IPC.server.define.listen[IPCEvent.SCANNER_SCANSTOPPED] = 'The scanner has stopped scanning'
+
+$IPC.server.start()
+
+
+
 # -------------------  ------------------- -------------------  -------------------
-if $Config 'horace.scan.serverstart'
-  logger.info 'horace.scan.serverstart set to true. Scanning now.'
-  startScan()
-else
-  logger.info 'horace.scan.serverstart set to false.'
+# Start child processes
+$ChildProcess.fork './app/scanner.coffee'
 
 _.extend horace, 
   Event           : Event

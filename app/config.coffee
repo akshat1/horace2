@@ -22,14 +22,15 @@ $nconf
     'horace.server.logLevel'   : 'warn'
     'horace.scanner.logLevel'  : 'warn'
     'horace.scan.serverstart'  : true,
-    'horace.adapters.logLevel' : 'warn'
+    'horace.adapters.logLevel' : 'debug'
     'horace.db.logLevel'       : 'warn'
     'horace.webroot'           : 'dist'
     'horace.port'              : 8080
     'web.client.config'        : {}
     'horace.defaultAdapters'   : [
       './adapters/dli-adapter.coffee',
-      './adapters/pdf-adapter.coffee'
+      './adapters/txt-adapter.coffee'
+#      './adapters/pdf-adapter.coffee'
     ]
     'horace.adapters'          : []
     'horace.folders'           : []

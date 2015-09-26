@@ -49,6 +49,14 @@ getAdapterForBook = (book) -> adapterMap[book.adapterId]
 
 
 getBook = (path) ->
+  logger.info "getBook('#{path}')"
+  adapters = toArray()
+  logger.debug "#{adapters.length} adapters"
+  getBookProxy = (adptr, index) -> adptr.getBook path
+  $Utils.findPromise adapters, getBookProxy, _.identity
+
+
+getBookOld = (path) ->
   adapters = toArray()
   logger.info "getBook('#{path}')"
   logger.debug "#{adapters.length} adapters"

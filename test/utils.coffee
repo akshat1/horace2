@@ -101,3 +101,23 @@ describe 'utils', () ->
           err.message.should.equal 'No valid values'
           done()
 
+
+
+
+  describe 'utils.findPromise', () ->
+    it 'tests that findPromise returns the value which satisfies fnCondition', () ->
+      testArr = ['zero', 'one', 'two', 'three', 'four']
+      fnGetter = (str, index) ->
+        new Promise (resolve, reject) ->
+          resolve if str is 'three' then '2+1' else 'blah'
+
+      fnCondition = (str) ->
+        str is '2+1'
+
+      $Utils.findPromise testArr, fnGetter, fnCondition
+        .then (result) ->
+          console.log "result is >>>#{result}"
+          result.should.equal '2+1'
+
+
+
