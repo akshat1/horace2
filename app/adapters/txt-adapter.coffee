@@ -36,7 +36,7 @@ GutenbergReplacePattern =
 logger = new $Winston.Logger
   transports: [
     new $Winston.transports.Console({
-      level: 'debug'
+      level: 'warn'
       }),
     new $Winston.transports.File({
       filename: $Path.join process.cwd(), 'horace-txt.log'
@@ -189,7 +189,7 @@ getUnidentifiedBookInfo = (path, text) ->
       getSubjects(text),
       getPublisher(text)]
       .then (infoArr) ->
-        console.log infoArr unless infoArr[0]
+        #console.log infoArr unless infoArr[0]
         #resolve new $Book path, infoArr[0], infoArr[1], infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()
         resolve()
       
@@ -216,7 +216,7 @@ getBook = (path) ->
               text = buff.toString DEFAULT_ENCODING
               gutenbergInfo = getGutenbergInfoBlock text
               if gutenbergInfo
-                console.log 'this is a guttenberg file'
+                #console.log 'this is a guttenberg file'
                 resolve getGutenbergBook path, gutenbergInfo, text
 
               else

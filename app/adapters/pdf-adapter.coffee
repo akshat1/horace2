@@ -31,18 +31,23 @@ logger = new $Winston.Logger
 
 getExif = (path) ->
   p = new Promise (resolve, reject) ->
-    $Exec """#{CMD} -j "#{path}" """, (err, stdOutBuff, stdErrBuff) ->
-      if err
-        reject err
-      else
-        if stdErrBuff
-          reject stdErrBuff.toString()
+    try
+      $Exec """#{CMD} -j "#{path}" """, (err, stdOutBuff, stdErrBuff) ->
+        if err
+          reject err
         else
-          exifData = JSON.parse(stdOutBuff.toString())[0]
-          if exifData
-            resolve exifData
+          if stdErrBuff
+            reject stdErrBuff.toString()
           else
-            reject new Error 'Unknown error. No exifdata.'
+            exifData = JSON.parse(stdOutBuff.toString())[0]
+            if exifData
+              resolve exifData
+            else
+              reject new Error 'Unknown error. No exifdata.'
+    catch err
+      console.log 'Error executing exiftool for path: ', path
+      console.trace err
+      reject err
   p
 
 
@@ -62,7 +67,10 @@ getBook = (path) ->
       resolve null
     else
       getExif path
-        .catch (err) -> reject err
+        .catch (err) -> 
+          console.log '000000000000000000000000000000000000'
+          reject err
+
         .then (exifdata) ->
           logger.info 'Got exif %o', exifdata
           if exifdata
