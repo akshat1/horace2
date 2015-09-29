@@ -62,10 +62,9 @@ _scanChildren = (path) ->
 
 
 _scanPath = (path) ->
-  logger.debug "_scanPath(#{path})"
+  logger.info "_scanPath(#{path})"
   $Adapters.getBook path
     .then (oBook) ->
-      console.log 'book? ', oBook
       if oBook
         logger.info 'Save this book'
         $DB.saveBook oBook
@@ -76,7 +75,7 @@ _scanPath = (path) ->
 
 
 _scanSequentially = (paths) ->
-  logger.debug "_scanSequentially([#{paths.join ','}])"
+  logger.info "_scanSequentially([#{paths.join ','}])"
   $Utils.forEachPromise paths, _scanPath
 
 
@@ -102,7 +101,6 @@ $IPC.connectTo $IPCUtils.ID.HORACE, () ->
     _master.emit IPCEvent.SCANNER_SCANSTARTED
     _scanSequentially paths
       .then () ->
-        console.log 'DONE SCANNING ALL PATHS'
         logger.info 'Done scanning all paths' 
         _master.emit IPCEvent.SCANNER_SCANSTOPPED
 
