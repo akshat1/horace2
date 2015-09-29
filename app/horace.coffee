@@ -131,6 +131,7 @@ _ipcServer = () ->
 
 
   $IPC.server.on IPCEvent.SCANNER_SCANSTOPPED, (data, socket) ->
+    logger.info 'Scaning Finished'
     # We completely ignore data
     _isScanning = false
     horace.emit Event.ScanStopped

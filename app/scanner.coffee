@@ -30,56 +30,54 @@ logger = new $Winston.Logger
 
 
 # ---------- ---------- ---------- ---------- ---------- ---------- 
+###*
+# if path is a directory then contents of the directory, else empty array
+# @path {string} path
+# @return {promise}
+# @resolves {Array} - Array of paths within path. Already joined with path
+###
+_getChildren = (path) ->
+  new Promise (resolve, reject) ->
+    $FS.stat path, (statErr, stat) ->
+      if statErr
+        reject statErr
+
+      else
+        if stat.isDirectory()
+          $FS.readdir path, (readdirErr, files) ->
+            if files
+              resolve files.map (f) -> $Path.join path, f
+
+            else
+              resolve()
+
+        else
+          resolve []
+
+
+_scanChildren = (path) ->
+  _getChildren path
+    .then _scanSequentially
+
 
 
 _scanPath = (path) ->
   logger.debug "_scanPath(#{path})"
-  new Promise (resolve, reject) ->
-    $Adapters.getBook path
-      .then (oBook) ->
-        logger.debug "got book? #{!oBook}", oBook
-        if oBook
-          logger.debug 'resolve with oBook'
-          resolve $DB.saveBook oBook
+  $Adapters.getBook path
+    .then (oBook) ->
+      console.log 'book? ', oBook
+      if oBook
+        logger.info 'Save this book'
+        $DB.saveBook oBook
 
-        else
-          logger.debug 'Check if path is a directory'
-          $FS.stat path, (statErr, oStat) ->
-            # istanbul ignore if 
-            if statErr
-              logger.error "Error stating path #{path}", statErr
-
-            else
-              logger.debug "is it a directory then? #{oStat.isDirectory()}"
-              if oStat.isDirectory()
-                logger.debug 'it is a directory. read it'
-                $FS.readdir path, (readdirErr, files) ->
-                  if readdirErr
-                    logger.error 'error doing readdir', readdirErr
-                    reject readdirErr
-
-                  else
-                    logger.debug "We got #{files.length} files"
-                    p = Promise.all _.map files, (f) ->
-                      _scanPath $Path.join path, f
-
-                    p.then (res) ->
-                      resolve res
-
-                    p.catch (err0) ->
-                      logger.error '_scanPath failed!'
-                      reject err0
-
-              else
-                resolve null
-
-      .catch (adapterErr) ->
-        logger.error "adapterErr for path #{path}", adapterErr
-        # We don't break when we get an error about a file.
+      else
+        logger.info 'Scan children'
+        _scanChildren path
 
 
-scanPath = (path) -> 
-  _scanPath path
+_scanSequentially = (paths) ->
+  logger.debug "_scanSequentially([#{paths.join ','}])"
+  $Utils.forEachPromise paths, _scanPath
 
 
 $IPC.config.id     = $IPCUtils.ID.SCANNER
@@ -102,22 +100,24 @@ $IPC.connectTo $IPCUtils.ID.HORACE, () ->
     paths = data.paths
     logger.info 'MASTER WANTS THE SCANNER TO START SCANNING ON :', paths
     _master.emit IPCEvent.SCANNER_SCANSTARTED
-    $Utils.forEachPromise paths, scanPath
+    _scanSequentially paths
       .then () ->
+        console.log 'DONE SCANNING ALL PATHS'
+        logger.info 'Done scanning all paths' 
         _master.emit IPCEvent.SCANNER_SCANSTOPPED
 
       .catch (err) ->
+        logger.error 'Error scanning all paths. Going to emit error'
+        logger.error err
         _master.emit IPCEvent.ERROR_OCCURRED, 
           error: err
 
         _master.emit IPCEvent.SCANNER_SCANSTOPPED
-    ###
 
-  
 
 # ---------- ---------- ---------- ---------- ---------- ---------- 
 
 ###
 module.exports =
-  scanPath : scanPath
+  _scanSequentially : _scanSequentially
 ###
