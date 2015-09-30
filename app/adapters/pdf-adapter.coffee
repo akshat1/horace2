@@ -60,6 +60,7 @@ getYear = () -> -1
 
 getBook = (path) ->
   logger.info "getBook(#{path})"
+  fileName = $Path.basename path
   p = new Promise (resolve, reject) ->
     extension = $Path.extname path
     if extension.toLowerCase() isnt '.pdf'
@@ -75,7 +76,7 @@ getBook = (path) ->
           logger.info 'Got exif %o', exifdata
           if exifdata
             try
-            	book = new $Book path, getTitle(exifdata), getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID
+            	book = new $Book path, (getTitle(exifdata) or fileName), getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID
             catch err1
               logger.error 'Error occurred: %o', err1
               reject err1

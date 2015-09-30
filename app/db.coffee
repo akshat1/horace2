@@ -2,7 +2,10 @@
 # @module db
 ###
 
-$Tingo   = require 'tingodb'
+# TODO: Clean up the whole _connect thing.
+
+#$Tingo   = require 'tingodb'
+$MongoDB = require 'mongodb'
 $Winston = require 'winston'
 _        = require 'lodash'
 $FSExtra = require 'fs-extra'
@@ -26,7 +29,7 @@ logger   = new $Winston.Logger
       })
   ]
 
-
+###
 dbLocation = $Config 'horace.db.location'
 throw new Error 'dbLocation not defined' unless dbLocation
 logger.info "Ensure #{dbLocation}"
@@ -35,55 +38,81 @@ $FSExtra.ensureDir dbLocation
 logger.info 'Create db instance'
 Engine = $Tingo()
 database = new Engine.Db dbLocation, {}
-collectionBooks = database.collection Collection.Books
+###
+client = $MongoDB.MongoClient
+url = 'mongodb://localhost:27017/horace?maxPoolSize=10'
+_isConnected = false
+collectionBooks = null
+
+_connect = () ->
+  new Promise (resolve, reject) ->
+    if _isConnected
+      resolve()
+
+    else
+      client.connect url, (connectErr, db) ->
+        if connectErr
+          console.error 'Unable to connect to mongodbn. Error: ', connectErr
+          reject connectErr
+
+        else
+          _isConnected = true
+          collectionBooks = db.collection 'books'
+          resolve()
+
+#database.collection Collection.Books
 
 
 saveBook = (book) ->
   logger.info 'saveBook(%o)', book.id
-  p = new Promise (resolve, reject) ->
-    handleUpsert = (err) ->
-      if err
-        logger.error 'Upsert error %o', err
-        reject err
-      else
-        logger.info "Saved book #{book.id}"
-        resolve()
+  _connect()
+    .then () ->
+      p = new Promise (resolve, reject) ->
+        handleUpsert = (err) ->
+          if err
+            logger.error 'Upsert error %o', err
+            reject err
+          else
+            logger.info "Saved book #{book.id}"
+            resolve()
 
-    logger.debug 'run upsert'
-    collectionBooks.update(
-      {id: book.id},
-      book,
-      {upsert: true},
-      handleUpsert
-      )
-  p
+        logger.debug 'run upsert'
+        collectionBooks.update(
+          {id: book.id},
+          book,
+          {upsert: true},
+          handleUpsert
+          )
+      p
 
 
 # TODO: opts -> query
 getBooks = (opts = {}) ->
-  p = new Promise (resolve, reject) ->
-    logger.info 'getBooks(%o)', opts
-    sortOpts = {}
-    sortOpts[opts.sortcolumnName or $Sorting.SortColumn.Title] = if opts.sortDirection is $Sorting.SortDirection.ASC then 1 else -1
-    logger.debug 'sortOpts: ', sortOpts
-    cur = collectionBooks.find().sort sortOpts
-    cur.toArray (curErr, books) ->
-      if curErr
-        logger.error 'Error converting to array', curErr
-        reject curErr
-      else
-        from       = parseInt(opts.from) or 0
-        to         = from + parseInt opts.numItems
-        totalBooks = books.length
-        unless isNaN to
-          books = books[from ... to]
-        #logger.info 'Resolve promise with books %o', books
-        logger.debug "Return #{books.length} books", books
-        resolve
-          from       : from
-          totalItems : totalBooks
-          books      : books
-  p
+  _connect()
+    .then () ->
+      p = new Promise (resolve, reject) ->
+        logger.info 'getBooks(%o)', opts
+        sortOpts = {}
+        sortOpts[opts.sortcolumnName or $Sorting.SortColumn.Title] = if opts.sortDirection is $Sorting.SortDirection.ASC then 1 else -1
+        logger.debug 'sortOpts: ', sortOpts
+        cur = collectionBooks.find().sort sortOpts
+        cur.toArray (curErr, books) ->
+          if curErr
+            logger.error 'Error converting to array', curErr
+            reject curErr
+          else
+            from       = parseInt(opts.from) or 0
+            to         = from + parseInt opts.numItems
+            totalBooks = books.length
+            unless isNaN to
+              books = books[from ... to]
+            #logger.info 'Resolve promise with books %o', books
+            logger.debug "Return #{books.length} books"
+            resolve
+              from       : from
+              totalItems : totalBooks
+              books      : books
+      p
 
 
 ###*
@@ -93,21 +122,23 @@ getBooks = (opts = {}) ->
  * @rejects {Error}
 ###
 getBook = (id) ->
-  p = new Promise (resolve, reject) ->
-    try
-      cur = collectionBooks.find
-        id: id
-      cur.toArray (curErr, books) ->
-        if curErr
-          reject curErr
-        else
-          logger.info '(from db) resolve'
-          resolve books[0]
+  _connect()
+    .then () ->
+      p = new Promise (resolve, reject) ->
+        try
+          cur = collectionBooks.find
+            id: id
+          cur.toArray (curErr, books) ->
+            if curErr
+              reject curErr
+            else
+              logger.info '(from db) resolve'
+              resolve books[0]
 
-    catch err
-      logger.error "Error occurred while trying to fetch id: #{id}\n", err
-      reject err
-  p
+        catch err
+          logger.error "Error occurred while trying to fetch id: #{id}\n", err
+          reject err
+      p
 
 
 

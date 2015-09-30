@@ -153,6 +153,18 @@ toPromise = (x) ->
     new Promise (resolve, reject) -> resolve x
 
 
+testSequential = () ->
+  arr = [0..9]
+  fn = (x) ->
+    new Promise (resolve, reject) ->
+      inner = () ->
+        console.log 'boom:::', x
+        resolve x
+      setTimeout inner, 1000
+  forEachPromise arr, fn
+
+
+
 module.exports = 
   getHash         : getHash
   conditionalRace : conditionalRace
@@ -160,3 +172,4 @@ module.exports =
   toPromise       : toPromise
   findPromise     : findPromise
   forEachPromise  : forEachPromise
+  testSequential  : testSequential
