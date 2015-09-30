@@ -30,7 +30,7 @@ $nconf
     'horace.defaultAdapters'   : [
       './adapters/dli-adapter.coffee'
       './adapters/txt-adapter.coffee'
-#      './adapters/pdf-adapter.coffee'
+      './adapters/pdf-adapter.coffee'
     ]
     'horace.adapters'          : []
     'horace.folders'           : []
