@@ -1,4 +1,4 @@
-// TODO        : Clarify the situation with Sources.COFFEE and the full path in browserify
+"use strict";
 
 var gulp       = require('gulp');
 var _          = require('lodash');
@@ -7,6 +7,7 @@ var coffee     = require('gulp-coffee');
 var haml       = require('gulp-ruby-haml');
 var del        = require('del');
 var FS         = require('fs');
+var Path       = require('path');
 var concat     = require('gulp-concat');
 var browserify = require('gulp-browserify2');
 var rename     = require('gulp-rename');
@@ -17,129 +18,151 @@ var istanbul   = require('gulp-coffee-istanbul');
 var mocha      = require('gulp-mocha');
 var nconf      = require('nconf');
 var jsdoc      = require('gulp-jsdoc');
+
+// MISC
+var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
+
+// Initialise config
 nconf.argv()
 
+// Paths (and some over-engineered path-building)
+function tmpDir (subDir) {
+  return Path.join('build-tmp', subDir || '');
+}
 
 
+function distDir (subDir) {
+  return Path.join('dist', subDir || '');
+}
 
-var Sources = {
-  BOWER               : 'bower_components',
-  HAML                : 'client/haml/**/*.haml',
-  SASS                : 'client/sass/**/*.scss',
-  CLIENT_COFFEE       : 'client/coffee/**/*.coffee',
-  CLIENT_COFFEE_ENTRY : 'client/coffee/index.coffee',
-  APP_COFFEE          : 'app/**/*.coffee',
-  RESOURCES           : 'client/resources/**/*',
-  TEST                : 'test/**/*.coffee',
-  TMPJS               : 'tmpjs'
+
+function clientDir() {
+  var subPath = Array.prototype.slice.apply(arguments);
+  subPath.unshift('client');
+  var result = Path.join.apply(null, subPath);
+  return result;
+}
+
+
+var Paths = {
+  app_coffee          : 'app/**/*.coffee',
+  bower               : 'bower_components',
+  haml                : clientDir('haml', '**', '*.haml'),
+  sass                : clientDir('sass', '**', '*.scss'),
+  client_coffee       : clientDir('coffee', '**', '*.coffee'),
+  client_coffee_entry : clientDir('coffee', 'index.coffee'),
+  resources_src       : clientDir('resources', '**', '*'),
+  tmp                 : tmpDir(),
+  tmp_client_js       : tmpDir('client_js'),
+  tmp_app_js          : tmpDir('app_js'),
+  dist                : distDir(),
+  html                : distDir(),
+  css                 : distDir('css'),
+  js                  : distDir('js'),
+  resources           : distDir('resources'),
+  csslib              : distDir('lib'),
+  jslib               : distDir('lib'),
+  test                : 'test/**/*.coffee',
+  jsonlint_conf       : Path.join(__dirname, 'build-config', 'coffeelint.json'),
+  coverage            : 'coverage',
+  jsdoc_app           : 'documentation',
+  jsdoc_client        : 'documentation'
 };
 
-var Destinations = {
-  HTML      : 'dist/',
-  CSS       : 'dist/css/',
-  JS        : 'dist/js/',
-  RESOURCES : 'dist/resources/',
-  CSSLIB    : 'dist/lib',
-  COVERAGE  : 'coverage',
-  TMPJS     : 'tmpjs',
-  JSDOC     : 'documentation'
-};
 
-
-gulp.task('clean', function(cb) {
-  del(_.values(Destinations), cb);
+/* ************************************ Setup ************************************ */
+gulp.task('clean', function() {
+  del([Paths.dist, Paths.tmp]);
 });
+/* *********************************** /Setup ************************************ */
 
 
-gulp.task('mkdir-setup', function(cb) {
-  var directories = _.values(Destinations);
-  for(var i = 0; i < directories.length; i++) {
-    var d = directories[i];
-    if(!FS.existsSync(d))
-      FS.mkdirSync(d);
-  }
-  cb();
-});
-
-
-gulp.task('app-js-for-jsdoc', ['mkdir-setup'], function() {
-  return gulp.src(Sources.APP_COFFEE)
+/* ******************************** Documentation ******************************** */
+gulp.task('app-js-for-jsdoc', function() {
+  return gulp.src(Paths.app_coffee)
     .pipe(coffee({bare: true}))
-    //destination, template, infos, buildOptions
-    .pipe(gulp.dest(Destinations.TMPJS + '/app', null, null, {}));
+    .pipe(gulp.dest(Paths.tmp_app_js));
 });
 
-gulp.task('client-js-for-jsdoc', ['mkdir-setup'], function() {
-  return gulp.src(Sources.CLIENT_COFFEE)
+
+gulp.task('client-js-for-jsdoc', function() {
+  return gulp.src(Paths.client_coffee)
     .pipe(coffee({bare: true}))
-    .pipe(gulp.dest(Destinations.TMPJS + '/client'));
+    .pipe(gulp.dest(Paths.tmp_client_js));
 });
+
 
 gulp.task ('app-jsdoc', ['app-js-for-jsdoc'], function() {
-  return gulp.src(Destinations.TMPJS + '/app/**/*.js')
-    .pipe(jsdoc(Destinations.JSDOC + '/app'));
+  return gulp.src(Paths.tmp_app_js + '/**/*.js')
+    .pipe(jsdoc(Paths.jsdoc_app));
 })
+
 
 gulp.task ('client-jsdoc', ['client-js-for-jsdoc'], function() {
-  return gulp.src(Destinations.TMPJS + '/client/**/*.js')
-    .pipe(jsdoc(Destinations.JSDOC + '/client'));
+  return gulp.src(Paths.tmp_client_js + '/**/*.js')
+    .pipe(jsdoc(Paths.jsdoc_client));
 })
 
-gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
 
-gulp.task('js', ['mkdir-setup'], function() {
-  return gulp.src(Sources.CLIENT_COFFEE_ENTRY)
+gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
+/* ******************************** Documentation ******************************** */
+
+
+/* ********************************* Build Client ******************************** */
+gulp.task('js', function() {
+  return gulp.src(Paths.client_coffee_entry)
     .pipe(browserify({
       fileName: 'horace.js',
       transform: [require('coffeeify')]
     }))
-    .pipe(gulp.dest(Destinations.JS));
+    .pipe(gulp.dest(Paths.js));
 });
 
 
-gulp.task('sass', ['mkdir-setup'], function() {
-  return gulp.src(Sources.SASS)
+gulp.task('sass', function() {
+  return gulp.src(Paths.sass)
     .pipe(sass())
     .pipe(concat('horace.css'))
-    .pipe(gulp.dest(Destinations.CSS));
+    .pipe(gulp.dest(Paths.css));
 });
 
 
-gulp.task('css-lib', ['mkdir-setup'], function() {
+gulp.task('css-lib', function() {
   return gulp.src('./bower.json')
     .pipe(bower())
     .pipe(gulpFilter(['**/*.css']))
-    .pipe(concat('lib.css', {newLine: '\r\n/* ******************************************************* */\r\n'}))
-    .pipe(gulp.dest(Destinations.CSSLIB));
+    .pipe(concat('lib.css', {newLine: File_Separator}))
+    .pipe(gulp.dest(Paths.csslib));
 });
 
 
-gulp.task('js-lib', ['mkdir-setup'], function() {
+gulp.task('js-lib', function() {
   return gulp.src('./bower.json')
     .pipe(bower())
     .pipe(gulpFilter(['**/*.js']))
-    .pipe(concat('lib.js', {newLine: '\r\n/* ******************************************************* */\r\n'}))
-    .pipe(gulp.dest(Destinations.CSSLIB));
+    .pipe(concat('lib.js', {newLine: File_Separator}))
+    .pipe(gulp.dest(Paths.jslib));
 });
 
 
-gulp.task('haml', ['mkdir-setup'], function() {
-  return gulp.src(Sources.HAML)
+gulp.task('haml', function() {
+  return gulp.src(Paths.haml)
     .pipe(haml())
-    .pipe(gulp.dest(Destinations.HTML));
+    .pipe(gulp.dest(Paths.html));
 });
 
 
-gulp.task('resources', ['mkdir-setup'], function() {
-  return gulp.src(Sources.RESOURCES)
-    .pipe(gulp.dest(Destinations.RESOURCES));
+gulp.task('resources', function() {
+  return gulp.src(Paths.resources_src)
+    .pipe(gulp.dest(Paths.resources));
 });
+/* ******************************** /Build Client ******************************** */
 
 
+/* *********************************** Quality *********************************** */
 gulp.task('coffee-lint', function () {
-  return gulp.src([Sources.CLIENT_COFFEE, Sources.APP_COFFEE])
-    //TODO User Path.join etc. to get this correct.
-    .pipe(coffeelint(__dirname + '/build-config/coffeelint.json'))
+  return gulp.src([Paths.client_coffee, Paths.app_coffee])
+    .pipe(coffeelint(Paths.jsonlint_conf))
     .pipe(coffeelint.reporter());
 });
 
@@ -152,23 +175,25 @@ if(coffeeTestGrep){
 }
 console.log('coffeeTestOptions: ', coffeeTestOptions);
 gulp.task('coffee-test', function (cb) {
-  return gulp.src([Sources.CLIENT_COFFEE, Sources.APP_COFFEE])
+  return gulp.src([Paths.client_coffee, Paths.app_coffee])
     .pipe(istanbul({includeUntested: true}))
     .pipe(istanbul.hookRequire())
     .on('finish', function () {
-      gulp.src(Sources.TEST)
+      gulp.src(Paths.test)
         .pipe(mocha(coffeeTestOptions))
         .pipe(istanbul.writeReports({
-          dir: Destinations.COVERAGE
+          dir: Paths.coverage
         }))
         .on('cnd', cb);
     })
 });
+/* ********************************** /Quality *********************************** */
 
 
+/* ********************************* Top Level *********************************** */
 gulp.task('build', ['js', 'sass', 'haml', 'resources', 'css-lib', 'js-lib']);
 gulp.task('test', ['coffee-lint', 'coffee-test']);
-
 gulp.task('default', ['build']);
+/* ******************************** /Top Level *********************************** */
 
 
