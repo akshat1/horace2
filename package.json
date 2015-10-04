@@ -4,7 +4,7 @@
   "author": "SpeedySan",
   "private": true,
   "scripts": {
-    "start": "coffee app/index.coffee"
+    "start": "node app/index.js"
   },
   "bugs": {
     "url": "https://tree.taiga.io/project/speedysan-horace-2/issues"
