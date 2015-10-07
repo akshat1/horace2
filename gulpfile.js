@@ -3,18 +3,16 @@
 var gulp       = require('gulp');
 var _          = require('lodash');
 var sass       = require('gulp-sass');
-//var coffee     = require('gulp-coffee');
 var haml       = require('gulp-ruby-haml');
 var del        = require('del');
 var FS         = require('fs');
 var Path       = require('path');
 var concat     = require('gulp-concat');
-var browserify = require('gulp-browserify2');
+var browserify = require('browserify');
+var source     = require('vinyl-source-stream');
 var rename     = require('gulp-rename');
 var bower      = require('gulp-main-bower-files');
 var gulpFilter = require('gulp-filter');
-//var coffeelint = require('gulp-coffeelint');
-var istanbul   = require('gulp-coffee-istanbul');
 var mocha      = require('gulp-mocha');
 var nconf      = require('nconf');
 var jsdoc      = require('gulp-jsdoc');
@@ -94,10 +92,16 @@ gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
 
 /* ********************************* Build Client ******************************** */
 gulp.task('js', function() {
+  /*
   return gulp.src(Paths.client_js_entry)
     .pipe(browserify({
       fileName: 'horace.js'
     }))
+    .pipe(gulp.dest(Paths.js));
+  */
+  return browserify(Paths.client_js_entry)
+    .bundle()
+    .pipe(source('horace.js'))
     .pipe(gulp.dest(Paths.js));
 });
 
