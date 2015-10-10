@@ -17,6 +17,7 @@ var gulpFilter = require('gulp-filter');
 var mocha      = require('gulp-mocha');
 var nconf      = require('nconf');
 var jsdoc      = require('gulp-jsdoc');
+var sourcemaps = require("gulp-sourcemaps");
 
 // MISC
 var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
@@ -98,7 +99,9 @@ gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
 /* ********************************** Build App ********************************** */
 gulp.task('build-app', function() {
   return gulp.src('src/app/**/*.js')
+    .pipe(sourcemaps.init())
     .pipe(babel())
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest('app'));
 });
 /* ********************************* /Build App ********************************** */

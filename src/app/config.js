@@ -25,7 +25,11 @@ $nconf.argv().env().file({
   'horace.webroot'                : 'dist',
   'horace.port'                   : 8080,
   'web.client.config'             : {},
-  'horace.defaultAdapters'        : ['./adapters/dli-adapter.js', './adapters/txt-adapter.js', './adapters/pdf-adapter.js'],
+  'horace.defaultAdapters'        : [
+    './adapters/dli-adapter.js',
+    './adapters/txt-adapter.js',
+    './adapters/pdf-adapter.js'
+  ],
   'horace.adapters'               : [],
   'horace.folders'                : [],
   'horace.db.location'            : dbLocation

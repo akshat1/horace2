@@ -20,7 +20,7 @@ const Pattern = {
 var logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
-      level: 'warn'
+      level: 'info'
     }), new Winston.transports.File({
       filename: Path.join(process.cwd(), 'horace-dli-adapter.log')
     })

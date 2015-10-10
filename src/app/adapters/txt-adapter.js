@@ -1,59 +1,49 @@
-/**
- * @module txt adapter
- */
-var $Book, $FS, $Formats, $Path, $Utils, $Winston, ADAPTER_ID, DEFAULT_ENCODING, GUTENBERG_LICENSE_TEXT, GUTENBERG_START_TAG, GutenbergReplacePattern, GutenbergSearchPattern, SUPPORTED_EXPORT_FORMATS, getAdapterId, getAuthors, getAuthorsForGutenberg, getBook, getBookForDownload, getGutenbergBook, getGutenbergInfoBlock, getPublisher, getPublisherForGutenberg, getSizeInBytes, getSubjects, getSubjectsForGutenberg, getTitle, getTitleForGutenberg, getUnidentifiedBookInfo, getYear, getYearForGutenberg, isTextFile, logger,
-  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
+'use strict';
 
-$Path = require('path');
+import Path from 'path';
+import FS from 'fs';
+import Winston from 'winston';
+import Utils from '../utils.js';
+import Book from '../book.js';
+import Formats from '../formats.js';
 
-$FS = require('fs');
 
-$Winston = require('winston');
+const ADAPTER_ID = 'horace.txt';
+const SUPPORTED_EXPORT_FORMATS = [Formats.TXT];
+const DEFAULT_ENCODING = 'utf8';
+const GUTENBERG_LICENSE_TEXT = 'This eBook is for the use of anyone anywhere at no cost and with almost no restrictions whatsoever.  You may copy it, give it away or re-use it under the terms of the Project Gutenberg License included with this eBook or online at www.gutenberg.net';
+const GUTENBERG_START_TAG = /\*\*\*\s*START OF (THE|THIS) PROJECT GUTENBERG EBOOK.*\s*.*\*\*\*/;
 
-$Utils = require('../utils.js');
-
-$Book = require('../book.js');
-
-$Formats = require('../formats.js');
-
-ADAPTER_ID = 'horace.txt';
-
-SUPPORTED_EXPORT_FORMATS = [$Formats.TXT];
-
-DEFAULT_ENCODING = 'utf8';
-
-GUTENBERG_LICENSE_TEXT = 'This eBook is for the use of anyone anywhere at no cost and with almost no restrictions whatsoever.  You may copy it, give it away or re-use it under the terms of the Project Gutenberg License included with this eBook or online at www.gutenberg.net';
-
-GUTENBERG_START_TAG = /\*\*\*\s*START OF (THE|THIS) PROJECT GUTENBERG EBOOK.*\s*.*\*\*\*/;
-
-GutenbergSearchPattern = {
-  Title: /Title:[\s\S]*/,
-  Author: /Author:[\sS]*/
+const GutenbergSearchPattern = {
+  Title  : /Title:[\s\S]*/,
+  Author : /Author:[\sS]*/
 };
 
-GutenbergReplacePattern = {
-  Title: /Title:\s*/,
-  Author: /Author:\s*/
+const GutenbergReplacePattern = {
+  Title  : /Title:\s*/,
+  Author : /Author:\s*/
 };
 
-logger = new $Winston.Logger({
+
+const logger = new Winston.Logger({
   transports: [
-    new $Winston.transports.Console({
-      level: 'warn'
-    }), new $Winston.transports.File({
-      filename: $Path.join(process.cwd(), 'horace-txt.log')
+    new Winston.transports.Console({
+      level: 'info'
+    }), new Winston.transports.File({
+      filename: Path.join(process.cwd(), 'horace-txt.log')
     })
   ]
 });
 
-getAdapterId = function() {
-  return ADAPTER_ID;
-};
 
-getGutenbergInfoBlock = function(text) {
-  var match, sample;
-  sample = text.substr(0, 1500);
-  match = sample.match(GUTENBERG_START_TAG);
+export function getAdapterId() {
+  return ADAPTER_ID;
+}
+
+
+function getGutenbergInfoBlock(text) {
+  var sample = text.substr(0, 1500);
+  var match = sample.match(GUTENBERG_START_TAG);
   if (match) {
     return sample.substr(0, match.index);
   } else {
@@ -68,24 +58,23 @@ getGutenbergInfoBlock = function(text) {
  * @resolves {boolean} whether ot not path refers to a 'TEXT' && 'FILE'
  */
 
-isTextFile = function(path) {
+function isTextFile(path) {
   return new Promise(function(resolve, reject) {
-    var isText;
-    isText = $Path.extname(path).toLowerCase() === '.txt';
+    let isText = Path.extname(path).toLowerCase() === '.txt';
     if (!isText) {
       resolve(false);
-      return;
-    }
-    return $FS.stat(path, function(statErr, stat) {
-      if (statErr) {
-        return reject(statErr);
-      } else {
-        if (stat.isFile()) {
-          return resolve(true);
+    } else {
+      FS.stat(path, function(statErr, stat) {
+        if (statErr) {
+          reject(statErr);
+        } else {
+          if (stat.isFile()) {
+            return resolve(true);
+          }
         }
-      }
-    });
-  });
+      });//FS.stat
+    }
+  });//new Promise
 };
 
 
@@ -95,11 +84,8 @@ isTextFile = function(path) {
  * @param {string} text - the contents of the text file
  * @returns {string} the title of the book
  */
-
-getTitle = function(path, text) {
-  var filename;
-  filename = $Path.basename(path);
-  return $Utils.toPromise(filename);
+function getTitle(path, text) {
+  return Promise.resolve(Path.basename(path));
 };
 
 
@@ -108,9 +94,8 @@ getTitle = function(path, text) {
  * @param {string} text - the contents of the text file
  * @returns {Array} - An array of author names (string)
  */
-
-getAuthors = function(text) {
-  return $Utils.toPromise(['Unknown']);
+function getAuthors(text) {
+  return Promise.resolve(['Unknown']);
 };
 
 
@@ -120,9 +105,8 @@ getAuthors = function(text) {
  * @returns {Promise}
  * @resolves {Number} - the size of file in bytes
  */
-
-getSizeInBytes = function(path) {
-  return $Utils.toPromise(-1);
+function getSizeInBytes(path) {
+  return Promise.resolve(-1);
 };
 
 
@@ -131,9 +115,8 @@ getSizeInBytes = function(path) {
  * @param {string} text - the contents of the text file
  * @returns {Number} - the year
  */
-
-getYear = function(text) {
-  return $Utils.toPromise(-1);
+function getYear(text) {
+  return Promise.resolve(-1);
 };
 
 
@@ -142,9 +125,8 @@ getYear = function(text) {
  * @param {string} text - the contents of the text file
  * @returns {Array} - An array of subject names (string)
  */
-
-getSubjects = function() {
-  return $Utils.toPromise([]);
+function getSubjects() {
+  return Promise.resolve([]);
 };
 
 
@@ -153,42 +135,47 @@ getSubjects = function() {
  * @param {string} text - the contents of the text file
  * @returns {String} - the publisher
  */
-
-getPublisher = function() {
-  return $Utils.toPromise('Unknown');
+function getPublisher() {
+  return Promise.resolve('Unknown');
 };
 
-getTitleForGutenberg = function(tag) {
+
+function getTitleForGutenberg(tag) {
   return tag.replace(GutenbergReplacePattern.Title, '').replace(/\s+/, ' ');
 };
 
-getAuthorsForGutenberg = function(tag) {
+
+function getAuthorsForGutenberg(tag) {
   tag = tag.replace(GutenbergReplacePattern.Author, '');
   return tag.split('\n').map(function(a) {
     return a.trim();
   });
 };
 
-getYearForGutenberg = function() {
-  return $Utils.toPromise(-1);
+
+function getYearForGutenberg() {
+  return Promise.resolve(-1);
 };
 
-getSubjectsForGutenberg = function() {
-  return $Utils.toPromise(['GBSubject']);
+
+function getSubjectsForGutenberg() {
+  return Promise.resolve(['GBSubject']);
 };
 
-getPublisherForGutenberg = function() {
-  return $Utils.toPromise('GBPublisher');
+
+function getPublisherForGutenberg() {
+  return Promise.resolve('GBPublisher');
 };
 
-getGutenbergBook = function(path, infoBlock, text) {
+
+function getGutenbergBook(path, infoBlock, text) {
   return new Promise(function(resolve, reject) {
-    var authors, i, index, len, tag, tags, title;
-    title = null;
-    authors = [];
-    tags = infoBlock.split(/\r\n\r\n/);
-    for (index = i = 0, len = tags.length; i < len; index = ++i) {
-      tag = tags[index];
+    //var authors, i, index, len, tag, tags, title;
+    let title = null;
+    let authors = [];
+    let tags = infoBlock.split(/\r\n\r\n/);
+    for (let index = i = 0, len = tags.length; i < len; index = ++i) {
+      let tag = tags[index];
       if (GutenbergSearchPattern.Title.test(tag)) {
         title = getTitleForGutenberg(tag);
       } else if (GutenbergSearchPattern.Author.test(tag)) {
@@ -201,17 +188,21 @@ getGutenbergBook = function(path, infoBlock, text) {
     if (!(authors != null ? authors.length : void 0)) {
       authors = ['Unknown'];
     }
-    return Promise.all([getSizeInBytes(path), getYearForGutenberg(infoBlock), getSubjectsForGutenberg(infoBlock), getPublisherForGutenberg(infoBlock)]).then(function(infoArr) {
-      return resolve(new $Book(path, title, authors, infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
-    })["catch"](reject);
-  });
+    return Promise.all([getSizeInBytes(path), getYearForGutenberg(infoBlock), getSubjectsForGutenberg(infoBlock), getPublisherForGutenberg(infoBlock)])
+    .then(function(infoArr) {
+      resolve(new Book(path, title, authors, infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
+    }).catch(reject);
+  });//return new Promise
 };
 
-getUnidentifiedBookInfo = function(path, text) {
+
+function getUnidentifiedBookInfo(path, text) {
   return new Promise(function(resolve, reject) {
-    return Promise.all([getTitle(path, text), getAuthors(text), getSizeInBytes(path), getYear(text), getSubjects(text), getPublisher(text)]).then(function(infoArr) {
-      return resolve();
-    })["catch"](reject);
+    Promise.all([getTitle(path, text), getAuthors(text), getSizeInBytes(path), getYear(text), getSubjects(text), getPublisher(text)])
+    .then(function(infoArr) {
+      resolve(new Book(path, infoArr[0], infoArr[1], infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
+    })
+    .catch(reject);
   });
 };
 
@@ -221,36 +212,38 @@ getUnidentifiedBookInfo = function(path, text) {
  * @returns {Promise}
  * @resolves {Book}
  */
-
-getBook = function(path) {
+export function getBook(path) {
   logger.info("TxtAdapter.getBook(" + path + ")");
   return new Promise(function(resolve, reject) {
-    return isTextFile(path).then(function(isText) {
+    isTextFile(path)
+    .then(function(isText) {
       if (isText) {
         logger.debug('This is a text file');
-        return $FS.readFile(path, function(readErr, buff) {
-          var gutenbergInfo, text;
+        return FS.readFile(path, function(readErr, buff) {
           if (readErr) {
-            return reject(readErr);
+            console.error(`txt-adapter.getBook(${path}..readFile encountered error)`, readErr);
+            reject(readErr);
           } else {
-            text = buff.toString(DEFAULT_ENCODING);
-            gutenbergInfo = getGutenbergInfoBlock(text);
+            let text = buff.toString(DEFAULT_ENCODING);
+            let gutenbergInfo = getGutenbergInfoBlock(text);
             if (gutenbergInfo) {
-              return resolve(getGutenbergBook(path, gutenbergInfo, text));
+              resolve(getGutenbergBook(path, gutenbergInfo, text));
             } else {
-              return resolve(getUnidentifiedBookInfo(path, text));
+              logger.debug('This is a text file, but not from gutenberg');
+              resolve(getUnidentifiedBookInfo(path, text));
             }
           }
         });
       } else {
-        logger.debug('not a text file');
-        return resolve();
+        logger.debug('not a text file at all');
+        resolve();
       }
-    })["catch"](function(isTextFileErr) {
+    })//.then
+    .catch(function(isTextFileErr) {
       logger.error('Error occurred while trying to find out if this a text file');
-      return reject(isTextFileErr);
-    });
-  });
+      reject(isTextFileErr);
+    });//catch
+  });//new Promise
 };
 
 
@@ -260,10 +253,9 @@ getBook = function(path) {
  * @returns {Promise}
  * @resolves {ReadStream}
  */
-
-getBookForDownload = function(book, format) {
+export function getBookForDownload(book, format) {
   if (format == null) {
-    format = $Formats.TXT;
+    format = Formats.TXT;
   }
   return new Promise(function(resolve, reject) {
     var rStream;
@@ -275,21 +267,7 @@ getBookForDownload = function(book, format) {
       reject(new Error("Target format not supported (>" + format + "<)"));
       return;
     }
-    rStream = $FS.createReadStream(book.path);
+    rStream = FS.createReadStream(book.path);
     return resolve(rStream);
   });
-};
-
-module.exports = {
-  getAdapterId: getAdapterId,
-  getBook: getBook,
-  getBookForDownload: getBookForDownload,
-  isTextFile: isTextFile,
-  getTitle: getTitle,
-  getAuthors: getAuthors,
-  getSizeInBytes: getSizeInBytes,
-  getYear: getYear,
-  getSubjects: getSubjects,
-  getPublisher: getPublisher,
-  getBookForDownload: getBookForDownload
 };

@@ -3,154 +3,130 @@
  * @see http://www.sno.phy.queensu.ca/~phil/exiftool/install.html
  * @module pdf adapter
  */
-var $Book, $Exec, $FS, $Formats, $Path, $Winston, ADAPTER_ID, CMD, SUPPORTED_EXPORT_FORMATS, getAuthors, getBook, getBookForDownload, getExif, getPublisher, getSizeInBytes, getSubjects, getTitle, getYear, logger,
-  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
-$Path = require('path');
+import Path from 'path';
+import FS from 'fs';
+import ChildProcess from 'child_process';
+import Winston from 'winston';
 
-$FS = require('fs');
+import Book from '../book.js'
+import Formats from '../formats.js';
 
-$Exec = require('child_process').exec;
+const Exec = ChildProcess.exec;
+const ADAPTER_ID = 'horace.pdf';
+const CMD = 'exiftool';
+const SUPPORTED_EXPORT_FORMATS = [Formats.PDF];
 
-$Winston = require('winston');
-
-$Book = require('../book.js');
-
-$Formats = require('../formats.js');
-
-ADAPTER_ID = 'horace.pdf';
-
-CMD = 'exiftool';
-
-SUPPORTED_EXPORT_FORMATS = [$Formats.PDF];
-
-logger = new $Winston.Logger({
+const logger = new Winston.Logger({
   transports: [
-    new $Winston.transports.Console({
-      level: 'warn'
-    }), new $Winston.transports.File({
-      filename: $Path.join(process.cwd(), 'horace-pdf-adapter.log')
+    new Winston.transports.Console({
+      level: 'info'
+    }), new Winston.transports.File({
+      filename: Path.join(process.cwd(), 'horace-pdf-adapter.log')
     })
   ]
 });
 
-getExif = function(path) {
-  var p;
-  p = new Promise(function(resolve, reject) {
-    var err;
-    try {
-      return $Exec(CMD + " -j \"" + path + "\" ", function(err, stdOutBuff, stdErrBuff) {
-        var exifData;
-        if (err) {
-          return reject(err);
+
+function getExif(path) {
+  logger.debug(`pdf.getExif(${path})`);
+  return new Promise(function(resolve, reject){
+    let command = `${CMD} -j ${path}`;
+    logger.debug(`pdf.getExif(${path}). Executing ${command}`);
+    Exec(command, function(exifErr, stdOutBuff, stdErrBuff) {
+      if(exifErr){
+        logger.error(`pdf.getExif(${path}).execCallback encountered error`, exifErr);
+        reject(exifErr);
+      } else {
+        if (stdErrBuff) {
+          let errString = stdErrBuff.toString();
+          logger.error(`pdf.getExif(${path}).execCallback there is something in stdErr: ${errString}`);
+          reject(errString);
         } else {
-          if (stdErrBuff) {
-            return reject(stdErrBuff.toString());
+          logger.debug(`pdf.getExif(${path}).execCallback everything seems to be in order`);
+          let exifData = JSON.parse(stdOutBuff.toString())[0];
+          if (exifData) {
+            resolve(exifData);
           } else {
-            exifData = JSON.parse(stdOutBuff.toString())[0];
-            if (exifData) {
-              return resolve(exifData);
-            } else {
-              return reject(new Error('Unknown error. No exifdata.'));
-            }
+            logger.error(`pdf.getExif(${path}).execCallback did not obtain exif`);
+            reject(new Error('Unknown error. No exifdata.'));
           }
         }
-      });
-    } catch (_error) {
-      err = _error;
-      console.log('Error executing exiftool for path: ', path);
-      console.trace(err);
-      return reject(err);
-    }
-  });
-  return p;
-};
+      }
+    });//$Exec(CMD + " -j \"" + path + "\" ", function(exifErr, stdOutBuff, stdErrBuff)
+  });//return new Promise(function(resolve, reject)
+}
 
-getTitle = function(exifdata) {
+
+function getTitle(exifdata) {
   return exifdata['Title'] || exifdata['FileName'];
 };
 
-getAuthors = function(exifdata) {
+function getAuthors(exifdata) {
   return [exifdata['Author']];
 };
 
-getSizeInBytes = function(exifdata) {
+function getSizeInBytes(exifdata) {
   return -1;
 };
 
-getSubjects = function(exifdata) {
+function getSubjects(exifdata) {
   return [exifdata['Subject']];
 };
 
-getPublisher = function() {
+function getPublisher() {
   return '';
 };
 
-getYear = function() {
+function getYear() {
   return -1;
-};
+}
 
-getBook = function(path) {
-  var fileName, p;
-  logger.info("getBook(" + path + ")");
-  fileName = $Path.basename(path);
-  p = new Promise(function(resolve, reject) {
-    var extension;
-    extension = $Path.extname(path);
-    if (extension.toLowerCase() !== '.pdf') {
-      logger.info(path + " is not a pdf file.");
-      return resolve(null);
-    } else {
-      return getExif(path)["catch"](function(err) {
-        console.log('000000000000000000000000000000000000');
-        return reject(err);
-      }).then(function(exifdata) {
-        var book, err1;
-        logger.info('Got exif %o', exifdata);
-        if (exifdata) {
-          try {
-            book = new $Book(path, getTitle(exifdata) || fileName, getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID);
-          } catch (_error) {
-            err1 = _error;
-            logger.error('Error occurred: %o', err1);
-            reject(err1);
-            return;
-          }
-          logger.debug('resolve with: %o', book);
-          return resolve(book);
-        } else {
-          logger.debug("No exifdata for " + path);
-          return resolve();
-        }
-      });
-    }
-  });
-  return p;
-};
 
-getBookForDownload = function(book, targetFormat) {
-  if (targetFormat == null) {
-    targetFormat = $Formats.PDF;
-  }
+export function getAdapterId() {
+  return ADAPTER_ID;
+}
+
+
+export function getBookForDownload(book, targetFormat) {
+  targetFormat = targetFormat || Formats.PDF;
   logger.info('getBookForDownload(%o)', book);
   return new Promise(function(resolve, reject) {
-    var err, rStream;
     if (indexOf.call(SUPPORTED_EXPORT_FORMATS, targetFormat) < 0) {
-      err = new Error("Target format not supported (>" + targetFormat + "<)");
+      let err = new Error("Target format not supported (>" + targetFormat + "<)");
       logger.error(err);
       reject(err);
       return;
     }
     logger.debug("create readstream for path: >" + book.path + "<");
-    rStream = $FS.createReadStream(book.path);
+    let rStream = FS.createReadStream(book.path);
     return resolve(rStream);
   });
 };
 
-module.exports = {
-  getAdapterId: function() {
-    return ADAPTER_ID;
-  },
-  getBook: getBook,
-  getBookForDownload: getBookForDownload
+
+export function getBook(path) {
+  logger.info(`getBook(${path})`);
+  var fileName = Path.basename(path);
+  return new Promise(function(resolve, reject) {
+    let extension = Path.extname(path);
+    if (extension.toLowerCase() !== '.pdf') {
+      logger.info(`${path} is not a pdf file.`);
+      resolve(null);
+    } else {
+      getExif(path)
+      .then(function(exifdata) {
+        if (exifdata) {
+          logger.info(`getBook(${path}) :: got exifdata. try resolving with book`);
+          resolve(new Book(path, getTitle(exifdata) || fileName, getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID));
+        } else {
+          logger.info(`getBook(${path}) :: no exifdata`);
+          resolve();
+        }
+      })
+      .catch(function(err) {
+        return reject(err);
+      });
+    }
+  });
 };
