@@ -97,11 +97,16 @@ saveBook = function(book) {
 };
 
 getBooks = function(opts) {
-  if (opts == null) {
-    opts = {};
-  }
+  var defaults = {
+    sortColumn: 'title',
+    sortAscending: true
+  };
+  var sortOpts = {};
+  sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
+  opts = _.assign(defaults, opts);
   return _connect().then(function() {
     var p;
+    /*
     p = new Promise(function(resolve, reject) {
       var cur, sortOpts;
       logger.info('getBooks(%o)', opts);
@@ -124,6 +129,7 @@ getBooks = function(opts) {
           logger.debug("Return " + books.length + " books");
           return resolve({
             from: from,
+            numItems: numItems,
             totalItems: totalBooks,
             books: books
           });
@@ -131,8 +137,39 @@ getBooks = function(opts) {
       });
     });
     return p;
-  });
-};
+    */
+    console.log('getBooks:', opts);
+    console.log('sort: ', sortOpts);
+    return new Promise(function(resolve, reject){
+      var cur = collectionBooks.find().sort(sortOpts);
+      cur.toArray(function(curErr, books) {
+        if(curErr){
+          logger.error('Error converting to array', curErr);
+          return reject(curErr);
+
+        } else {
+          var currentPage = parseInt(opts.currentPage);
+          var pageSize = parseInt(opts.pageSize);
+          var from = currentPage* pageSize;
+          var to = from + pageSize;
+          console.log('Extract books ' + from + ' to ' + to);
+          var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
+          books = books.slice(from, to);
+          var response = {
+            books: books,
+            currentPage: currentPage,
+            maxPages: maxPages,
+            pageSize: pageSize,
+            sortColumn: opts.sortColumn,
+            sortAscending: opts.sortAscending
+          };
+          //console.log('Respond with :', opts);
+          resolve(response);
+        }
+      });//cur.toArray
+    });//return new Promise(function(resolve, reject){
+  });//_connect.then
+};//getBooks
 
 
 /**

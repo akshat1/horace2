@@ -2,7 +2,7 @@
 %html
   %head
     %title Horace. Dos.
-    -#%link(rel='stylesheet' type='text/css' href='/lib/lib.css')
+    %link(rel='stylesheet' type='text/css' href='/lib/lib.css')
     %link(rel='stylesheet' type='text/css' href='/css/horace.css')
     %script(src='./config')
     %script(src='socket.io/socket.io.js')
@@ -10,35 +10,3 @@
     %script(src='js/horace.js')
 
   %body
-    %h-announcer.h-book-download-message(params='key: "book_download"')
-    #topNav Horace. The simian librarian of the unseen university.
-
-    #activeQueryInfo Showing Books
-
-    #bookList(data-bind='with: bookList')
-      .h-pagination-control
-        %button.h-previous(data-bind='click: pagePreviousC, enable: pagePreviousEnabledB') ◀
-        %span(data-bind='text: currentPageNumberB')
-        %button.h-next(data-bind='click: pageNextC, enable: pageNextEnabledB') ▶︎
-      %table
-        %thead
-          %tr
-            %th.h-name.h-is-sortable(data-bind='click: sortByTitleC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByTitleB}') Name
-            %th.h-year.h-is-sortable(data-bind='click: sortByYearC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByYearB}') Year
-            %th.h-adapter.h-is-sortable(data-bind='click: sortByAdapterC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByAdapterB}') Adapter
-            %th.h-authors.h-is-sortable(data-bind='click: sortByAuthorsC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedByAuthorsB}') Authors
-            %th.h-subjects.h-is-sortable(data-bind='click: sortBySubjectsC, css: {"h-is-sorted-desc": isSortedDESCB,  "h-is-sorted": isSortedBySubjectsB}') Subjects
-
-        %tbody(data-bind='foreach: booksB')
-          %tr
-            %td.h-name
-              %a(href='#' data-bind='text: title, click: $parent.downloadC')
-            %td.h-year(data-bind='text: year')
-            %td.h-adapter(data-bind='text: adapterId')
-            %td.h-authors(data-bind='foreach: authors')
-              %span.h-author(data-bind='text: $data')
-            %td.h-subjects(data-bind='foreach: subjects')
-              %span.h-subject(data-bind='text: $data')
-
-    #footer Horace. The simian librarian of the unseen university.
-

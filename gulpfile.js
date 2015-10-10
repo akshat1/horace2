@@ -9,6 +9,7 @@ var FS         = require('fs');
 var Path       = require('path');
 var concat     = require('gulp-concat');
 var browserify = require('browserify');
+var babelify   = require('babelify');
 var source     = require('vinyl-source-stream');
 var rename     = require('gulp-rename');
 var bower      = require('gulp-main-bower-files');
@@ -100,6 +101,9 @@ gulp.task('js', function() {
     .pipe(gulp.dest(Paths.js));
   */
   return browserify(Paths.client_js_entry)
+    .transform(babelify.configure({
+      optional: ["es7.decorators"]  
+    }))
     .bundle()
     .pipe(source('horace.js'))
     .pipe(gulp.dest(Paths.js));

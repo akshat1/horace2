@@ -5,6 +5,8 @@
 			"path": "."
 		}
 	],
-	"tab_size": 2,
-	"translate_tabs_to_spaces": true
+	"settings": {
+		"tab_size": 2,
+		"translate_tabs_to_spaces": true
+	}
 }
