@@ -1,8 +1,6 @@
 /**
  * @module db
  */
-'use strict';
-
 var $Config, $FSExtra, $MongoDB, $Sorting, $Winston, Collection, _, _connect, _isConnected, client, collectionBooks, getBook, getBooks, logLevel, logger, saveBook, url;
 
 $MongoDB = require('mongodb');
@@ -24,12 +22,15 @@ Collection = {
 logLevel = $Config('horace.db.logLevel');
 
 logger = new $Winston.Logger({
-  transports: [new $Winston.transports.Console({
-    level: logLevel
-  }), new $Winston.transports.File({
-    filename: 'horace-db.log'
-  })]
+  transports: [
+    new $Winston.transports.Console({
+      level: logLevel
+    }), new $Winston.transports.File({
+      filename: 'horace-db.log'
+    })
+  ]
 });
+
 
 /*
 dbLocation = $Config 'horace.db.location'
@@ -50,12 +51,12 @@ _isConnected = false;
 
 collectionBooks = null;
 
-_connect = function () {
-  return new Promise(function (resolve, reject) {
+_connect = function() {
+  return new Promise(function(resolve, reject) {
     if (_isConnected) {
       return resolve();
     } else {
-      return client.connect(url, function (connectErr, db) {
+      return client.connect(url, function(connectErr, db) {
         if (connectErr) {
           console.error('Unable to connect to mongodbn. Error: ', connectErr);
           return reject(connectErr);
@@ -69,13 +70,13 @@ _connect = function () {
   });
 };
 
-saveBook = function (book) {
+saveBook = function(book) {
   logger.info('saveBook(%o)', book.id);
-  return _connect().then(function () {
+  return _connect().then(function() {
     var p;
-    p = new Promise(function (resolve, reject) {
+    p = new Promise(function(resolve, reject) {
       var handleUpsert;
-      handleUpsert = function (err) {
+      handleUpsert = function(err) {
         if (err) {
           logger.error('Upsert error %o', err);
           return reject(err);
@@ -95,7 +96,7 @@ saveBook = function (book) {
   });
 };
 
-getBooks = function (opts) {
+getBooks = function(opts) {
   var defaults = {
     sortColumn: 'title',
     sortAscending: true
@@ -103,7 +104,7 @@ getBooks = function (opts) {
   var sortOpts = {};
   sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
   opts = _.assign(defaults, opts);
-  return _connect().then(function () {
+  return _connect().then(function() {
     var p;
     /*
     p = new Promise(function(resolve, reject) {
@@ -139,16 +140,17 @@ getBooks = function (opts) {
     */
     console.log('getBooks:', opts);
     console.log('sort: ', sortOpts);
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject){
       var cur = collectionBooks.find().sort(sortOpts);
-      cur.toArray(function (curErr, books) {
-        if (curErr) {
+      cur.toArray(function(curErr, books) {
+        if(curErr){
           logger.error('Error converting to array', curErr);
           return reject(curErr);
+
         } else {
           var currentPage = parseInt(opts.currentPage);
           var pageSize = parseInt(opts.pageSize);
-          var from = currentPage * pageSize;
+          var from = currentPage* pageSize;
           var to = from + pageSize;
           console.log('Extract books ' + from + ' to ' + to);
           var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
@@ -164,10 +166,11 @@ getBooks = function (opts) {
           //console.log('Respond with :', opts);
           resolve(response);
         }
-      }); //cur.toArray
-    }); //return new Promise(function(resolve, reject){
-  }); //_connect.then
-}; //getBooks
+      });//cur.toArray
+    });//return new Promise(function(resolve, reject){
+  });//_connect.then
+};//getBooks
+
 
 /**
  * @param {number} id of the book being requested
@@ -176,16 +179,16 @@ getBooks = function (opts) {
  * @rejects {Error}
  */
 
-getBook = function (id) {
-  return _connect().then(function () {
+getBook = function(id) {
+  return _connect().then(function() {
     var p;
-    p = new Promise(function (resolve, reject) {
+    p = new Promise(function(resolve, reject) {
       var cur, err;
       try {
         cur = collectionBooks.find({
           id: id
         });
-        return cur.toArray(function (curErr, books) {
+        return cur.toArray(function(curErr, books) {
           if (curErr) {
             return reject(curErr);
           } else {

@@ -2,8 +2,6 @@
 Will accept DLI books
 @module DLI adapter
  */
-'use strict';
-
 var $Book, $FS, $Path, $Winston, ADAPTER_ID, DLI_MANIFEST_FILE, Pattern, getAuthors, getBook, getPublisher, getSizeInBytes, getSubjects, getTitle, getValuesForPattern, getYear, logger;
 
 $Path = require('path');
@@ -25,14 +23,16 @@ Pattern = {
 };
 
 logger = new $Winston.Logger({
-  transports: [new $Winston.transports.Console({
-    level: 'warn'
-  }), new $Winston.transports.File({
-    filename: $Path.join(process.cwd(), 'horace-dli-adapter.log')
-  })]
+  transports: [
+    new $Winston.transports.Console({
+      level: 'warn'
+    }), new $Winston.transports.File({
+      filename: $Path.join(process.cwd(), 'horace-dli-adapter.log')
+    })
+  ]
 });
 
-getValuesForPattern = function (metadata, pattern) {
+getValuesForPattern = function(metadata, pattern) {
   var key, value, values;
   values = {};
   for (key in metadata) {
@@ -44,29 +44,30 @@ getValuesForPattern = function (metadata, pattern) {
   return Object.keys(values);
 };
 
-getTitle = function (metadata) {
+getTitle = function(metadata) {
   return metadata.title;
 };
 
-getAuthors = function (metadata) {
+getAuthors = function(metadata) {
   return metadata.authors || getValuesForPattern(metadata, Pattern.author);
 };
 
-getSizeInBytes = function (metadata) {
+getSizeInBytes = function(metadata) {
   return -1;
 };
 
-getSubjects = function (metadata) {
+getSubjects = function(metadata) {
   return metadata.subjects || getValuesForPattern(metadata, Pattern.subject);
 };
 
-getPublisher = function (metadata) {
+getPublisher = function(metadata) {
   return metadata.publisher;
 };
 
-getYear = function (metadata) {
+getYear = function(metadata) {
   return metadata.year;
 };
+
 
 /*
 Will accept an absolute path which may refer to a file, or a directory.
@@ -77,11 +78,11 @@ Will accept an absolute path which may refer to a file, or a directory.
   or reject with error if any errors occurr or null if the books isnt identified.
  */
 
-getBook = function (path) {
+getBook = function(path) {
   var p;
-  p = new Promise(function (resolve, reject) {
+  p = new Promise(function(resolve, reject) {
     var handleDLIManifest, handleStat;
-    handleDLIManifest = function (manifestFileReadError, manifestFileContent) {
+    handleDLIManifest = function(manifestFileReadError, manifestFileContent) {
       var book, err, m;
       if (manifestFileReadError) {
         console.error('Manifest file read error', manifestFileReadError);
@@ -101,7 +102,7 @@ getBook = function (path) {
         return resolve(book);
       }
     };
-    handleStat = function (statError, stat) {
+    handleStat = function(statError, stat) {
       var manifestFilePath;
       if (statError) {
         console.error('file stat error', statError);
@@ -111,7 +112,7 @@ getBook = function (path) {
         return resolve(null);
       } else {
         manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE);
-        return $FS.exists(manifestFilePath, function (fileExists) {
+        return $FS.exists(manifestFilePath, function(fileExists) {
           if (fileExists) {
             logger.info('Found the manifest: ', manifestFilePath);
             return $FS.readFile(manifestFilePath, {
@@ -130,7 +131,7 @@ getBook = function (path) {
 };
 
 module.exports = {
-  getAdapterId: function getAdapterId() {
+  getAdapterId: function() {
     return ADAPTER_ID;
   },
   getBook: getBook

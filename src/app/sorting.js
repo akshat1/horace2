@@ -1,8 +1,6 @@
 /**
  * @module sorting
  */
-'use strict';
-
 var SortColumn, SortDirection;
 
 SortColumn = {
@@ -16,7 +14,7 @@ SortColumn = {
 SortDirection = {
   ASC: 'ascending',
   DESC: 'descending',
-  flip: function flip(sDir) {
+  flip: function(sDir) {
     if (sDir === this.ASC) {
       return this.DESC;
     } else {

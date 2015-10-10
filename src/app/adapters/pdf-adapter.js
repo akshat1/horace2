@@ -3,32 +3,8 @@
  * @see http://www.sno.phy.queensu.ca/~phil/exiftool/install.html
  * @module pdf adapter
  */
-'use strict';
-
-var $Book,
-    $Exec,
-    $FS,
-    $Formats,
-    $Path,
-    $Winston,
-    ADAPTER_ID,
-    CMD,
-    SUPPORTED_EXPORT_FORMATS,
-    getAuthors,
-    getBook,
-    getBookForDownload,
-    getExif,
-    getPublisher,
-    getSizeInBytes,
-    getSubjects,
-    getTitle,
-    getYear,
-    logger,
-    indexOf = [].indexOf || function (item) {
-  for (var i = 0, l = this.length; i < l; i++) {
-    if (i in this && this[i] === item) return i;
-  }return -1;
-};
+var $Book, $Exec, $FS, $Formats, $Path, $Winston, ADAPTER_ID, CMD, SUPPORTED_EXPORT_FORMATS, getAuthors, getBook, getBookForDownload, getExif, getPublisher, getSizeInBytes, getSubjects, getTitle, getYear, logger,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 $Path = require('path');
 
@@ -49,19 +25,21 @@ CMD = 'exiftool';
 SUPPORTED_EXPORT_FORMATS = [$Formats.PDF];
 
 logger = new $Winston.Logger({
-  transports: [new $Winston.transports.Console({
-    level: 'warn'
-  }), new $Winston.transports.File({
-    filename: $Path.join(process.cwd(), 'horace-pdf-adapter.log')
-  })]
+  transports: [
+    new $Winston.transports.Console({
+      level: 'warn'
+    }), new $Winston.transports.File({
+      filename: $Path.join(process.cwd(), 'horace-pdf-adapter.log')
+    })
+  ]
 });
 
-getExif = function (path) {
+getExif = function(path) {
   var p;
-  p = new Promise(function (resolve, reject) {
+  p = new Promise(function(resolve, reject) {
     var err;
     try {
-      return $Exec(CMD + " -j \"" + path + "\" ", function (err, stdOutBuff, stdErrBuff) {
+      return $Exec(CMD + " -j \"" + path + "\" ", function(err, stdOutBuff, stdErrBuff) {
         var exifData;
         if (err) {
           return reject(err);
@@ -88,45 +66,45 @@ getExif = function (path) {
   return p;
 };
 
-getTitle = function (exifdata) {
+getTitle = function(exifdata) {
   return exifdata['Title'] || exifdata['FileName'];
 };
 
-getAuthors = function (exifdata) {
+getAuthors = function(exifdata) {
   return [exifdata['Author']];
 };
 
-getSizeInBytes = function (exifdata) {
+getSizeInBytes = function(exifdata) {
   return -1;
 };
 
-getSubjects = function (exifdata) {
+getSubjects = function(exifdata) {
   return [exifdata['Subject']];
 };
 
-getPublisher = function () {
+getPublisher = function() {
   return '';
 };
 
-getYear = function () {
+getYear = function() {
   return -1;
 };
 
-getBook = function (path) {
+getBook = function(path) {
   var fileName, p;
   logger.info("getBook(" + path + ")");
   fileName = $Path.basename(path);
-  p = new Promise(function (resolve, reject) {
+  p = new Promise(function(resolve, reject) {
     var extension;
     extension = $Path.extname(path);
     if (extension.toLowerCase() !== '.pdf') {
       logger.info(path + " is not a pdf file.");
       return resolve(null);
     } else {
-      return getExif(path)["catch"](function (err) {
+      return getExif(path)["catch"](function(err) {
         console.log('000000000000000000000000000000000000');
         return reject(err);
-      }).then(function (exifdata) {
+      }).then(function(exifdata) {
         var book, err1;
         logger.info('Got exif %o', exifdata);
         if (exifdata) {
@@ -150,12 +128,12 @@ getBook = function (path) {
   return p;
 };
 
-getBookForDownload = function (book, targetFormat) {
+getBookForDownload = function(book, targetFormat) {
   if (targetFormat == null) {
     targetFormat = $Formats.PDF;
   }
   logger.info('getBookForDownload(%o)', book);
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     var err, rStream;
     if (indexOf.call(SUPPORTED_EXPORT_FORMATS, targetFormat) < 0) {
       err = new Error("Target format not supported (>" + targetFormat + "<)");
@@ -170,7 +148,7 @@ getBookForDownload = function (book, targetFormat) {
 };
 
 module.exports = {
-  getAdapterId: function getAdapterId() {
+  getAdapterId: function() {
     return ADAPTER_ID;
   },
   getBook: getBook,

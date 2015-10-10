@@ -3,12 +3,12 @@
 var gulp       = require('gulp');
 var _          = require('lodash');
 var sass       = require('gulp-sass');
-var haml       = require('gulp-ruby-haml');
 var del        = require('del');
 var FS         = require('fs');
 var Path       = require('path');
 var concat     = require('gulp-concat');
 var browserify = require('browserify');
+var babel      = require('gulp-babel');
 var babelify   = require('babelify');
 var source     = require('vinyl-source-stream');
 var rename     = require('gulp-rename');
@@ -37,22 +37,23 @@ function distDir (subDir) {
 
 function clientDir() {
   var subPath = Array.prototype.slice.apply(arguments);
-  subPath.unshift('client');
+  subPath = ['src', 'client'].concat(subPath);
   var result = Path.join.apply(null, subPath);
   return result;
 }
 
 
 var Paths = {
-  app_js              : 'app/**/*.js',
+  app_js_src          : 'src/app/js/**.js',
+  app_js              : 'app',
   bower               : 'bower_components',
-  haml                : clientDir('haml', '**', '*.haml'),
   sass                : clientDir('sass', '**', '*.scss'),
   client_js           : clientDir('js', '**', '*.js'),
-  client_js_entry : clientDir('js', 'index.js'),
+  client_js_entry     : clientDir('js', 'index.js'),
   resources_src       : clientDir('resources', '**', '*'),
   tmp                 : tmpDir(),
   dist                : distDir(),
+  html_src            : clientDir('html', '**/*.html'),
   html                : distDir(),
   css                 : distDir('css'),
   js                  : distDir('js'),
@@ -75,6 +76,8 @@ gulp.task('clean', function() {
 
 
 /* ******************************** Documentation ******************************** */
+/*
+//TODO Use ESDoc
 gulp.task ('app-jsdoc', function() {
   return gulp.src(Paths.app_js)
     .pipe(jsdoc(Paths.jsdoc_app));
@@ -88,21 +91,24 @@ gulp.task ('client-jsdoc', function() {
 
 
 gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
+*/
 /* ******************************** Documentation ******************************** */
+
+
+/* ********************************** Build App ********************************** */
+gulp.task('build-app', function() {
+  return gulp.src('src/app/**/*.js')
+    .pipe(babel())
+    .pipe(gulp.dest('app'));
+});
+/* ********************************* /Build App ********************************** */
 
 
 /* ********************************* Build Client ******************************** */
 gulp.task('js', function() {
-  /*
-  return gulp.src(Paths.client_js_entry)
-    .pipe(browserify({
-      fileName: 'horace.js'
-    }))
-    .pipe(gulp.dest(Paths.js));
-  */
   return browserify(Paths.client_js_entry)
     .transform(babelify.configure({
-      optional: ["es7.decorators"]  
+      optional: ["es7.decorators"]
     }))
     .bundle()
     .pipe(source('horace.js'))
@@ -136,16 +142,14 @@ gulp.task('js-lib', function() {
 });
 
 
-gulp.task('haml', function() {
-  return gulp.src(Paths.haml)
-    .pipe(haml())
-    .pipe(gulp.dest(Paths.html));
-});
-
-
 gulp.task('resources', function() {
   return gulp.src(Paths.resources_src)
     .pipe(gulp.dest(Paths.resources));
+});
+
+gulp.task('html', function() {
+  return gulp.src(Paths.html_src)
+    .pipe(gulp.dest(Paths.html));
 });
 /* ******************************** /Build Client ******************************** */
 
@@ -176,7 +180,7 @@ gulp.task('coffee-test', function (cb) {
 
 
 /* ********************************* Top Level *********************************** */
-gulp.task('build', ['js', 'sass', 'haml', 'resources', 'css-lib', 'js-lib']);
+gulp.task('build', ['js', 'sass', 'html', 'resources', 'css-lib', 'js-lib']);
 gulp.task('default', ['build']);
 /* ******************************** /Top Level *********************************** */
 

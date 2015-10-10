@@ -1,8 +1,6 @@
 /**
  * @module horace
  */
-'use strict';
-
 var $Adapter, $ChildProcess, $Config, $DB, $Events, $FS, $FSExtra, $IPC, $IPCUtils, $Path, $Utils, $Winston, Event, IPCEvent, _, _ipcServer, _isScanning, getBook, getBooks, horace, logLevel, logger, requestDownload, startScan, tmpFolderPath, watchedFolders;
 
 $Path = require('path');
@@ -42,11 +40,13 @@ Event = {
 logLevel = $Config('horace.logLevel');
 
 logger = new $Winston.Logger({
-  transports: [new $Winston.transports.Console({
-    level: logLevel
-  }), new $Winston.transports.File({
-    filename: 'horace.log'
-  })]
+  transports: [
+    new $Winston.transports.Console({
+      level: logLevel
+    }), new $Winston.transports.File({
+      filename: 'horace.log'
+    })
+  ]
 });
 
 watchedFolders = $Config('horace.folders');
@@ -61,9 +61,9 @@ horace = new $Events.EventEmitter();
 
 _isScanning = false;
 
-startScan = function () {
+startScan = function() {
   logger.info('startScanning');
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     var err;
     try {
       logger.info('broadcast event : ', IPCEvent.SCANNER_DOSCAN);
@@ -79,36 +79,36 @@ startScan = function () {
   });
 };
 
-getBooks = function (opts) {
+getBooks = function(opts) {
   logger.info('getBooks');
   return $DB.getBooks(opts);
 };
 
-getBook = function (id) {
+getBook = function(id) {
   return $DB.getBook(id);
 };
 
-requestDownload = function (id) {
-  return new Promise(function (resolve, reject) {
-    return getBook(id).then(function (book) {
+requestDownload = function(id) {
+  return new Promise(function(resolve, reject) {
+    return getBook(id).then(function(book) {
       var tmpFilePath;
       logger.info('Download >>> ', book);
-      tmpFilePath = $Path.join(tmpFolderPath, "id_" + Date.now() + "_" + $Path.basename(book.path));
+      tmpFilePath = $Path.join(tmpFolderPath, "id_" + (Date.now()) + "_" + ($Path.basename(book.path)));
       logger.debug('write to tmp location: ', tmpFilePath);
-      return $Adapter.getBookForDownload(book).then(function (bookRStream) {
+      return $Adapter.getBookForDownload(book).then(function(bookRStream) {
         var err2, tmpFileWStream;
         logger.debug('Got book read stream', bookRStream);
         try {
           tmpFileWStream = $FS.createWriteStream(tmpFilePath);
           bookRStream.pipe(tmpFileWStream);
-          bookRStream.on('error', function (rStreamError) {
+          bookRStream.on('error', function(rStreamError) {
             logger.error('Book read stream threw an error %o', err);
             return reject(rStreamError);
           });
-          bookRStream.on('end', function () {
+          bookRStream.on('end', function() {
             return logger.info('Finished piping bookRStream');
           });
-          return tmpFileWStream.on('close', function () {
+          return tmpFileWStream.on('close', function() {
             logger.info('Finished writing book to tmp location.');
             return resolve(tmpFilePath);
           });
@@ -119,11 +119,11 @@ requestDownload = function (id) {
             reject(err2);
           }
         }
-      })["catch"](function (err1) {
+      })["catch"](function(err1) {
         console.error("Error while preparing " + id + " for download\n", err1);
         return reject(err1);
       });
-    })["catch"](function (err) {
+    })["catch"](function(err) {
       console.err("Error fetching book: " + id + ": ", err);
       return reject(err);
     });
@@ -136,21 +136,21 @@ $IPC.config.silent = true;
 
 $IPC.config.retry = 1500;
 
-_ipcServer = function () {
-  $IPC.server.on(IPCEvent.HELLOFROM_SCANNER, function (data, socket) {
+_ipcServer = function() {
+  $IPC.server.on(IPCEvent.HELLOFROM_SCANNER, function(data, socket) {
     if ($Config('horace.scan.serverstart')) {
       logger.info('horace.scan.serverstart set to true. Scanning now.');
       return startScan();
     }
   });
-  $IPC.server.on(IPCEvent.ERROR_OCCURRED, function (data, socket) {
+  $IPC.server.on(IPCEvent.ERROR_OCCURRED, function(data, socket) {
     logger.error('Somebody had an error', data);
     return console.error(data);
   });
-  $IPC.server.on(IPCEvent.SCANNER_SCANSTARTED, function (data, socket) {
+  $IPC.server.on(IPCEvent.SCANNER_SCANSTARTED, function(data, socket) {
     return _isScanning = true;
   });
-  return $IPC.server.on(IPCEvent.SCANNER_SCANSTOPPED, function (data, socket) {
+  return $IPC.server.on(IPCEvent.SCANNER_SCANSTOPPED, function(data, socket) {
     logger.info('Scaning Finished');
     _isScanning = false;
     horace.emit(Event.ScanStopped);

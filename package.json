@@ -30,6 +30,7 @@
     "del": "^1.2.0",
     "griddle-react": "^0.2.14",
     "gulp": "^3.9.0",
+    "gulp-babel": "^5.2.1",
     "gulp-concat": "^2.5.2",
     "gulp-filter": "^2.0.2",
     "gulp-jsdoc": "^0.1.5",

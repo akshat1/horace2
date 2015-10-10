@@ -1,45 +1,8 @@
 /**
  * @module txt adapter
  */
-'use strict';
-
-var $Book,
-    $FS,
-    $Formats,
-    $Path,
-    $Utils,
-    $Winston,
-    ADAPTER_ID,
-    DEFAULT_ENCODING,
-    GUTENBERG_LICENSE_TEXT,
-    GUTENBERG_START_TAG,
-    GutenbergReplacePattern,
-    GutenbergSearchPattern,
-    SUPPORTED_EXPORT_FORMATS,
-    getAdapterId,
-    getAuthors,
-    getAuthorsForGutenberg,
-    getBook,
-    getBookForDownload,
-    getGutenbergBook,
-    getGutenbergInfoBlock,
-    getPublisher,
-    getPublisherForGutenberg,
-    getSizeInBytes,
-    getSubjects,
-    getSubjectsForGutenberg,
-    getTitle,
-    getTitleForGutenberg,
-    getUnidentifiedBookInfo,
-    getYear,
-    getYearForGutenberg,
-    isTextFile,
-    logger,
-    indexOf = [].indexOf || function (item) {
-  for (var i = 0, l = this.length; i < l; i++) {
-    if (i in this && this[i] === item) return i;
-  }return -1;
-};
+var $Book, $FS, $Formats, $Path, $Utils, $Winston, ADAPTER_ID, DEFAULT_ENCODING, GUTENBERG_LICENSE_TEXT, GUTENBERG_START_TAG, GutenbergReplacePattern, GutenbergSearchPattern, SUPPORTED_EXPORT_FORMATS, getAdapterId, getAuthors, getAuthorsForGutenberg, getBook, getBookForDownload, getGutenbergBook, getGutenbergInfoBlock, getPublisher, getPublisherForGutenberg, getSizeInBytes, getSubjects, getSubjectsForGutenberg, getTitle, getTitleForGutenberg, getUnidentifiedBookInfo, getYear, getYearForGutenberg, isTextFile, logger,
+  indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
 
 $Path = require('path');
 
@@ -74,18 +37,20 @@ GutenbergReplacePattern = {
 };
 
 logger = new $Winston.Logger({
-  transports: [new $Winston.transports.Console({
-    level: 'warn'
-  }), new $Winston.transports.File({
-    filename: $Path.join(process.cwd(), 'horace-txt.log')
-  })]
+  transports: [
+    new $Winston.transports.Console({
+      level: 'warn'
+    }), new $Winston.transports.File({
+      filename: $Path.join(process.cwd(), 'horace-txt.log')
+    })
+  ]
 });
 
-getAdapterId = function () {
+getAdapterId = function() {
   return ADAPTER_ID;
 };
 
-getGutenbergInfoBlock = function (text) {
+getGutenbergInfoBlock = function(text) {
   var match, sample;
   sample = text.substr(0, 1500);
   match = sample.match(GUTENBERG_START_TAG);
@@ -96,21 +61,22 @@ getGutenbergInfoBlock = function (text) {
   }
 };
 
+
 /**
  * @param {string} path
  * @returns {Promise}
  * @resolves {boolean} whether ot not path refers to a 'TEXT' && 'FILE'
  */
 
-isTextFile = function (path) {
-  return new Promise(function (resolve, reject) {
+isTextFile = function(path) {
+  return new Promise(function(resolve, reject) {
     var isText;
     isText = $Path.extname(path).toLowerCase() === '.txt';
     if (!isText) {
       resolve(false);
       return;
     }
-    return $FS.stat(path, function (statErr, stat) {
+    return $FS.stat(path, function(statErr, stat) {
       if (statErr) {
         return reject(statErr);
       } else {
@@ -122,6 +88,7 @@ isTextFile = function (path) {
   });
 };
 
+
 /**
  * extract the title from the given text
  * @param {string} path - the path of the text file
@@ -129,11 +96,12 @@ isTextFile = function (path) {
  * @returns {string} the title of the book
  */
 
-getTitle = function (path, text) {
+getTitle = function(path, text) {
   var filename;
   filename = $Path.basename(path);
   return $Utils.toPromise(filename);
 };
+
 
 /**
  * extract the authors of the given text file
@@ -141,9 +109,10 @@ getTitle = function (path, text) {
  * @returns {Array} - An array of author names (string)
  */
 
-getAuthors = function (text) {
+getAuthors = function(text) {
   return $Utils.toPromise(['Unknown']);
 };
+
 
 /**
  * find the size of the given text in bytes
@@ -152,9 +121,10 @@ getAuthors = function (text) {
  * @resolves {Number} - the size of file in bytes
  */
 
-getSizeInBytes = function (path) {
+getSizeInBytes = function(path) {
   return $Utils.toPromise(-1);
 };
+
 
 /**
  * extract the year the given text was published
@@ -162,9 +132,10 @@ getSizeInBytes = function (path) {
  * @returns {Number} - the year
  */
 
-getYear = function (text) {
+getYear = function(text) {
   return $Utils.toPromise(-1);
 };
+
 
 /**
  * extract the subjects of the given text file
@@ -172,9 +143,10 @@ getYear = function (text) {
  * @returns {Array} - An array of subject names (string)
  */
 
-getSubjects = function () {
+getSubjects = function() {
   return $Utils.toPromise([]);
 };
+
 
 /**
  * extract the publisher of the given text file
@@ -182,35 +154,35 @@ getSubjects = function () {
  * @returns {String} - the publisher
  */
 
-getPublisher = function () {
+getPublisher = function() {
   return $Utils.toPromise('Unknown');
 };
 
-getTitleForGutenberg = function (tag) {
+getTitleForGutenberg = function(tag) {
   return tag.replace(GutenbergReplacePattern.Title, '').replace(/\s+/, ' ');
 };
 
-getAuthorsForGutenberg = function (tag) {
+getAuthorsForGutenberg = function(tag) {
   tag = tag.replace(GutenbergReplacePattern.Author, '');
-  return tag.split('\n').map(function (a) {
+  return tag.split('\n').map(function(a) {
     return a.trim();
   });
 };
 
-getYearForGutenberg = function () {
+getYearForGutenberg = function() {
   return $Utils.toPromise(-1);
 };
 
-getSubjectsForGutenberg = function () {
+getSubjectsForGutenberg = function() {
   return $Utils.toPromise(['GBSubject']);
 };
 
-getPublisherForGutenberg = function () {
+getPublisherForGutenberg = function() {
   return $Utils.toPromise('GBPublisher');
 };
 
-getGutenbergBook = function (path, infoBlock, text) {
-  return new Promise(function (resolve, reject) {
+getGutenbergBook = function(path, infoBlock, text) {
+  return new Promise(function(resolve, reject) {
     var authors, i, index, len, tag, tags, title;
     title = null;
     authors = [];
@@ -224,24 +196,25 @@ getGutenbergBook = function (path, infoBlock, text) {
       }
     }
     if (!title) {
-      throw new Error("Did not find title :( out of " + tags.length + " tags (tags was " + typeof tags + ")\n\n" + JSON.stringify(tags));
+      throw new Error("Did not find title :( out of " + tags.length + " tags (tags was " + (typeof tags) + ")\n\n" + (JSON.stringify(tags)));
     }
     if (!(authors != null ? authors.length : void 0)) {
       authors = ['Unknown'];
     }
-    return Promise.all([getSizeInBytes(path), getYearForGutenberg(infoBlock), getSubjectsForGutenberg(infoBlock), getPublisherForGutenberg(infoBlock)]).then(function (infoArr) {
+    return Promise.all([getSizeInBytes(path), getYearForGutenberg(infoBlock), getSubjectsForGutenberg(infoBlock), getPublisherForGutenberg(infoBlock)]).then(function(infoArr) {
       return resolve(new $Book(path, title, authors, infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
     })["catch"](reject);
   });
 };
 
-getUnidentifiedBookInfo = function (path, text) {
-  return new Promise(function (resolve, reject) {
-    return Promise.all([getTitle(path, text), getAuthors(text), getSizeInBytes(path), getYear(text), getSubjects(text), getPublisher(text)]).then(function (infoArr) {
+getUnidentifiedBookInfo = function(path, text) {
+  return new Promise(function(resolve, reject) {
+    return Promise.all([getTitle(path, text), getAuthors(text), getSizeInBytes(path), getYear(text), getSubjects(text), getPublisher(text)]).then(function(infoArr) {
       return resolve();
     })["catch"](reject);
   });
 };
+
 
 /**
  * @param {string} path - path of the incoming file
@@ -249,13 +222,13 @@ getUnidentifiedBookInfo = function (path, text) {
  * @resolves {Book}
  */
 
-getBook = function (path) {
+getBook = function(path) {
   logger.info("TxtAdapter.getBook(" + path + ")");
-  return new Promise(function (resolve, reject) {
-    return isTextFile(path).then(function (isText) {
+  return new Promise(function(resolve, reject) {
+    return isTextFile(path).then(function(isText) {
       if (isText) {
         logger.debug('This is a text file');
-        return $FS.readFile(path, function (readErr, buff) {
+        return $FS.readFile(path, function(readErr, buff) {
           var gutenbergInfo, text;
           if (readErr) {
             return reject(readErr);
@@ -273,12 +246,13 @@ getBook = function (path) {
         logger.debug('not a text file');
         return resolve();
       }
-    })["catch"](function (isTextFileErr) {
+    })["catch"](function(isTextFileErr) {
       logger.error('Error occurred while trying to find out if this a text file');
       return reject(isTextFileErr);
     });
   });
 };
+
 
 /**
  * @param {Book} book - The book to be downloaded
@@ -287,11 +261,11 @@ getBook = function (path) {
  * @resolves {ReadStream}
  */
 
-getBookForDownload = function (book, format) {
+getBookForDownload = function(book, format) {
   if (format == null) {
     format = $Formats.TXT;
   }
-  return new Promise(function (resolve, reject) {
+  return new Promise(function(resolve, reject) {
     var rStream;
     if (book.adapterId !== getAdapterId()) {
       reject(new Error("This book does not belong to this adapter [" + ADAPTER_ID + "]"));

@@ -1,18 +1,17 @@
 /**
  * Base book class
  */
-'use strict';
-
 var $Utils, Book, _;
 
 $Utils = require('./utils.js');
 
 _ = require('lodash');
 
-Book = (function () {
-  Book.makeSortStringFromArray = function (arr) {
+Book = (function() {
+  Book.makeSortStringFromArray = function(arr) {
     return arr.sort().join('_$_');
   };
+
 
   /**
    * Adapters may extend this class in order to add custom data
@@ -50,10 +49,10 @@ Book = (function () {
     }
     this.id = $Utils.getHash(this.path);
     this.title = title.toLowerCase();
-    this.authors = _.map(authors, function (a) {
+    this.authors = _.map(authors, function(a) {
       return (a || '').toLowerCase();
     });
-    this.subjects = _.map(subjects, function (s) {
+    this.subjects = _.map(subjects, function(s) {
       return (s || '').toLowerCase();
     });
     this.publisher = publisher.toLowerCase();
@@ -62,16 +61,17 @@ Book = (function () {
     this.setUpSortProperties();
   }
 
-  Book.prototype.setUpDisplayProperties = function () {
+  Book.prototype.setUpDisplayProperties = function() {
     return this.displayYear = this.year === -1 ? 'Unknown' : this.year;
   };
 
-  Book.prototype.setUpSortProperties = function () {
+  Book.prototype.setUpSortProperties = function() {
     this.sortStringAuthors = Book.makeSortStringFromArray(this.authors);
     return this.sortStringSubjects = Book.makeSortStringFromArray(this.subjects);
   };
 
   return Book;
+
 })();
 
 module.exports = Book;

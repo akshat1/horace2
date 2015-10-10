@@ -2,22 +2,21 @@
  * General utilities
  * @module utils
  */
-"use strict";
-
 var conditionalRace, findPromise, forEachPromise, getHash, isPromise, testSequential, toPromise;
 
-getHash = function (path) {
+getHash = function(path) {
   var ch, hash, i, j, ref;
   if (!(path != null ? path.length : void 0)) {
     throw new Error('Missing argument to generate hash from');
   }
   for (i = j = 0, ref = path.length; 0 <= ref ? j < ref : j > ref; i = 0 <= ref ? ++j : --j) {
     ch = path.charCodeAt(i);
-    hash = (hash << 5) - hash + ch;
+    hash = ((hash << 5) - hash) + ch;
     hash = hash & hash;
   }
   return hash;
 };
+
 
 /**
  * @param {array} Array of Promises
@@ -28,17 +27,17 @@ getHash = function (path) {
  * @reject rejects with the first error encountered iff breakOnError is true
  */
 
-conditionalRace = function (promises, condition, breakOnError) {
+conditionalRace = function(promises, condition, breakOnError) {
   var pending, primary;
   if (!condition) {
-    condition = function (x) {
+    condition = function(x) {
       return x;
     };
   }
   pending = promises.length;
-  primary = new Promise(function (resolve, reject) {
+  primary = new Promise(function(resolve, reject) {
     var checkCompletion, index, j, len, p, results;
-    checkCompletion = function () {
+    checkCompletion = function() {
       if (pending === 0) {
         return resolve();
       }
@@ -46,7 +45,7 @@ conditionalRace = function (promises, condition, breakOnError) {
     results = [];
     for (index = j = 0, len = promises.length; j < len; index = ++j) {
       p = promises[index];
-      p["catch"](function (err) {
+      p["catch"](function(err) {
         pending--;
         if (breakOnError) {
           return reject(err);
@@ -54,7 +53,7 @@ conditionalRace = function (promises, condition, breakOnError) {
           return checkCompletion();
         }
       });
-      results.push(p.then(function (result) {
+      results.push(p.then(function(result) {
         pending--;
         if (condition(result)) {
           return resolve(result);
@@ -68,6 +67,7 @@ conditionalRace = function (promises, condition, breakOnError) {
   return primary;
 };
 
+
 /**
  * @param {Array} arr - Array of the objets to be processed
  * @param {function} fnGetter - function which returns a Promise which resolves, hopefully 
@@ -79,36 +79,36 @@ conditionalRace = function (promises, condition, breakOnError) {
  * @returns {Promise} - A promise which resolves in the value which satisfied fnCondition
  */
 
-findPromise = function (arr, fnGetter, fnCondition, breakOnError) {
-  return new Promise(function (resolve, reject) {
+findPromise = function(arr, fnGetter, fnCondition, breakOnError) {
+  return new Promise(function(resolve, reject) {
     var index, next, tick;
     index = 0;
-    next = function () {
+    next = function() {
       index++;
       setTimeout(tick);
     };
-    tick = function () {
+    tick = function() {
       var candidate;
       if (index >= arr.length) {
         resolve(null);
         return;
       }
       candidate = arr[index];
-      return fnGetter.call(null, candidate, index).then(function (obj) {
-        return toPromise(fnCondition.call(null, obj)).then(function (isValid) {
+      return fnGetter.call(null, candidate, index).then(function(obj) {
+        return toPromise(fnCondition.call(null, obj)).then(function(isValid) {
           if (isValid) {
             return obj;
           } else {
             return null;
           }
         });
-      }).then(function (obj) {
+      }).then(function(obj) {
         if (obj) {
           return resolve(obj);
         } else {
           return next();
         }
-      })["catch"](function (err) {
+      })["catch"](function(err) {
         if (breakOnError) {
           return reject(err);
         } else {
@@ -119,6 +119,7 @@ findPromise = function (arr, fnGetter, fnCondition, breakOnError) {
     return tick();
   });
 };
+
 
 /**
  * Execute fn on each item of arr in sequence. Expect promise from fn. Move to 
@@ -128,26 +129,26 @@ findPromise = function (arr, fnGetter, fnCondition, breakOnError) {
  * @param {boolean} breakOnError - Whether or not execution should stop when any promise rejects
  */
 
-forEachPromise = function (arr, fn, breakOnError) {
-  return new Promise(function (resolve, reject) {
+forEachPromise = function(arr, fn, breakOnError) {
+  return new Promise(function(resolve, reject) {
     var index, next, result, tick;
     index = 0;
     result = [];
-    next = function () {
+    next = function() {
       index++;
       return setTimeout(tick);
     };
-    tick = function () {
+    tick = function() {
       var candidate;
       if (index >= arr.length) {
         resolve(result);
         return;
       }
       candidate = arr[index];
-      return fn(candidate, index).then(function (resultForIndex) {
+      return fn(candidate, index).then(function(resultForIndex) {
         result.push(resultForIndex);
         return next();
-      })["catch"](function (err) {
+      })["catch"](function(err) {
         if (breakOnError) {
           return reject(err);
         } else {
@@ -159,6 +160,7 @@ forEachPromise = function (arr, fn, breakOnError) {
   });
 };
 
+
 /**
  * Returns a boolean indidicating whether or not the param is a Promise
  * Uses instanceof
@@ -166,9 +168,10 @@ forEachPromise = function (arr, fn, breakOnError) {
  * @return {boolean} x instanceof Promise
  */
 
-isPromise = function (x) {
+isPromise = function(x) {
   return x instanceof Promise;
 };
+
 
 /**
  * Returns a promise which resolves into the supplied argument.
@@ -177,23 +180,23 @@ isPromise = function (x) {
  * @returns {promise}
  */
 
-toPromise = function (x) {
+toPromise = function(x) {
   if (isPromise(x)) {
     return x;
   } else {
-    return new Promise(function (resolve, reject) {
+    return new Promise(function(resolve, reject) {
       return resolve(x);
     });
   }
 };
 
-testSequential = function () {
+testSequential = function() {
   var arr, fn;
   arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  fn = function (x) {
-    return new Promise(function (resolve, reject) {
+  fn = function(x) {
+    return new Promise(function(resolve, reject) {
       var inner;
-      inner = function () {
+      inner = function() {
         console.log('boom:::', x);
         return resolve(x);
       };
