@@ -1,76 +1,72 @@
-var $H, $ServerEvents, _, _off, _on, _socket, dispatch, downloadFile, getBooks, getSocket, requestDownload;
+'use strict';
 
-$H = require('./http.js');
+/**
+@module net
+<p>
+Abstractions of Horace server functions.
+</p><p>
+Provides both HTTP as well as Websocket related utils.
+</p>
+*/
 
-_ = require('lodash');
+import Http from './http.js';
+import _ from 'lodash';
+import ServerEvents from '../../../app/server-events.js';
 
-$ServerEvents = require('../../../app/server-events.js');
 
-_socket = null;
-
-downloadFile = function(url, success) {
-  var _frame;
-  _frame = document.createElement('iframe');
-  _frame.className = 'downloadFrame';
-  _frame.height = '100px';
-  _frame.width = '100px';
-  document.body.appendChild(_frame);
-  return _frame.src = url;
-};
-
-getSocket = function() {
-  if (!_socket) {
-    _socket = io.connect(window.location.origin, {
+// -------------- Websockets stuff --------------
+var socket = null
+export function getSocket() {
+  if(!socket) {
+    socket = io.connect(window.location.origin, {
       path: HoraceConf.socketIOURL
     });
   }
-  return _socket;
-};
+  return socket;
+}
 
-dispatch = function(eventName, args) {
-  var socket;
-  console.debug('dispatch(%s, %o)', eventName, args);
-  socket = getSocket();
-  return socket.emit(eventName, args);
-};
 
-_on = function(eventName, callback) {
-  return getSocket().on(eventName, callback);
-};
+export function emitWebSocket(eventName, args) {
+  getSocket().emit(eventName, args);
+}
 
-_off = function(eventName, callback) {
-  return getSocket().off(eventName, callback);
-};
 
-getBooks = function(query) {
-  var opts;
-  opts = {
-    url: '/api/books',
-    responseType: $H.ResponseType.JSON,
-    data: query
-  };
-  return $H.get(opts);
-};
+export function onWebSocket(eventName, callback) {
+  getSocket().on(eventName, callback);
+}
 
-requestDownload = function(book) {
-  console.debug('requestDownload(%o)', book);
 
-  /*
-  opts =
-    url : '/api/requestDownload'
-    data :
-      id : book.id
-  $H.get opts
-   */
-  return dispatch($ServerEvents.REQUEST_BOOK_DOWNLOAD, {
+export function offWebSocket(eventName, callback) {
+  getSocket().off(eventName, callback);
+}
+
+// ------------- /Websockets stuff --------------
+
+
+// ----------------- End Point ------------------
+export function downloadFile(url, success) {
+  var frame;
+  frame = document.createElement('iframe');
+  frame.className = 'h-download-frame';
+  frame.height = '100px';
+  frame.width = '100px';
+  document.body.appendChild(_frame);
+  frame.src = url;
+}
+
+
+export function getBooks(query) {
+  return Http.get({
+    url          : '/api/books',
+    responseType : Http.ResponseType.JSON,
+    data         : query
+  });
+}
+
+
+export function requestDownload(book) {
+  emitWebSocket(ServerEvents.REQUEST_BOOK_DOWNLOAD, {
     bookId: book.id
   });
-};
-
-_.extend(module.exports, {
-  dispatch: dispatch,
-  'on': _on,
-  'off': _off,
-  getBooks: getBooks,
-  requestDownload: requestDownload
-});
+}
+// ---------------- /End Point ------------------ 

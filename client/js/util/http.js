@@ -1,48 +1,48 @@
-"use strict";
+'use strict';
 
 const Method = {
-  POST: 'POST',
-  GET: 'GET',
-  PUT: 'PUT',
-  DELETE: 'DELETE'
+  POST   : 'POST',
+  GET    : 'GET',
+  PUT    : 'PUT',
+  DELETE : 'DELETE'
 };
 
 const StatusCode = {
-  OK: 200,
-  NotModified: 304,
-  BadRequest: 400,
-  Unauthorized: 401,
-  Forbidden: 403,
-  NotFound: 404,
-  MethodNotAllowed: 405,
-  Conflict: 409,
-  InternalServerError: 500
+  OK                  : 200,
+  NotModified         : 304,
+  BadRequest          : 400,
+  Unauthorized        : 401,
+  Forbidden           : 403,
+  NotFound            : 404,
+  MethodNotAllowed    : 405,
+  Conflict            : 409,
+  InternalServerError : 500
 };
 
 const Mime = {
-  TEXT: 'text/plain',
-  HALJSON: 'application/hal+json',
-  JSON: 'application/json',
-  FORMURLENCODED: 'application/x-www-form-urlencoded',
-  FORMDATA: 'multipart/form-data',
-  XML: 'text/xml'
+  TEXT           : 'text/plain',
+  HALJSON        : 'application/hal+json',
+  JSON           : 'application/json',
+  FORMURLENCODED : 'application/x-www-form-urlencoded',
+  FORMDATA       : 'multipart/form-data',
+  XML            : 'text/xml'
 };
 
 const ResponseType = {
-  DOMSTRING: '',
-  ARRAYBUFFER: 'arraybuffer',
-  BLOB: 'blob',
-  DOCUMENT: 'document',
-  JSON: 'json',
-  TEXT: 'text'
+  DOMSTRING   : '',
+  ARRAYBUFFER : 'arraybuffer',
+  BLOB        : 'blob',
+  DOCUMENT    : 'document',
+  JSON        : 'json',
+  TEXT        : 'text'
 };
 
 const ReadyState = {
-  UNINITIALIZED: 0,
-  LOADING: 1,
-  LOADED: 2,
-  INTERACTIVE: 3,
-  COMPLETE: 4
+  UNINITIALIZED : 0,
+  LOADING       : 1,
+  LOADED        : 2,
+  INTERACTIVE   : 3,
+  COMPLETE      : 4
 };
 
 /*
@@ -167,24 +167,27 @@ function ajax(opts) {
 
 
 module.exports = {
-  Method: Method,
-  StatusCode: StatusCode,
-  Mime: Mime,
-  ResponseType: ResponseType,
-  ReadyState: ReadyState,
-  ajax: ajax,
+  Method       : Method,
+  StatusCode   : StatusCode,
+  Mime         : Mime,
+  ResponseType : ResponseType,
+  ReadyState   : ReadyState,
+  ajax         : ajax,
   get: function(opts) {
     opts.method = Method.GET;
     return ajax(opts);
   },
+
   post: function(opts) {
     opts.method = Method.POST;
     return ajax(opts);
   },
+
   put: function(opts) {
     opts.method = Method.PUT;
     return ajax(opts);
   },
+  
   'delete': function(opts) {
     opts.method = Method.DELETE;
     return ajax(opts);
