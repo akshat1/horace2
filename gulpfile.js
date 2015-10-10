@@ -101,7 +101,9 @@ gulp.task('js', function() {
     .pipe(gulp.dest(Paths.js));
   */
   return browserify(Paths.client_js_entry)
-    .transform(babelify)
+    .transform(babelify.configure({
+      optional: ["es7.decorators"]  
+    }))
     .bundle()
     .pipe(source('horace.js'))
     .pipe(gulp.dest(Paths.js));

@@ -1,9 +1,9 @@
 import React from 'react';
-import HelloWorld from './hello-world.jsx';
+import Library from './component/library.jsx';
  
 document.addEventListener('DOMContentLoaded', function() {
   React.render(
-    <HelloWorld />,
+    <Library />,
     document.body
   );
 });

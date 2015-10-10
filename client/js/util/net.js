@@ -4,7 +4,7 @@ $H = require('./http.js');
 
 _ = require('lodash');
 
-$ServerEvents = require('../../app/server-events.js');
+$ServerEvents = require('../../../app/server-events.js');
 
 _socket = null;
 
