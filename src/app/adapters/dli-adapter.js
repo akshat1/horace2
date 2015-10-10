@@ -1,38 +1,34 @@
-/*
-Will accept DLI books
-@module DLI adapter
- */
-var $Book, $FS, $Path, $Winston, ADAPTER_ID, DLI_MANIFEST_FILE, Pattern, getAuthors, getBook, getPublisher, getSizeInBytes, getSubjects, getTitle, getValuesForPattern, getYear, logger;
+'use strict';
 
-$Path = require('path');
+import * as Path from 'path';
+import * as FS from 'fs';
+import * as Winston from 'winston';
+import Book from './../book.js';
 
-$FS = require('fs');
-
-$Winston = require('winston');
-
-$Book = require('../book.js');
-
-DLI_MANIFEST_FILE = 'metadata.json';
-
-ADAPTER_ID = 'horace.dli';
-
-Pattern = {
-  author: /author\d*/,
-  subject: /subject\d*/,
-  publisher: /publisher\d*/
+const DLI_MANIFEST_FILE = 'metadata.json';
+const DLI_MANIFEST_FILE_OPTIONS = {
+  encoding: 'utf8'
+};
+const ADAPTER_ID = 'horace.dli';
+const Pattern = {
+  author    : /author\d*/,
+  subject   : /subject\d*/,
+  publisher : /publisher\d*/
 };
 
-logger = new $Winston.Logger({
+
+var logger = new Winston.Logger({
   transports: [
-    new $Winston.transports.Console({
+    new Winston.transports.Console({
       level: 'warn'
-    }), new $Winston.transports.File({
-      filename: $Path.join(process.cwd(), 'horace-dli-adapter.log')
+    }), new Winston.transports.File({
+      filename: Path.join(process.cwd(), 'horace-dli-adapter.log')
     })
   ]
 });
 
-getValuesForPattern = function(metadata, pattern) {
+
+function getValuesForPattern (metadata, pattern) {
   var key, value, values;
   values = {};
   for (key in metadata) {
@@ -44,95 +40,80 @@ getValuesForPattern = function(metadata, pattern) {
   return Object.keys(values);
 };
 
-getTitle = function(metadata) {
+
+function getTitle(metadata) {
   return metadata.title;
 };
 
-getAuthors = function(metadata) {
+
+function getAuthors(metadata) {
   return metadata.authors || getValuesForPattern(metadata, Pattern.author);
 };
 
-getSizeInBytes = function(metadata) {
+
+function getSizeInBytes(metadata) {
   return -1;
 };
 
-getSubjects = function(metadata) {
+
+function getSubjects(metadata) {
   return metadata.subjects || getValuesForPattern(metadata, Pattern.subject);
 };
 
-getPublisher = function(metadata) {
+
+function getPublisher(metadata) {
   return metadata.publisher;
 };
 
-getYear = function(metadata) {
+
+function getYear(metadata) {
   return metadata.year;
 };
 
 
-/*
-Will accept an absolute path which may refer to a file, or a directory.
-
-@param path : String. Absolute path to the file / directory
-@returns Promise. The promise will either
-  resolve with a Book object if the adapter identifies the book
-  or reject with error if any errors occurr or null if the books isnt identified.
- */
-
-getBook = function(path) {
-  var p;
-  p = new Promise(function(resolve, reject) {
-    var handleDLIManifest, handleStat;
-    handleDLIManifest = function(manifestFileReadError, manifestFileContent) {
-      var book, err, m;
+export function getBook(path) {
+  var p = new Promise(function(resolve, reject){
+    let handleDLIManifest = function(manifestFileReadError, manifestFileContent) {
       if (manifestFileReadError) {
-        console.error('Manifest file read error', manifestFileReadError);
-        return reject(manifestFileReadError);
+        logger.error(`dli.getBook(${path}.handleDLIManifest got statErr)`, manifestFileReadError);
+        reject(manifestFileReadError);
       } else {
-        m = JSON.parse(manifestFileContent);
-        try {
-          book = new $Book(path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID);
-        } catch (_error) {
-          err = _error;
-          if (err) {
-            console.error('DLI adapter encountered an error', err);
-            reject(err);
-            return;
-          }
+        let m = JSON.parse(manifestFileContent);
+        let book = new Book(path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID);
+        resolve(book);
+      }
+    }//handleDLIManifest
+
+    let handleStat = function(statErr, stat) {
+      logger.debug(`dli.getBook(${path}).handleStat`);
+      if(statErr) {
+        logger.error(`dli.getBook(${path}.handleStat got statErr)`, statErr);
+        reject(statErr);
+      } else {
+        if (!stat.isDirectory()) {
+          logger.debug(`dli.getBook(${path}).handleStat :: not a directory`);
+          resolve(null);
+        } else {
+          let manifestFilePath = Path.join(path, DLI_MANIFEST_FILE);
+          FS.exists(manifestFilePath, function(fileExists){
+            if (fileExists) {
+              logger.info(`dli.getBook(${path}).handleStat :: found manifest file`);
+              FS.readFile(manifestFilePath, DLI_MANIFEST_FILE_OPTIONS, handleDLIManifest);
+            } else {
+              logger.debug(`dli.getBook(${path}).handleStat :: manifest file not found`);
+              resolve(null);
+            }
+          });
         }
-        return resolve(book);
       }
-    };
-    handleStat = function(statError, stat) {
-      var manifestFilePath;
-      if (statError) {
-        console.error('file stat error', statError);
-        return reject(statError);
-      } else if (!stat.isDirectory()) {
-        logger.info('Not a directory');
-        return resolve(null);
-      } else {
-        manifestFilePath = $Path.join(path, DLI_MANIFEST_FILE);
-        return $FS.exists(manifestFilePath, function(fileExists) {
-          if (fileExists) {
-            logger.info('Found the manifest: ', manifestFilePath);
-            return $FS.readFile(manifestFilePath, {
-              encoding: 'utf8'
-            }, handleDLIManifest);
-          } else {
-            logger.info('No manifest file. Return null');
-            return resolve(null);
-          }
-        });
-      }
-    };
-    return $FS.stat(path, handleStat);
+    }//handleStat
+
+    FS.stat(path, handleStat);
   });
   return p;
-};
+}//function getBook(path) {
 
-module.exports = {
-  getAdapterId: function() {
-    return ADAPTER_ID;
-  },
-  getBook: getBook
-};
+
+export function getAdapterId() {
+  return ADAPTER_ID;
+}
