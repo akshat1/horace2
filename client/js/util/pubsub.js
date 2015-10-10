@@ -1,42 +1,41 @@
-var broadcast, exports, getListenerArray, listenerMap, removeListener, subscribe;
+'use strict';
 
-listenerMap = {};
+/**
+@module pubsub
+Simple pubsub implementation
+*/
 
-getListenerArray = function(eventName) {
-  var arr;
-  arr = listenerMap[eventName];
-  if (!arr) {
+var listenerMap = {};
+
+
+export function getListenerArray(eventName) {
+  var arr = listenerMap[eventName];
+  if (!arr)
     arr = listenerMap[eventName] = [];
-  }
+
   return arr;
-};
+}
 
-subscribe = function(eventName, fn) {
+
+export function subscribe(eventName, fn) {
   getListenerArray(eventName).push(fn);
-};
+}
 
-removeListener = function(eventName, fn) {
-  var arr;
-  arr = getListenerArray(eventName);
+
+export function removeListener(eventName, fn) {
+  var arr = getListenerArray(eventName);
   arr = arr.remove(fn);
 };
 
-broadcast = function(eventName, payload) {
-  var arr, fn, i, len, returnValue;
-  arr = getListenerArray(eventName);
-  for (i = 0, len = arr.length; i < len; i++) {
-    fn = arr[i];
-    returnValue = fn(payload);
-    if (returnValue === false) {
+
+export function broadcast(eventName, payload) {
+  var arr = getListenerArray(eventName);
+  for(let i = 0; i < arr.length; i++) {
+    let fn = arr[i];
+    let returnValue = fn(payload);
+    // Stop execution if a broadcast listener returns false
+    if(returnValue === false) {
       return;
     }
   }
-};
-
-module.exports = {
-  getListenerArray: getListenerArray,
-  subscribe: subscribe,
-  removeListener: removeListener,
-  broadcast: broadcast,
-  _listenerMap: listenerMap
-};
+}
