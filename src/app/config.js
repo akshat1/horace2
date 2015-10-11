@@ -1,16 +1,15 @@
-"use strict";
+'use strict';
+
 /**
  * @module config
  */
-var $Path, $nconf, configFilePath, dbLocation;
+import NConf from 'nconf';
+import Path from 'path';
 
-$nconf = require('nconf');
-$Path = require('path');
+var configFilePath = Path.join(process.cwd(), 'config.json');
+var dbLocation = Path.join(process.cwd(), 'db');
 
-configFilePath = $Path.join(process.cwd(), 'config.json');
-dbLocation = $Path.join(process.cwd(), 'db');
-
-$nconf.argv().env().file({
+NConf.argv().env().file({
   file: configFilePath
 }).defaults({
   'horace.rebuildClientAtStartup' : false,
@@ -40,6 +39,6 @@ $nconf.argv().env().file({
  * @param {string} key
  * @returns {Object|string}
  */
-module.exports = function(key) {
-  return $nconf.get(key);
+export default function(key) {
+  return NConf.get(key);
 };
