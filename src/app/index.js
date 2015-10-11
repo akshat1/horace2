@@ -29,15 +29,12 @@ $Utils = require('./utils.js');
 $Horace = require('./horace.js');
 
 if ($Config('horace.rebuildClientAtStartup')) {
-  console.log('start gulp');
   Gulp = require('gulp');
   GulpFile = require('../gulpfile.js');
   Gulp.start('default');
 }
 
 logLevel = $Config('horace.server.logLevel');
-
-console.log('logLevel: ', logLevel);
 
 serverTmpPath = $Path.join(__dirname, '..', $Config('horace.tmpDirPath'));
 

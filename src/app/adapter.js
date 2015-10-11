@@ -69,7 +69,11 @@ getBook = function(path) {
   getBookProxy = function(adptr, index) {
     return adptr.getBook(path);
   };
-  return $Utils.findPromise(adapters, getBookProxy, _.identity);
+  var p = $Utils.findPromise(adapters, getBookProxy, _.identity, true);
+  p.catch(function(err){
+    console.log(`getBook broke for the path ${path}`);
+  });
+  return p;
 };
 
 getBookOld = function(path) {

@@ -105,41 +105,6 @@ getBooks = function(opts) {
   sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
   opts = _.assign(defaults, opts);
   return _connect().then(function() {
-    var p;
-    /*
-    p = new Promise(function(resolve, reject) {
-      var cur, sortOpts;
-      logger.info('getBooks(%o)', opts);
-      sortOpts = {};
-      sortOpts[opts.sortcolumnName || $Sorting.SortColumn.Title] = opts.sortDirection === $Sorting.SortDirection.ASC ? 1 : -1;
-      logger.debug('sortOpts: ', sortOpts);
-      cur = collectionBooks.find().sort(sortOpts);
-      return cur.toArray(function(curErr, books) {
-        var from, to, totalBooks;
-        if (curErr) {
-          logger.error('Error converting to array', curErr);
-          return reject(curErr);
-        } else {
-          from = parseInt(opts.from) || 0;
-          to = from + parseInt(opts.numItems);
-          totalBooks = books.length;
-          if (!isNaN(to)) {
-            books = books.slice(from, to);
-          }
-          logger.debug("Return " + books.length + " books");
-          return resolve({
-            from: from,
-            numItems: numItems,
-            totalItems: totalBooks,
-            books: books
-          });
-        }
-      });
-    });
-    return p;
-    */
-    console.log('getBooks:', opts);
-    console.log('sort: ', sortOpts);
     return new Promise(function(resolve, reject){
       var cur = collectionBooks.find().sort(sortOpts);
       cur.toArray(function(curErr, books) {
@@ -152,7 +117,6 @@ getBooks = function(opts) {
           var pageSize = parseInt(opts.pageSize);
           var from = currentPage* pageSize;
           var to = from + pageSize;
-          console.log('Extract books ' + from + ' to ' + to);
           var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
           var response = {
@@ -163,7 +127,6 @@ getBooks = function(opts) {
             sortColumn: opts.sortColumn,
             sortAscending: opts.sortAscending
           };
-          //console.log('Respond with :', opts);
           resolve(response);
         }
       });//cur.toArray

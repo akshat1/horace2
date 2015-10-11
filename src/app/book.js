@@ -1,18 +1,17 @@
-/**
- * Base book class
- */
-var $Utils, Book, _;
-
-$Utils = require('./utils.js');
-
-_ = require('lodash');
-
-Book = (function() {
-  Book.makeSortStringFromArray = function(arr) {
-    return arr.sort().join('_$_');
-  };
+import Utils from './utils.js';
+import _ from 'lodash';
 
 
+function mapToLowerCase(a) {
+  return (a||'').toLowerCase();
+}
+
+function reduceToSortString(previousValue, currentValue, index, array) {
+  return (previousValue || '') + '_' + (currentValue || '');
+}
+
+
+class Book {
   /**
    * Adapters may extend this class in order to add custom data
    * @constructor Book
@@ -25,53 +24,40 @@ Book = (function() {
    * @param {string} publisher
    * @param {string} adapterId
    */
+  constructor(path, title, authors, sizeInBytes, year, subjects, publisher, adapterId) {
+    if(!path)
+      throw new Error('Can not create Book without path');
+    if(!adapterId)
+      throw new Error('Can not create Book without an adapterId');
 
-  function Book(path, title, authors, sizeInBytes, year, subjects, publisher, adapterId) {
-    this.path = path;
-    if (authors == null) {
-      authors = [];
-    }
-    this.sizeInBytes = sizeInBytes;
-    if (year == null) {
-      year = -1;
-    }
-    if (subjects == null) {
-      subjects = [];
-    }
-    if (publisher == null) {
-      publisher = '';
-    }
-    this.adapterId = adapterId;
+    authors   = authors || [];
+    year      = year || -1;
+    subjects  = subjects || [];
+    publisher = publisher || '';
 
-    /* istanbul ignore next */
-    if (!(this.adapterId && typeof this.adapterId === 'string')) {
-      throw new Error('adapterId must be a non-empty string');
-    }
-    this.id = $Utils.getHash(this.path);
-    this.title = title.toLowerCase();
-    this.authors = _.map(authors, function(a) {
-      return (a || '').toLowerCase();
-    });
-    this.subjects = _.map(subjects, function(s) {
-      return (s || '').toLowerCase();
-    });
-    this.publisher = publisher.toLowerCase();
-    this.year = parseInt(year);
+    this.id          = Utils.getHash(path);
+    this.path        = path;
+    this.title       = title;
+    this.authors     = authors.map(mapToLowerCase);
+    this.sizeInBytes = isNaN(sizeInBytes) ? -1 : parseInt(sizeInBytes);
+    this.year        = isNaN(year) ? -1 : parseInt(year);
+    this.subjects    = subjects.map(mapToLowerCase);
+    this.publisher   = publisher.toLowerCase();
+    this.adapterId   = adapterId;
+
     this.setUpDisplayProperties();
     this.setUpSortProperties();
   }
 
-  Book.prototype.setUpDisplayProperties = function() {
-    return this.displayYear = this.year === -1 ? 'Unknown' : this.year;
-  };
+  setUpDisplayProperties() {
+    this.displayYear = this.year === -1 ? 'Unknown' : this.year;
+  }
 
-  Book.prototype.setUpSortProperties = function() {
-    this.sortStringAuthors = Book.makeSortStringFromArray(this.authors);
-    return this.sortStringSubjects = Book.makeSortStringFromArray(this.subjects);
-  };
+  setUpSortProperties() {
+    this.sortStringAuthors = this.authors.reduce(reduceToSortString, '');
+    this.sortStringSubjects = this.subjects.reduce(reduceToSortString, '');
+  }
+}
 
-  return Book;
 
-})();
-
-module.exports = Book;
+export default Book;

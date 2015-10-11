@@ -28,7 +28,7 @@ const GutenbergReplacePattern = {
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
-      level: 'info'
+      level: 'warn'
     }), new Winston.transports.File({
       filename: Path.join(process.cwd(), 'horace-txt.log')
     })
@@ -174,8 +174,8 @@ function getGutenbergBook(path, infoBlock, text) {
     let title = null;
     let authors = [];
     let tags = infoBlock.split(/\r\n\r\n/);
-    for (let index = i = 0, len = tags.length; i < len; index = ++i) {
-      let tag = tags[index];
+    for (let i = 0; i < tags.length; i++) {
+      let tag = tags[i];
       if (GutenbergSearchPattern.Title.test(tag)) {
         title = getTitleForGutenberg(tag);
       } else if (GutenbergSearchPattern.Author.test(tag)) {
@@ -190,7 +190,11 @@ function getGutenbergBook(path, infoBlock, text) {
     }
     return Promise.all([getSizeInBytes(path), getYearForGutenberg(infoBlock), getSubjectsForGutenberg(infoBlock), getPublisherForGutenberg(infoBlock)])
     .then(function(infoArr) {
-      resolve(new Book(path, title, authors, infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
+      try {
+        resolve(new Book(path, title, authors, infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
+      } catch(err) {
+        reject(err);
+      }
     }).catch(reject);
   });//return new Promise
 };
@@ -200,7 +204,11 @@ function getUnidentifiedBookInfo(path, text) {
   return new Promise(function(resolve, reject) {
     Promise.all([getTitle(path, text), getAuthors(text), getSizeInBytes(path), getYear(text), getSubjects(text), getPublisher(text)])
     .then(function(infoArr) {
-      resolve(new Book(path, infoArr[0], infoArr[1], infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
+      try {
+        resolve(new Book(path, infoArr[0], infoArr[1], infoArr[2], infoArr[3], infoArr[4], infoArr[5], getAdapterId()));
+      } catch(err) {
+        reject(err);
+      }
     })
     .catch(reject);
   });

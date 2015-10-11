@@ -20,7 +20,7 @@ const SUPPORTED_EXPORT_FORMATS = [Formats.PDF];
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
-      level: 'info'
+      level: 'warn'
     }), new Winston.transports.File({
       filename: Path.join(process.cwd(), 'horace-pdf-adapter.log')
     })
@@ -31,7 +31,7 @@ const logger = new Winston.Logger({
 function getExif(path) {
   logger.debug(`pdf.getExif(${path})`);
   return new Promise(function(resolve, reject){
-    let command = `${CMD} -j ${path}`;
+    let command = `${CMD} -j "${path}"`;
     logger.debug(`pdf.getExif(${path}). Executing ${command}`);
     Exec(command, function(exifErr, stdOutBuff, stdErrBuff) {
       if(exifErr){
@@ -118,7 +118,11 @@ export function getBook(path) {
       .then(function(exifdata) {
         if (exifdata) {
           logger.info(`getBook(${path}) :: got exifdata. try resolving with book`);
-          resolve(new Book(path, getTitle(exifdata) || fileName, getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID));
+          try {
+            resolve(new Book(path, getTitle(exifdata) || fileName, getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID));
+          } catch(err) {
+            reject(err);
+          }
         } else {
           logger.info(`getBook(${path}) :: no exifdata`);
           resolve();

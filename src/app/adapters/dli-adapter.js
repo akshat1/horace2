@@ -20,7 +20,7 @@ const Pattern = {
 var logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
-      level: 'info'
+      level: 'warn'
     }), new Winston.transports.File({
       filename: Path.join(process.cwd(), 'horace-dli-adapter.log')
     })
@@ -79,8 +79,12 @@ export function getBook(path) {
         reject(manifestFileReadError);
       } else {
         let m = JSON.parse(manifestFileContent);
+        try {
         let book = new Book(path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID);
         resolve(book);
+        } catch(err) {
+          reject(err);
+        }
       }
     }//handleDLIManifest
 

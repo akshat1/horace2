@@ -37,7 +37,7 @@ conditionalRace = function(promises, condition, breakOnError) {
   pending = promises.length;
   primary = new Promise(function(resolve, reject) {
     var checkCompletion, index, j, len, p, results;
-    checkCompletion = function() {
+  checkCompletion = function() {
       if (pending === 0) {
         return resolve();
       }
@@ -46,6 +46,7 @@ conditionalRace = function(promises, condition, breakOnError) {
     for (index = j = 0, len = promises.length; j < len; index = ++j) {
       p = promises[index];
       p["catch"](function(err) {
+        console.trace(err);
         pending--;
         if (breakOnError) {
           return reject(err);
@@ -109,6 +110,8 @@ findPromise = function(arr, fnGetter, fnCondition, breakOnError) {
           return next();
         }
       })["catch"](function(err) {
+        console.error(`findPromise broke for the index ${index} which gave the candidate ${candidate.getAdapterId()}`);
+        console.trace(err);
         if (breakOnError) {
           return reject(err);
         } else {
@@ -149,6 +152,7 @@ forEachPromise = function(arr, fn, breakOnError) {
         result.push(resultForIndex);
         return next();
       })["catch"](function(err) {
+        console.error(err);
         if (breakOnError) {
           return reject(err);
         } else {
@@ -197,7 +201,6 @@ testSequential = function() {
     return new Promise(function(resolve, reject) {
       var inner;
       inner = function() {
-        console.log('boom:::', x);
         return resolve(x);
       };
       return setTimeout(inner, 1000);
