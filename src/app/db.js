@@ -1,31 +1,27 @@
+'use strict';
+
 /**
  * @module db
  */
-var $Config, $FSExtra, $MongoDB, $Sorting, $Winston, Collection, _, _connect, _isConnected, client, collectionBooks, getBook, getBooks, logLevel, logger, saveBook, url;
 
-$MongoDB = require('mongodb');
+import MongoDB from 'mongodb';
+import Winston from 'winston';
+import _ from 'lodash';
 
-$Winston = require('winston');
+import FSExtra from 'fs-extra';
+import Config from './config.js';
+import Sorting from './sorting.js';
 
-_ = require('lodash');
-
-$FSExtra = require('fs-extra');
-
-$Config = require('./config.js');
-
-$Sorting = require('./sorting.js');
-
-Collection = {
+const Collection = {
   Books: 'horace-books'
 };
 
-logLevel = $Config('horace.db.logLevel');
-
-logger = new $Winston.Logger({
+const logLevel = Config('horace.db.logLevel');
+const logger = new Winston.Logger({
   transports: [
-    new $Winston.transports.Console({
+    new Winston.transports.Console({
       level: logLevel
-    }), new $Winston.transports.File({
+    }), new Winston.transports.File({
       filename: 'horace-db.log'
     })
   ]
@@ -33,6 +29,7 @@ logger = new $Winston.Logger({
 
 
 /*
+// Keep tingoDB code around for now
 dbLocation = $Config 'horace.db.location'
 throw new Error 'dbLocation not defined' unless dbLocation
 logger.info "Ensure #{dbLocation}"
@@ -41,38 +38,31 @@ $FSExtra.ensureDir dbLocation
 logger.info 'Create db instance'
 Engine = $Tingo()
 database = new Engine.Db dbLocation, {}
- */
+*/
 
-client = $MongoDB.MongoClient;
+const client = MongoDB.MongoClient;
+const url = 'mongodb://localhost:27017/horace?maxPoolSize=10';
 
-url = 'mongodb://localhost:27017/horace?maxPoolSize=10';
+var _isConnected = false;
+var collectionBooks = null;
 
-_isConnected = false;
 
-collectionBooks = null;
 
-_connect = function() {
-  return new Promise(function(resolve, reject) {
-    if (_isConnected) {
-      return resolve();
+var ConnectPromise = new Promise(function(resolve, reject) {
+  client.connect(url, function(connectErr, db) {
+    if(connectErr) {
+      reject(connectErr);
     } else {
-      return client.connect(url, function(connectErr, db) {
-        if (connectErr) {
-          console.error('Unable to connect to mongodbn. Error: ', connectErr);
-          return reject(connectErr);
-        } else {
-          _isConnected = true;
-          collectionBooks = db.collection('books');
-          return resolve();
-        }
-      });
+      collectionBooks = db.collection('books');
+      resolve();
     }
   });
-};
+});
 
-saveBook = function(book) {
+
+export function saveBook(book) {
   logger.info('saveBook(%o)', book.id);
-  return _connect().then(function() {
+  return ConnectPromise.then(function() {
     var p;
     p = new Promise(function(resolve, reject) {
       var handleUpsert;
@@ -96,22 +86,22 @@ saveBook = function(book) {
   });
 };
 
-getBooks = function(opts) {
-  var defaults = {
-    sortColumn: 'title',
-    sortAscending: true
-  };
-  var sortOpts = {};
-  sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
-  opts = _.assign(defaults, opts);
-  return _connect().then(function() {
+
+export function getBooks(opts) {
+  return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
+      var defaults = {
+        sortColumn: 'title',
+        sortAscending: true
+      };
+      var sortOpts = {};
+      sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
+      opts = _.assign(defaults, opts);
       var cur = collectionBooks.find().sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){
           logger.error('Error converting to array', curErr);
           return reject(curErr);
-
         } else {
           var currentPage = parseInt(opts.currentPage);
           var pageSize = parseInt(opts.pageSize);
@@ -119,19 +109,18 @@ getBooks = function(opts) {
           var to = from + pageSize;
           var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
-          var response = {
-            books: books,
-            currentPage: currentPage,
-            maxPages: maxPages,
-            pageSize: pageSize,
-            sortColumn: opts.sortColumn,
-            sortAscending: opts.sortAscending
-          };
-          resolve(response);
+          resolve({
+            books         : books,
+            currentPage   : currentPage,
+            maxPages      : maxPages,
+            pageSize      : pageSize,
+            sortColumn    : opts.sortColumn,
+            sortAscending : opts.sortAscending
+          });
         }
       });//cur.toArray
-    });//return new Promise(function(resolve, reject){
-  });//_connect.then
+    })
+  });
 };//getBooks
 
 
@@ -141,9 +130,8 @@ getBooks = function(opts) {
  * @resolves {Book}
  * @rejects {Error}
  */
-
-getBook = function(id) {
-  return _connect().then(function() {
+export function getBook(id) {
+  return ConnectPromise.then(function() {
     var p;
     p = new Promise(function(resolve, reject) {
       var cur, err;
@@ -169,8 +157,3 @@ getBook = function(id) {
   });
 };
 
-module.exports = {
-  saveBook: saveBook,
-  getBooks: getBooks,
-  getBook: getBook
-};
