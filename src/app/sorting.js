@@ -1,9 +1,8 @@
+'use strict';
 /**
  * @module sorting
  */
-var SortColumn, SortDirection;
-
-SortColumn = {
+export const SortColumn = {
   Title: 'title',
   Year: 'year',
   Adapter: 'adapterId',
@@ -11,7 +10,7 @@ SortColumn = {
   Subjects: 'sortStringSubjects'
 };
 
-SortDirection = {
+export const SortDirection = {
   ASC: 'ascending',
   DESC: 'descending',
   flip: function(sDir) {
@@ -21,9 +20,4 @@ SortDirection = {
       return this.ASC;
     }
   }
-};
-
-module.exports = {
-  SortColumn: SortColumn,
-  SortDirection: SortDirection
 };

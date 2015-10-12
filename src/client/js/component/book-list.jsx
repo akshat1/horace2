@@ -3,7 +3,7 @@ import React from 'react';
 import Griddle from 'griddle-react';
 import autobind from 'autobind-decorator';
 import * as Net from './../util/net.js';
-import Sorting from './../../../app/sorting.js';
+import * as Sorting from './../../../app/sorting.js';
 import _ from 'lodash';
 
 var SortDirection = Sorting.SortDirection;

@@ -10,7 +10,7 @@ import Winston from 'Winston';
 import _ from 'lodash';
 
 import Config from './config.js';
-import Utils from './utils.js';
+import * as Utils from './utils.js';
 
 const logger = new Winston.Logger({
   transports: [

@@ -1,10 +1,10 @@
+'use strict';
+
 /**
  * General utilities
  * @module utils
  */
-var conditionalRace, findPromise, forEachPromise, getHash, isPromise, testSequential, toPromise;
-
-getHash = function(path) {
+export function getHash(path) {
   var ch, hash, i, j, ref;
   if (!(path != null ? path.length : void 0)) {
     throw new Error('Missing argument to generate hash from');
@@ -26,8 +26,7 @@ getHash = function(path) {
  * @resolve with the first value that satisfies the test condition, or null if no valid values are found
  * @reject rejects with the first error encountered iff breakOnError is true
  */
-
-conditionalRace = function(promises, condition, breakOnError) {
+export function conditionalRace(promises, condition, breakOnError) {
   var pending, primary;
   if (!condition) {
     condition = function(x) {
@@ -79,8 +78,7 @@ conditionalRace = function(promises, condition, breakOnError) {
                    the returned promise to fail
  * @returns {Promise} - A promise which resolves in the value which satisfied fnCondition
  */
-
-findPromise = function(arr, fnGetter, fnCondition, breakOnError) {
+export function findPromise(arr, fnGetter, fnCondition, breakOnError) {
   return new Promise(function(resolve, reject) {
     var index, next, tick;
     index = 0;
@@ -96,7 +94,7 @@ findPromise = function(arr, fnGetter, fnCondition, breakOnError) {
       }
       candidate = arr[index];
       return fnGetter.call(null, candidate, index).then(function(obj) {
-        return toPromise(fnCondition.call(null, obj)).then(function(isValid) {
+        return Promise.resolve(fnCondition.call(null, obj)).then(function(isValid) {
           if (isValid) {
             return obj;
           } else {
@@ -131,8 +129,7 @@ findPromise = function(arr, fnGetter, fnCondition, breakOnError) {
  * @param {function} fn - A function of the form function(obj, index) which returns a promise
  * @param {boolean} breakOnError - Whether or not execution should stop when any promise rejects
  */
-
-forEachPromise = function(arr, fn, breakOnError) {
+export function forEachPromise(arr, fn, breakOnError) {
   return new Promise(function(resolve, reject) {
     var index, next, result, tick;
     index = 0;
@@ -165,36 +162,7 @@ forEachPromise = function(arr, fn, breakOnError) {
 };
 
 
-/**
- * Returns a boolean indidicating whether or not the param is a Promise
- * Uses instanceof
- * @param {object} x
- * @return {boolean} x instanceof Promise
- */
-
-isPromise = function(x) {
-  return x instanceof Promise;
-};
-
-
-/**
- * Returns a promise which resolves into the supplied argument.
- * Returns the argument as is when supplied with a promise.
- * @param x {object}
- * @returns {promise}
- */
-
-toPromise = function(x) {
-  if (isPromise(x)) {
-    return x;
-  } else {
-    return new Promise(function(resolve, reject) {
-      return resolve(x);
-    });
-  }
-};
-
-testSequential = function() {
+export function testSequential() {
   var arr, fn;
   arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   fn = function(x) {
@@ -207,14 +175,4 @@ testSequential = function() {
     });
   };
   return forEachPromise(arr, fn);
-};
-
-module.exports = {
-  getHash: getHash,
-  conditionalRace: conditionalRace,
-  isPromise: isPromise,
-  toPromise: toPromise,
-  findPromise: findPromise,
-  forEachPromise: forEachPromise,
-  testSequential: testSequential
 };
