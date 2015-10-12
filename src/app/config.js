@@ -1,16 +1,15 @@
-"use strict";
+'use strict';
+
 /**
  * @module config
  */
-var $Path, $nconf, configFilePath, dbLocation;
+import NConf from 'nconf';
+import Path from 'path';
 
-$nconf = require('nconf');
-$Path = require('path');
+var configFilePath = Path.join(process.cwd(), 'config.json');
+var dbLocation = Path.join(process.cwd(), 'db');
 
-configFilePath = $Path.join(process.cwd(), 'config.json');
-dbLocation = $Path.join(process.cwd(), 'db');
-
-$nconf.argv().env().file({
+NConf.argv().env().file({
   file: configFilePath
 }).defaults({
   'horace.rebuildClientAtStartup' : false,
@@ -18,14 +17,18 @@ $nconf.argv().env().file({
   'horace.urlSubDir'              : '/',
   'horace.logLevel'               : 'info',
   'horace.server.logLevel'        : 'warn',
-  'horace.scanner.logLevel'       : 'debug',
+  'horace.scanner.logLevel'       : 'warn',
   'horace.scan.serverstart'       : true,
-  'horace.adapters.logLevel'      : 'debug',
+  'horace.adapters.logLevel'      : 'warn',
   'horace.db.logLevel'            : 'warn',
   'horace.webroot'                : 'dist',
   'horace.port'                   : 8080,
   'web.client.config'             : {},
-  'horace.defaultAdapters'        : ['./adapters/dli-adapter.js', './adapters/txt-adapter.js', './adapters/pdf-adapter.js'],
+  'horace.defaultAdapters'        : [
+    './adapters/dli-adapter.js',
+    './adapters/txt-adapter.js',
+    './adapters/pdf-adapter.js'
+  ],
   'horace.adapters'               : [],
   'horace.folders'                : [],
   'horace.db.location'            : dbLocation
@@ -36,6 +39,6 @@ $nconf.argv().env().file({
  * @param {string} key
  * @returns {Object|string}
  */
-module.exports = function(key) {
-  return $nconf.get(key);
+export default function(key) {
+  return NConf.get(key);
 };

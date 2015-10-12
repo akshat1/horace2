@@ -187,7 +187,7 @@ module.exports = {
     opts.method = Method.PUT;
     return ajax(opts);
   },
-  
+
   'delete': function(opts) {
     opts.method = Method.DELETE;
     return ajax(opts);
