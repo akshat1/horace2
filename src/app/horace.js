@@ -15,11 +15,10 @@ import Winston from 'winston';
 import Config from './config.js';
 import * as Utils from './utils.js';
 import * as IPCUtils from './ipc.js';
-import IPCEvent from './ipc.js';
 import * as DB from './db.js';
 import * as Adapter from './adapter.js';
 
-
+const IPCEvent = IPCUtils.Event;
 export const Event = {
   ScanStarted : 'Horace.ScanStarted',
   ScanStopped : 'Horace.ScanStopped',

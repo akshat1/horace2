@@ -1,42 +1,31 @@
+'use strict';
 /**
  * @module scanner
  */
-var $Adapters, $Config, $DB, $FS, $IPC, $IPCUtils, $Path, $Utils, $Winston, IPCEvent, _, _getChildren, _scanChildren, _scanPath, _scanSequentially, logLevel, logger;
+import IPC from 'node-ipc';
+import Path from 'path';
+import FS from 'graceful-fs';
+import Winston from 'winston';
+import _ from 'lodash';
 
-$IPC = require('node-ipc');
+import * as IPCUtils from './ipc.js';
+import Config from './config.js';
+import * as Adapters from './adapter.js';
+import * as DB from './db.js';
+import * as Utils from './utils.js';
 
-$Path = require('path');
 
-$FS = require('graceful-fs');
-
-$Winston = require('winston');
-
-_ = require('lodash');
-
-$IPCUtils = require('./ipc.js');
-
-$Config = require('./config.js');
-
-$Adapters = require('./adapter.js');
-
-$DB = require('./db.js');
-
-$Utils = require('./utils.js');
-
-IPCEvent = $IPCUtils.Event;
-
-logLevel = $Config('horace.scanner.logLevel');
-
-logger = new $Winston.Logger({
+const IPCEvent = IPCUtils.Event;
+const logLevel = Config('horace.scanner.logLevel');
+const logger   = new Winston.Logger({
   transports: [
-    new $Winston.transports.Console({
+    new Winston.transports.Console({
       level: logLevel
-    }), new $Winston.transports.File({
+    }), new Winston.transports.File({
       filename: 'horace-scanner.log'
     })
   ]
 });
-
 
 /**
  * if path is a directory then contents of the directory, else empty array
@@ -44,91 +33,90 @@ logger = new $Winston.Logger({
  * @return {promise}
  * @resolves {Array} - Array of paths within path. Already joined with path
  */
-
-_getChildren = function(path) {
+function _getChildren(path) {
   return new Promise(function(resolve, reject) {
-    return $FS.stat(path, function(statErr, stat) {
+    FS.stat(path, function(statErr, stat) {
       if (statErr) {
-        return reject(statErr);
+        reject(statErr);
       } else {
         if (stat.isDirectory()) {
-          return $FS.readdir(path, function(readdirErr, files) {
+          FS.readdir(path, function(readdirErr, files) {
             if (files) {
-              return resolve(files.map(function(f) {
-                return $Path.join(path, f);
+              resolve(files.map(function(f) {
+                return Path.join(path, f);
               }));
             } else {
-              return resolve();
+              resolve();
             }
-          });
+          }); //FS.readdir
         } else {
-          return resolve([]);
+          resolve([]);
         }
       }
     });
   });
 };
 
-_scanChildren = function(path) {
+
+function _scanChildren(path) {
   return _getChildren(path).then(_scanSequentially);
 };
 
-_scanPath = function(path) {
+
+function _scanPath(path) {
   logger.info("_scanPath(" + path + ")");
-  return $Adapters.getBook(path).then(function(oBook) {
-    if (oBook) {
-      logger.info('Save this book');
-      return $DB.saveBook(oBook);
-    } else {
-      logger.info('Scan children');
-      return _scanChildren(path);
-    }
-  });
+  if(!path){
+    return;
+  }
+  return Adapters.getBook(path)
+    .then(function(oBook) {
+      if (oBook) {
+        logger.info('Save this book');
+        return DB.saveBook(oBook);
+      } else {
+        logger.info('Scan children');
+        return _scanChildren(path);
+      }
+    });
 };
 
-_scanSequentially = function(paths) {
+
+function _scanSequentially(paths) {
   logger.info("_scanSequentially([" + (paths.join(',')) + "])");
-  return $Utils.forEachPromise(paths, _scanPath);
+  return Utils.forEachPromise(paths, _scanPath, true);
 };
 
-$IPC.config.id = $IPCUtils.ID.SCANNER;
 
-$IPC.config.silent = true;
+// ----------------- Start IPC ---------------------
+IPC.config.id     = IPCUtils.ID.SCANNER;
+IPC.config.silent = true;
+IPC.config.retry  = 1000;
 
-$IPC.config.retry = 1000;
-
-$IPC.connectTo($IPCUtils.ID.HORACE, function() {
-  var _master;
+IPC.connectTo(IPCUtils.ID.HORACE, function() {
   logger.info('Scanner connecting to master');
-  _master = $IPC.of[$IPCUtils.ID.HORACE];
+  var _master = IPC.of[IPCUtils.ID.HORACE];
   _master.on('connect', function() {
     logger.info('Scanner connected to master');
-    return _master.emit(IPCEvent.HELLOFROM_SCANNER);
+    _master.emit(IPCEvent.HELLOFROM_SCANNER);
   });
   _master.on('disconnect', function() {
-    return logger.info('Scanner disconnected from master');
+    logger.info('Scanner disconnected from master');
   });
-  return _master.on(IPCEvent.SCANNER_DOSCAN, function(data) {
-    var paths;
-    paths = data.paths;
+  _master.on(IPCEvent.SCANNER_DOSCAN, function(data) {
+    let paths = data.paths;
     logger.info('MASTER WANTS THE SCANNER TO START SCANNING ON :', paths);
     _master.emit(IPCEvent.SCANNER_SCANSTARTED);
-    return _scanSequentially(paths).then(function() {
-      logger.info('Done scanning all paths');
-      return _master.emit(IPCEvent.SCANNER_SCANSTOPPED);
-    })["catch"](function(err) {
-      logger.error('Error scanning all paths. Going to emit error');
-      logger.error(err);
-      _master.emit(IPCEvent.ERROR_OCCURRED, {
-        error: err
+    return _scanSequentially(paths)
+      .then(function() {
+        logger.info('Done scanning all paths');
+        return _master.emit(IPCEvent.SCANNER_SCANSTOPPED);
+      }).catch(function(err) {
+        logger.error('Error scanning all paths. Going to emit error');
+        logger.error(err);
+        _master.emit(IPCEvent.ERROR_OCCURRED, {
+          error: err
+        });
+        return _master.emit(IPCEvent.SCANNER_SCANSTOPPED);
       });
-      return _master.emit(IPCEvent.SCANNER_SCANSTOPPED);
-    });
   });
 });
-
-
-/*
-module.exports =
-  _scanSequentially : _scanSequentially
- */
