@@ -1,5 +1,16 @@
 "use strict";
 
+/*
+Notes:
+- CSS libs come from 3 routes
+  - bower (for files which should be collapsed into a single lib.css). We don't always use this, as not everyeone has a
+    correct bower.json, or some packages need to be built or whatever.
+  - direct download into src/client/lib (for files which should be collapsed into a single lib.css)
+  - direct download into src/client/resources (for files which should be loaded separately, like normalize.css)
+
+- We might do this for JS later on, but for now lib js only comes through bower (or npm and browserify)
+*/
+
 var gulp       = require('gulp');
 var _          = require('lodash');
 var sass       = require('gulp-sass');
@@ -59,6 +70,8 @@ var Paths = {
   css                 : distDir('css'),
   js                  : distDir('js'),
   resources           : distDir('resources'),
+  csslib_tmp          : tmpDir('csslib'),
+  csslib_src          : clientDir('lib', '**', '*.css'),
   csslib              : distDir('lib'),
   jslib               : distDir('lib'),
   test                : 'test/**/*.coffee',
@@ -126,11 +139,15 @@ gulp.task('sass', function() {
     .pipe(gulp.dest(Paths.css));
 });
 
-
-gulp.task('css-lib', function() {
+gulp.task('gather-lib-css', function(){
   return gulp.src('./bower.json')
     .pipe(bower())
     .pipe(gulpFilter(['**/*.css']))
+    .pipe(gulp.dest(Paths.csslib_tmp));
+});
+
+gulp.task('css-lib', ['gather-lib-css'], function() {
+  return gulp.src([Path.join(Paths.csslib_tmp, '**', '*.css'), Paths.csslib_src])
     .pipe(concat('lib.css', {newLine: File_Separator}))
     .pipe(gulp.dest(Paths.csslib));
 });

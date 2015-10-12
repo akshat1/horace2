@@ -14,7 +14,6 @@
     "tests"
   ],
   "dependencies": {
-    "compute": "~0.0.7",
-    "skeleton": "~2.0.4"
+    "compute": "~0.0.7"
   }
 }
