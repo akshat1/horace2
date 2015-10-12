@@ -8,6 +8,7 @@ import FS from 'graceful-fs';
 import Winston from 'winston';
 import _ from 'lodash';
 
+import * as Events from './events.js';
 import * as IPCUtils from './ipc.js';
 import Config from './config.js';
 import * as Adapters from './adapter.js';
@@ -15,7 +16,7 @@ import * as DB from './db.js';
 import * as Utils from './utils.js';
 
 
-const IPCEvent = IPCUtils.Event;
+const IPCEvents = Events.IPC;
 const logLevel = Config('horace.scanner.logLevel');
 const logger   = new Winston.Logger({
   transports: [
@@ -97,26 +98,26 @@ IPC.connectTo(IPCUtils.ID.HORACE, function() {
   var _master = IPC.of[IPCUtils.ID.HORACE];
   _master.on('connect', function() {
     logger.info('Scanner connected to master');
-    _master.emit(IPCEvent.HELLOFROM_SCANNER);
+    _master.emit(IPCEvents.HELLOFROM_SCANNER);
   });
   _master.on('disconnect', function() {
     logger.info('Scanner disconnected from master');
   });
-  _master.on(IPCEvent.SCANNER_DOSCAN, function(data) {
+  _master.on(IPCEvents.SCANNER_DOSCAN, function(data) {
     let paths = data.paths;
     logger.info('MASTER WANTS THE SCANNER TO START SCANNING ON :', paths);
-    _master.emit(IPCEvent.SCANNER_SCANSTARTED);
+    _master.emit(IPCEvents.SCANNER_SCANSTARTED);
     return _scanSequentially(paths)
       .then(function() {
         logger.info('Done scanning all paths');
-        return _master.emit(IPCEvent.SCANNER_SCANSTOPPED);
+        return _master.emit(IPCEvents.SCANNER_SCANSTOPPED);
       }).catch(function(err) {
         logger.error('Error scanning all paths. Going to emit error');
         logger.error(err);
-        _master.emit(IPCEvent.ERROR_OCCURRED, {
+        _master.emit(IPCEvents.ERROR_OCCURRED, {
           error: err
         });
-        return _master.emit(IPCEvent.SCANNER_SCANSTOPPED);
+        return _master.emit(IPCEvents.SCANNER_SCANSTOPPED);
       });
   });
 });

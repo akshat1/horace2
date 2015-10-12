@@ -13,12 +13,13 @@ import FSExtra from 'fs-extra';
 import URL from 'url';
 import _ from 'lodash';
 
-import ServerEvents from './server-events.js';
+import * as Events from './events.js';
 import Config from './config.js';
 import Utils from './utils.js';
 import * as Horace from './horace.js';
 
 
+const ServerEvents = Events.Server;
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({

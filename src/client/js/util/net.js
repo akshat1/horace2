@@ -11,8 +11,10 @@ Provides both HTTP as well as Websocket related utils.
 
 import Http from './http.js';
 import _ from 'lodash';
-import ServerEvents from '../../../app/server-events.js';
+import * as Events from './events.js';
 
+
+const ServerEvents = Events.Server;
 
 // -------------- Websockets stuff --------------
 var socket = null

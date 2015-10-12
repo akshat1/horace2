@@ -17,14 +17,9 @@ import * as Utils from './utils.js';
 import * as IPCUtils from './ipc.js';
 import * as DB from './db.js';
 import * as Adapter from './adapter.js';
+import * as HoraceEvents from './events.js';
 
-const IPCEvent = IPCUtils.Event;
-export const Event = {
-  ScanStarted : 'Horace.ScanStarted',
-  ScanStopped : 'Horace.ScanStopped',
-  Error       : 'Horace.ErrorOccurred'
-};
-
+const IPCEvents = HoraceEvents.IPC;
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
@@ -37,7 +32,6 @@ const logger = new Winston.Logger({
 
 const tmpFolderPath = Path.join(process.cwd(), Config('horace.tmpDirPath'));
 const watchedFolders = Config('horace.folders');
-const horace = new Events.EventEmitter();
 var _isScanning = false;
 
 
@@ -49,8 +43,8 @@ export function startScan() {
   logger.info('startScanning');
   return new Promise(function(resolve, reject) {
     try {
-      logger.info('broadcast event : ', IPCEvent.SCANNER_DOSCAN);
-      IPC.server.broadcast(IPCEvent.SCANNER_DOSCAN, {
+      logger.info('broadcast event : ', IPCEvents.SCANNER_DOSCAN);
+      IPC.server.broadcast(IPCEvents.SCANNER_DOSCAN, {
         paths: watchedFolders
       });
       logger.info('done');
@@ -119,39 +113,38 @@ export function requestDownload(id) {
 };
 
 
-// |--|----------------------------- IPC
+// ------------------------------- IPC
 
 IPC.config.id     = IPCUtils.ID.HORACE;
 IPC.config.silent = true;
 IPC.config.retry  = 1500;
 
 function _ipcServer() {
-  IPC.server.on(IPCEvent.HELLOFROM_SCANNER, function(data, socket) {
+  IPC.server.on(IPCEvents.HELLOFROM_SCANNER, function(data, socket) {
     if (Config('horace.scan.serverstart')) {
       logger.info('horace.scan.serverstart set to true. Scanning now.');
       return startScan();
     }
   });
-  IPC.server.on(IPCEvent.ERROR_OCCURRED, function(data, socket) {
+  IPC.server.on(IPCEvents.ERROR_OCCURRED, function(data, socket) {
     logger.error('Somebody had an error', data);
     return console.error(data);
   });
-  IPC.server.on(IPCEvent.SCANNER_SCANSTARTED, function(data, socket) {
+  IPC.server.on(IPCEvents.SCANNER_SCANSTARTED, function(data, socket) {
     return _isScanning = true;
   });
-  return IPC.server.on(IPCEvent.SCANNER_SCANSTOPPED, function(data, socket) {
+  return IPC.server.on(IPCEvents.SCANNER_SCANSTOPPED, function(data, socket) {
     logger.info('Scaning Finished');
     _isScanning = false;
-    horace.emit(Event.ScanStopped);
     return getBook();
   });
 };
 
 
 IPC.serve(_ipcServer);
-IPC.server.define.listen[IPCEvent.ERROR_OCCURRED] = 'Some error occurred';
-IPC.server.define.listen[IPCEvent.HELLOFROM_SCANNER] = 'Hello from scanner';
-IPC.server.define.listen[IPCEvent.SCANNER_SCANSTARTED] = 'The scanner has started scanning';
-IPC.server.define.listen[IPCEvent.SCANNER_SCANSTOPPED] = 'The scanner has stopped scanning';
+IPC.server.define.listen[IPCEvents.ERROR_OCCURRED] = 'Some error occurred';
+IPC.server.define.listen[IPCEvents.HELLOFROM_SCANNER] = 'Hello from scanner';
+IPC.server.define.listen[IPCEvents.SCANNER_SCANSTARTED] = 'The scanner has started scanning';
+IPC.server.define.listen[IPCEvents.SCANNER_SCANSTOPPED] = 'The scanner has stopped scanning';
 IPC.server.start();
 ChildProcess.fork('./app/scanner.js');
