@@ -1,0 +1,37 @@
+@charset 'UTF-8';
+
+@mixin pager-element() {
+  @include flex-item($grow: 0, $shrink: 0);
+}
+
+
+.h-pager {
+  @include flex-box(row, $justify-content: space-between, $align-items: center);
+  padding: $space-M $space-L;
+  background: $background-darker;
+  color: $text-light;
+}
+
+.h-pager-previous {
+  @include pager-element;
+  width: toRem(80px);
+  background: $background-light;
+}
+
+.h-pager-next {
+  @include pager-element;
+  width: 80px;
+  background: $background-light;
+}
+
+.h-pager-pages {
+  @include pager-element;
+
+  > * {
+    margin-right: $space-S;
+  }
+
+  select {
+    color: $text-base;
+  }
+}

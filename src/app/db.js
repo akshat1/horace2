@@ -95,9 +95,11 @@ export function getBooks(opts) {
         sortAscending: true
       };
       var sortOpts = {};
+      opts.sortAscending = `${opts.sortAscending}`.toLowerCase() === 'true'
       sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
       opts = _.assign(defaults, opts);
       var cur = collectionBooks.find().sort(sortOpts);
+      console.log('sortOpts: ', opts);
       cur.toArray(function(curErr, books) {
         if(curErr){
           logger.error('Error converting to array', curErr);
