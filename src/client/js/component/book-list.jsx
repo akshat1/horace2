@@ -33,7 +33,8 @@ class BookList extends React.Component {
           columnName   : 'title',
           cssClassName : 'h-title',
           displayName  : 'Title',
-          isSortable   : true
+          isSortable   : true,
+          rowComponent : this.getCustomTitleRowComponent
         }, {
           columnName     : 'authors',
           cssClassName   : 'h-authors',
@@ -148,6 +149,24 @@ class BookList extends React.Component {
   componentDidMount() {
     this.fetchBooks();
   }//componentDidMount
+
+
+  @autobind
+  getCustomTitleRowComponent(book) {
+    var downloadBook = function() {
+      console.debug('download book');
+      Net.requestDownload(book);
+    }.bind(this);
+
+    return (
+      <span className='h-book-title'>
+        {book.title}
+        <span className='h-book-actions'>
+          <span className='fa fa-cloud-download' onClick={downloadBook}/>
+        </span>
+      </span>
+    );
+  }
 
 
   getBlockingWaitComponent() {
