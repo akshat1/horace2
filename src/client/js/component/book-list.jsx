@@ -15,6 +15,7 @@ class BookList extends React.Component {
     super(props);
     window._BookList = this;
     this.state = {
+      isPerformingBlockingAction: false,
       books: [],
       currentPage: 0,
       maxPages: 0,
@@ -71,6 +72,7 @@ class BookList extends React.Component {
   @autobind
   handleBooksResponse(res) {
     this.setState({
+      isPerformingBlockingAction: false,
       books: res.books,
       currentPage: parseInt(res.currentPage),
       maxPages: parseInt(res.maxPages),
@@ -82,12 +84,14 @@ class BookList extends React.Component {
 
 
   handleError(err) {
+    this.setState({isPerformingBlockingAction: false});
     console.error(err);
     alert(`Error ${err.message}`);
   }//handleError
 
 
   fetchBooks(opts) {
+    this.setState({isPerformingBlockingAction: true})
     let query = this.getBooksQuery(opts);
     Net.getBooks(query)
       .then(this.handleBooksResponse)
@@ -97,6 +101,9 @@ class BookList extends React.Component {
 
   @autobind
   setPage(index) {
+    if(this.state.isPerformingBlockingAction)
+      return;
+
     if(typeof index === 'string'){
       index = Number(index);
     }
@@ -106,6 +113,9 @@ class BookList extends React.Component {
 
   @autobind
   sortData(sort, sortAscending, data) {
+    if(this.state.isPerformingBlockingAction)
+      return;
+
     this.fetchBooks({
       sortColumn: sort,
       sortAscending: sortAscending
@@ -127,6 +137,9 @@ class BookList extends React.Component {
 
   @autobind
   setPageSize(size) {
+    if(this.state.isPerformingBlockingAction)
+      return;
+
     this.fetchBooks({pageSize: size});
   }//setPageSize
 
@@ -135,6 +148,17 @@ class BookList extends React.Component {
   componentDidMount() {
     this.fetchBooks();
   }//componentDidMount
+
+
+  getBlockingWaitComponent() {
+    var className = `h-blocking-ui-wait ${this.state.isPerformingBlockingAction ? 'visible' : ''}`;
+    return (
+      <div className={className}>
+        <span className='fa fa-refresh fa-spin'/>
+        <span className='label'>Updating&hellip;</span>
+      </div>
+    );
+  }
 
 
   render() {
@@ -157,6 +181,7 @@ class BookList extends React.Component {
             columnMetadata = {this.state.columnMetadata}
           />
         </div>
+        {this.getBlockingWaitComponent()}
       </div>
     );
   }
