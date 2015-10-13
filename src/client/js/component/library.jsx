@@ -3,7 +3,6 @@
 import EventEmitter from 'events';
 import React from 'react';
 import BookList from './book-list.jsx';
-import ViewSelector from './view-selector.jsx';
 
 
 class Library extends React.Component {
@@ -14,8 +13,12 @@ class Library extends React.Component {
 
   render() {
     return (
-      <div className='library'>
-        <ViewSelector/>
+      <div className='h-library'>
+        <div className='h-tool-bar'>
+          <div className='h-logo'>
+            Horace
+          </div>
+        </div>
         <BookList/>
       </div>
     );

@@ -1,0 +1,19 @@
+@charset 'UTF-8';
+
+.h-tool-bar {
+  @include flex-item();
+  background: $background-darkest;
+  color: #FFF;
+  padding: $space-M;
+  height: 1em;
+  line-height: 1em;
+
+  a {
+    margin-right: $space-M;
+  }
+
+  .h-logo {
+    float: right;
+    text-transform: uppercase;
+  }
+}

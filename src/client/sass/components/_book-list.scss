@@ -1,0 +1,78 @@
+@charset 'UTF-8';
+
+.h-book-list {
+  @include flex-item($grow: 1, $shrink: 1);
+  @include flex-box($justify-content: flex-start);
+  overflow: auto;
+
+  .h-pager {
+    @include flex-item();
+  }
+
+  .h-table-wrapper {
+    @include flex-item(1, 1);
+    overflow: auto;
+  }
+
+  thead {
+    background: $background-dark;
+  }
+
+  th {
+    @include user-select(none);
+    color: $text-light;
+    font-size: 1.2em;
+    color: $text-lighter;
+
+    &.h-sortable {
+      cursor: pointer;
+      &:hover {
+        background: lighten($background-dark, 10%);
+      }
+      &:active {
+        background: lighten($background-dark, 20%);
+      }
+    }
+
+    .h-table-sort {
+      margin-left: 0.5em;
+    }
+  }
+
+  td, th {
+    border: solid $border-color;
+    border-width: 0 1px 1px 0;
+
+    &:last-child {
+      border-width: 0 0 1px 0;
+    }
+  }
+
+  tr:hover {
+    td {
+      background-color: $background-light;
+    }
+  }
+
+  .h-adapterId {
+    @include text-overflow;
+    width: toRem(80px);
+    max-width: toRem(80px);
+  }
+
+  .h-authors {
+    width: toRem(150px);
+  }
+
+  .h-subjects {
+    width: toRem(150px);
+  }
+
+  .h-year {
+    width: toRem(80px);
+  }
+}
+
+.h-list-table {
+  width: 100%;
+}

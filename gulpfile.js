@@ -12,6 +12,7 @@ Notes:
 */
 
 var gulp       = require('gulp');
+var changed    = require('gulp-changed');
 var _          = require('lodash');
 var sass       = require('gulp-sass');
 var del        = require('del');
@@ -134,8 +135,10 @@ gulp.task('js', function() {
 
 gulp.task('sass', function() {
   return gulp.src(Paths.sass)
+    .pipe(sourcemaps.init())
     .pipe(sass())
     .pipe(concat('horace.css'))
+    .pipe(sourcemaps.write('.'))
     .pipe(gulp.dest(Paths.css));
 });
 
@@ -164,11 +167,13 @@ gulp.task('js-lib', function() {
 
 gulp.task('resources', function() {
   return gulp.src(Paths.resources_src)
+    .pipe(changed(Paths.resources))
     .pipe(gulp.dest(Paths.resources));
 });
 
 gulp.task('html', function() {
   return gulp.src(Paths.html_src)
+    .pipe(changed(Paths.html))
     .pipe(gulp.dest(Paths.html));
 });
 /* ******************************** /Build Client ******************************** */
@@ -201,7 +206,8 @@ gulp.task('coffee-test', function (cb) {
 
 /* ********************************* Top Level *********************************** */
 gulp.task('build', ['js', 'sass', 'html', 'resources', 'css-lib', 'js-lib']);
-gulp.task('default', ['build']);
+gulp.task('micro', ['js', 'sass']);
+gulp.task('default', ['micro']);
 /* ******************************** /Top Level *********************************** */
 
 
