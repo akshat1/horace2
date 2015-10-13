@@ -3,6 +3,7 @@
 .h-book-list {
   @include flex-item($grow: 1, $shrink: 1);
   @include flex-box($justify-content: flex-start);
+  position: relative;
   overflow: auto;
 
   .h-pager {
@@ -70,6 +71,26 @@
 
   .h-year {
     width: toRem(80px);
+  }
+
+  .h-blocking-ui-wait {
+    @include position(absolute, $top: 15px, $left: -100px);
+    padding: $space-M;
+    font-size: toRem(15px);
+    color: #FFF;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    opacity: 0;
+    transition: opacity 2s, left 1s;
+
+    &.visible {
+      left: 15px;
+      opacity: 1;
+    }
+
+    .label {
+      margin: 0 0 0 $space-M;
+    }
   }
 }
 
