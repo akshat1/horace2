@@ -14,47 +14,48 @@ class BookList extends React.Component {
   constructor(props) {
     super(props);
     window._BookList = this;
+    this.columnMetadata = [
+      {
+        columnName   : 'adapterId',
+        cssClassName : 'h-adapterId',
+        displayName  : 'Adapter',
+        isSortable   : true
+      }, {
+        columnName   : 'title',
+        cssClassName : 'h-title',
+        displayName  : 'Title',
+        isSortable   : true,
+        rowComponent : this.getCustomTitleRowComponent
+      }, {
+        columnName     : 'authors',
+        cssClassName   : 'h-authors',
+        displayName    : 'Author',
+        isSortable     : true,
+        sortColumnName : 'sortStringAuthors'
+      }, {
+        columnName     : 'subjects',
+        cssClassName   : 'h-subjects',
+        displayName    : 'Subjects',
+        isSortable     : true,
+        sortColumnName : 'sortStringSubjects'
+      }, {
+        columnName     : 'displayYear',
+        cssClassName   : 'h-year',
+        displayName    : 'Year',
+        isSortable     : true,
+        sortColumnName : 'year'
+      }
+    ];
+
     this.state = {
       isPerformingBlockingAction: false,
       books: [],
       currentPage: 0,
       maxPages: 0,
-      pageSize: 24,
+      pageSize: 25,
       sortColumn: 'title',
       sortAscending: true,
-      displayColumns: ['adapterId', 'title', 'authors', 'subjects', 'displayYear'],
-      columnMetadata: [
-        {
-          columnName   : 'adapterId',
-          cssClassName : 'h-adapterId',
-          displayName  : 'Adapter',
-          isSortable   : true
-        }, {
-          columnName   : 'title',
-          cssClassName : 'h-title',
-          displayName  : 'Title',
-          isSortable   : true,
-          rowComponent : this.getCustomTitleRowComponent
-        }, {
-          columnName     : 'authors',
-          cssClassName   : 'h-authors',
-          displayName    : 'Author',
-          isSortable     : true,
-          sortColumnName : 'sortStringAuthors'
-        }, {
-          columnName     : 'subjects',
-          cssClassName   : 'h-subjects',
-          displayName    : 'Subjects',
-          isSortable     : true,
-          sortColumnName : 'sortStringSubjects'
-        }, {
-          columnName     : 'displayYear',
-          cssClassName   : 'h-year',
-          displayName    : 'Year',
-          isSortable     : true,
-          sortColumnName : 'year'
-        }
-      ]
+      displayColumns: ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
     };
   }//constructor
 
@@ -197,7 +198,7 @@ class BookList extends React.Component {
             sortColumnName = {this.state.sortColumn}
             sortAscending  = {this.state.sortAscending}
             columns        = {this.state.displayColumns}
-            columnMetadata = {this.state.columnMetadata}
+            columnMetadata = {this.columnMetadata}
           />
         </div>
         {this.getBlockingWaitComponent()}

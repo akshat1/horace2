@@ -11,10 +11,12 @@ Provides both HTTP as well as Websocket related utils.
 
 import Http from './http.js';
 import _ from 'lodash';
-import * as Events from './../../../app/events.js';
+import HoraceEvents from './../../../app/events.js';
+import UrlMap from './../../../app/urls.js';
 
 
-const ServerEvents = Events.Server;
+const ServerEvents = HoraceEvents.Server;
+const ClientURLMap = UrlMap.Client;
 
 // -------------- Websockets stuff --------------
 var socket = null
@@ -59,7 +61,7 @@ export function downloadFile(url, success) {
 
 export function getBooks(query) {
   return Http.get({
-    url          : '/api/books',
+    url          : ClientURLMap['Books'],
     responseType : Http.ResponseType.JSON,
     data         : query
   });
@@ -71,4 +73,19 @@ export function requestDownload(book) {
     bookId: book.id
   });
 }
-// ---------------- /End Point ------------------ 
+
+
+export function isServerScanningForBooks() {
+  return Http.get({
+    url: ClientURLMap['Status.IsScanning'],
+    responseType: Http.ResponseType.JSON
+  });
+}
+
+
+export function doStartScanning() {
+  Http.get({
+    url: ClientURLMap['Command.StartScan']
+  });
+}
+// ---------------- /End Point ------------------

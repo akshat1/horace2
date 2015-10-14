@@ -92,7 +92,7 @@ export function getBookForDownload(book, targetFormat) {
   targetFormat = targetFormat || Formats.PDF;
   logger.info('getBookForDownload(%o)', book);
   return new Promise(function(resolve, reject) {
-    if (indexOf.call(SUPPORTED_EXPORT_FORMATS, targetFormat) < 0) {
+    if (SUPPORTED_EXPORT_FORMATS.indexOf(targetFormat) < 0) {
       let err = new Error("Target format not supported (>" + targetFormat + "<)");
       logger.error(err);
       reject(err);
