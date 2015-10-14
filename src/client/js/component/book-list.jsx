@@ -1,6 +1,5 @@
 'use strict';
 import React from 'react';
-//import Griddle from 'griddle-react';
 import HTable from './h-table.jsx';
 import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
