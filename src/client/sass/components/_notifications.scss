@@ -1,0 +1,50 @@
+@charset 'UTF-8';
+
+$dismisser-width: toRem(25.86px);
+
+.h-notification-list-trigger {
+  position: relative;
+
+  > .fa {
+    opacity: 0.1;
+  }
+
+  &.active {
+    .fa {
+      opacity: 1;
+    }
+  }
+}
+
+
+.h-notification {
+  padding-right: $dismisser-width;
+  position: relative;
+  border-left: $space-M solid transparent;
+
+  &:hover {
+    border-left-color: $background-dark;
+  }
+}
+
+
+.h-notification-content {
+  padding: $space-S;
+}
+
+
+.h-notification-dismisser {
+  @include position(absolute, $top: 0, $right: 0);
+  box-sizing: border-box;
+  width: $dismisser-width;
+  padding: $space-S;
+  cursor: pointer;
+
+  &:hover {
+    text-shadow: 0px 0px 3px rgba(0, 0, 0, 0.5);
+  }
+
+  .fa {
+    color: black;
+  }
+}

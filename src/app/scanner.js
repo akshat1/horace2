@@ -8,7 +8,7 @@ import FS from 'graceful-fs';
 import Winston from 'winston';
 import _ from 'lodash';
 
-import * as Events from './events.js';
+import HoraceEvents from './events.js';
 import * as IPCUtils from './ipc.js';
 import Config from './config.js';
 import * as Adapters from './adapter.js';
@@ -16,7 +16,7 @@ import * as DB from './db.js';
 import * as Utils from './utils.js';
 
 
-const IPCEvents = Events.IPC;
+const IPCEvents = HoraceEvents.IPC;
 const logLevel = Config('horace.scanner.logLevel');
 const logger   = new Winston.Logger({
   transports: [

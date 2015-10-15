@@ -53,6 +53,10 @@
     td {
       background-color: $background-light;
     }
+
+    .h-book-actions {
+      visibility: visible;
+    }
   }
 
   .h-adapterId {
@@ -63,14 +67,19 @@
 
   .h-authors {
     width: toRem(150px);
+    max-width: toRem(150px);
+    word-wrap: break-word;
   }
 
   .h-subjects {
     width: toRem(150px);
+    max-width: toRem(150px);
+    word-wrap: break-word;
   }
 
   .h-year {
     width: toRem(80px);
+    max-width: toRem(80px);
   }
 
   .h-blocking-ui-wait {
@@ -90,6 +99,14 @@
 
     .label {
       margin: 0 0 0 $space-M;
+    }
+  }
+
+  .h-book-actions {
+    visibility: hidden;
+    float: right;
+    > span {
+      cursor: pointer;
     }
   }
 }

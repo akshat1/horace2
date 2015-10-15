@@ -1,19 +1,53 @@
 @charset 'UTF-8';
 
+$_toolbar-padding: $space-S;
+
+.h-toolbar-section-left {
+  @include flex-item();
+  @include flex-box(row, $justify-content: flex-start);
+  padding: $_toolbar-padding;
+}
+
+
+.h-toolbar-section-center {
+  @include flex-item($grow: 1);
+  @include flex-box(row, $justify-content: flex-center);
+  padding: $_toolbar-padding 0;
+}
+
+
+.h-toolbar-section-right {
+  @include flex-item();
+  @include flex-box(row, $justify-content: flex-end);
+  padding: $_toolbar-padding;
+}
+
+
+.h-toolbar-item {
+  @include flex-item();
+}
+
+
+.h-toolbar-item + .h-toolbar-item{
+  margin-left: $space-M;
+}
+
+
 .h-tool-bar {
   @include flex-item();
+  @include flex-box(row);
+  padding: 0 $space-S;
   background: $background-darkest;
-  color: #FFF;
-  padding: $space-M;
-  height: 1em;
-  line-height: 1em;
 
-  a {
-    margin-right: $space-M;
+  // Individual tool-bar items
+  .h-logo {
+    color: #FFF;
+    font-size: 1.4em;
+    text-transform: uppercase;
   }
 
-  .h-logo {
-    float: right;
-    text-transform: uppercase;
+  .fa {
+    color: #FFF;
+    font-size: 1.4em;
   }
 }

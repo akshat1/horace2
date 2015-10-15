@@ -19,6 +19,10 @@ th {
   font-weight: normal;
 }
 
+a {
+  color: $link-color;
+}
+
 /* ******************* /Native ******************* */
 
 
@@ -26,5 +30,6 @@ th {
 
 .h-library {
   @include flex-box($justify-content: flex-start);
+  font-size: 0.9em;
   height: 100%;
 }

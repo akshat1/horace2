@@ -271,7 +271,7 @@ export function getBookForDownload(book, format) {
       reject(new Error("This book does not belong to this adapter [" + ADAPTER_ID + "]"));
       return;
     }
-    if (indexOf.call(SUPPORTED_EXPORT_FORMATS, format) < 0) {
+    if (SUPPORTED_EXPORT_FORMATS.indexOf(format) < 0) {
       reject(new Error("Target format not supported (>" + format + "<)"));
       return;
     }

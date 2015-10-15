@@ -17,9 +17,10 @@ import * as Utils from './utils.js';
 import * as IPCUtils from './ipc.js';
 import * as DB from './db.js';
 import * as Adapter from './adapter.js';
-import * as HoraceEvents from './events.js';
+import HoraceEvents from './events.js';
 
 const IPCEvents = HoraceEvents.IPC;
+const ServerEvents = HoraceEvents.Server;
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
@@ -39,7 +40,7 @@ logger.info('watchedFolders:');
 logger.info(watchedFolders);
 
 
-export function startScan() {
+function startScan() {
   logger.info('startScanning');
   return new Promise(function(resolve, reject) {
     try {
@@ -56,23 +57,23 @@ export function startScan() {
 };
 
 
-export function getBooks(opts) {
+function getBooks(opts) {
   logger.info('getBooks');
   return DB.getBooks(opts);
 };
 
 
-export function getBook(id) {
+function getBook(id) {
   logger.info(`getBook(${id})`);
   return DB.getBook(id);
 };
 
 
-export function requestDownload(id) {
+function requestDownload(id) {
   return new Promise(function(resolve, reject) {
     return getBook(id).then(function(book) {
       logger.info('Download >>> ', book);
-      let tmpFilePath = Path.join(tmpFolderPath, "id_" + (Date.now()) + "_" + (Path.basename(book.path)));
+      let tmpFilePath = Path.join(tmpFolderPath, Path.basename(book.path));
       logger.debug('write to tmp location: ', tmpFilePath);
       Adapter.getBookForDownload(book).then(function(bookRStream) {
         logger.debug('Got book read stream', bookRStream);
@@ -113,6 +114,20 @@ export function requestDownload(id) {
 };
 
 
+function isScanningForBooks() {
+  return _isScanning;
+}
+
+var Horace = new Events.EventEmitter();
+Horace.startScan = startScan;
+Horace.getBooks = getBooks;
+Horace.getBook = getBook;
+Horace.requestDownload = requestDownload;
+Horace.isScanningForBooks = isScanningForBooks;
+export default Horace;
+
+
+
 // ------------------------------- IPC
 
 IPC.config.id     = IPCUtils.ID.HORACE;
@@ -126,17 +141,22 @@ function _ipcServer() {
       return startScan();
     }
   });
+
   IPC.server.on(IPCEvents.ERROR_OCCURRED, function(data, socket) {
     logger.error('Somebody had an error', data);
     return console.error(data);
   });
+
   IPC.server.on(IPCEvents.SCANNER_SCANSTARTED, function(data, socket) {
-    return _isScanning = true;
+    _isScanning = true;
+    Horace.emit(ServerEvents.SCANNER_SCANSTARTED);
   });
+
   return IPC.server.on(IPCEvents.SCANNER_SCANSTOPPED, function(data, socket) {
     logger.info('Scaning Finished');
     _isScanning = false;
-    return getBook();
+    getBook();
+    Horace.emit(ServerEvents.SCANNER_SCANSTOPPED);
   });
 };
 

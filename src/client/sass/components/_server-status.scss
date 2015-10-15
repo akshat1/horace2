@@ -1,0 +1,29 @@
+@charset 'UTF-8';
+
+@mixin _server-scan-item() {
+  @include flex-item();
+
+  .fa {
+    opacity: 0.1;
+    transition: opacity 1s;
+    cursor: pointer;
+
+    &:hover {
+      opacity: 1;
+    }
+
+    &.fa-spin {
+      opacity: 1;
+      cursor: default;
+    }
+  }
+}
+
+.h-tool-bar-server-status-container {
+  @include flex-box(row);
+}
+
+
+.h-server-scanning-status {
+  @include _server-scan-item();
+}

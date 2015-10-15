@@ -26,7 +26,8 @@ const StyleClass = {
  *      cssClassName   : String,
  *      displayName    : String,
  *      isSortable     : boolean,
- *      sortColumnName : String
+ *      sortColumnName : String,
+ *      rowComponent: function(data) { return ... } //Should return react component
  *    }]
  */
 class HTable extends React.Component {
@@ -131,7 +132,7 @@ class HTable extends React.Component {
       let metadata = this.getColumnMetadata(columnName);
       let className = metadata ? metadata.cssClassName : '';
       rowContent.push(
-        <td className={className}>{cellData}</td>
+        <td className={className}>{metadata.rowComponent? metadata.rowComponent(rowData) : cellData}</td>
       );
     }
     return (<tr>{rowContent}</tr>);
