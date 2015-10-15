@@ -49,12 +49,11 @@ export function offWebSocket(eventName, callback) {
 
 // ----------------- End Point ------------------
 export function downloadFile(url, success) {
-  var frame;
-  frame = document.createElement('iframe');
+  var frame = document.createElement('iframe');
   frame.className = 'h-download-frame';
   frame.height = '100px';
   frame.width = '100px';
-  document.body.appendChild(_frame);
+  document.body.appendChild(frame);
   frame.src = url;
 }
 

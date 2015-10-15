@@ -73,7 +73,7 @@ function requestDownload(id) {
   return new Promise(function(resolve, reject) {
     return getBook(id).then(function(book) {
       logger.info('Download >>> ', book);
-      let tmpFilePath = Path.join(tmpFolderPath, "id_" + (Date.now()) + "_" + (Path.basename(book.path)));
+      let tmpFilePath = Path.join(tmpFolderPath, Path.basename(book.path));
       logger.debug('write to tmp location: ', tmpFilePath);
       Adapter.getBookForDownload(book).then(function(bookRStream) {
         logger.debug('Got book read stream', bookRStream);

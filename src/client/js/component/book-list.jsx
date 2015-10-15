@@ -154,7 +154,6 @@ class BookList extends React.Component {
   @autobind
   getCustomTitleRowComponent(book) {
     var downloadBook = function() {
-      console.debug('download book');
       Net.requestDownload(book);
     }.bind(this);
 

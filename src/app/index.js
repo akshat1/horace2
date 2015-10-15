@@ -12,6 +12,7 @@ import SocketIO from 'socket.io';
 import FSExtra from 'fs-extra';
 import URL from 'url';
 import _ from 'lodash';
+import Mime from 'mime';
 
 import HoraceEvents from './events.js';
 import UrlMap from './urls.js';
@@ -57,7 +58,7 @@ const apiRouter = Express.Router();
 logger.info('listenPort     : ', listenPort);
 logger.info('serverTmpPath  : ', serverTmpPath);
 logger.info('webroot        : ', webroot);
-logger.info('downloadDirURL : ', downloadDirURL);
+//logger.info('downloadDirURL : ', downloadDirURL);
 logger.info('webrootURL     : ', webrootURL);
 
 FSExtra.ensureDir(serverTmpPath);
@@ -65,7 +66,21 @@ FSExtra.ensureDir(webroot);
 
 
 // Set up routes
-app.use(downloadDirURL, ServeStatic(serverTmpPath));
+//app.use(downloadDirURL, ServeStatic(serverTmpPath));
+app.use('/download/:fileName', function (request, response) {
+  logger.info('download file');
+  var fileName = request.params.fileName;
+  logger.info(`download: ${fileName}`);
+  var fileReadStream = FSExtra.createReadStream(Path.join(serverTmpPath, fileName));
+  fileReadStream.on('error', function(err) {
+    console.log('Error reading file for download', err);
+    response.end();
+  });
+  response.set('Content-Type', Mime.lookup(fileName));
+  response.set('Content-Disposition', `attachment; filename="${fileName}"`);
+  fileReadStream.pipe(response);
+});
+
 app.use(webrootURL, ServeStatic(webroot));
 app.use(ServerUrlMap.Config, function(req, res) {
   var str;

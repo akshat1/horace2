@@ -2,12 +2,14 @@
 
 import EventEmitter from 'events';
 import React from 'react';
+import Path from 'path';
+import autobind from 'autobind-decorator';
+
 import BookList from './book-list.jsx';
 import ScanningStatus from './scanning-status.jsx';
-
+import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
 import * as Net from './../util/net.js';
-import autobind from 'autobind-decorator';
 
 
 const ServerEvents = HoraceEvents.Server;
@@ -18,7 +20,8 @@ class Library extends React.Component {
     window._Library = this;
 
     this.state = {
-      isScanning: false
+      isScanning: false,
+      notifications: []
     }
   }//constructor
 
@@ -37,6 +40,22 @@ class Library extends React.Component {
     Net.onWebSocket(ServerEvents.SCANNER_SCANSTOPPED, function(){
       this.setState({isScanning: false});
     }.bind(this));
+
+    Net.onWebSocket(ServerEvents.BOOK_READY_FOR_DOWNLOAD, function(payload){
+      this.generateFileDownloadNotification(payload.path);
+    }.bind(this));
+  }
+
+
+  @autobind
+  generateFileDownloadNotification(filePath) {
+    var fileName = Path.basename(filePath);
+    var notifications = this.state.notifications;
+    notifications.push (<div className='h-file-download'>
+        Download Ready:&nbsp;
+        <a href={filePath}>{fileName}</a>
+      </div>);
+    this.setState({notifications: notifications});
   }
 
 
@@ -48,6 +67,7 @@ class Library extends React.Component {
       .catch(function(err){
         console.error('Error findind out if server is currently scanning');
       });
+    setTimeout(this.generateNotification, 500);
   }
 
 
@@ -71,11 +91,24 @@ class Library extends React.Component {
   }
 
 
+  @autobind
+  dismissNotification(notification) {
+    var notifications = this.state.notifications.filter(function(n) {
+      return n!== notification;
+    });
+    this.setState({
+      notifications: notifications
+    });
+  }
+
+
   render() {
     return (
       <div className='h-library'>
         <div className='h-tool-bar'>
-          <div className='h-toolbar-section-left'/>
+          <div className='h-toolbar-section-left'>
+            <NotificationList notifications={this.state.notifications} dismiss={this.dismissNotification}/>
+          </div>
           <div className='h-toolbar-section-center'/>
           <div className='h-toolbar-section-right'>
             {this.getServerStatusIndicators()}

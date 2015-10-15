@@ -123,7 +123,9 @@ gulp.task('build-app', function() {
 
 /* ********************************* Build Client ******************************** */
 gulp.task('js', function() {
-  return browserify(Paths.client_js_entry)
+  return browserify(Paths.client_js_entry, {
+      debug: true
+    })
     .transform(babelify.configure({
       optional: ["es7.decorators"]
     }))

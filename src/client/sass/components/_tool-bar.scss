@@ -38,15 +38,16 @@ $_toolbar-padding: $space-S;
   @include flex-box(row);
   padding: 0 $space-S;
   background: $background-darkest;
-  color: #FFF;
-  font-size: 1.4em;
-
-  a {
-    margin-right: $_toolbar-padding;
-  }
 
   // Individual tool-bar items
   .h-logo {
+    color: #FFF;
+    font-size: 1.4em;
     text-transform: uppercase;
+  }
+
+  .fa {
+    color: #FFF;
+    font-size: 1.4em;
   }
 }
