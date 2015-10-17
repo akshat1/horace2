@@ -65,62 +65,6 @@ FSExtra.ensureDir(serverTmpPath);
 FSExtra.ensureDir(webroot);
 
 
-// Set up routes
-//app.use(downloadDirURL, ServeStatic(serverTmpPath));
-app.use('/download/:fileName', function (request, response) {
-  logger.info('download file');
-  var fileName = request.params.fileName;
-  logger.info(`download: ${fileName}`);
-  var fileReadStream = FSExtra.createReadStream(Path.join(serverTmpPath, fileName));
-  fileReadStream.on('error', function(err) {
-    console.log('Error reading file for download', err);
-    response.end();
-  });
-  response.set('Content-Type', Mime.lookup(fileName));
-  response.set('Content-Disposition', `attachment; filename="${fileName}"`);
-  fileReadStream.pipe(response);
-});
-
-app.use(webrootURL, ServeStatic(webroot));
-app.use(ServerUrlMap.Config, function(req, res) {
-  var str;
-  str = "window.HoraceConf = " + (JSON.stringify(Config('web.client.config'))) + ";\nwindow.HoraceConf['webrootURL'] = \"" + webrootURL + "\";\nwindow.HoraceConf['socketIOURL'] = \"" + socketIOURL + "\";";
-  return res.send(str);
-});
-
-
-// Set up the api router
-apiRouter.get(ServerUrlMap['Command.StartScan'], function(request, response) {
-  logger.debug('Start Scan');
-  Horace.startScan();
-  return response.send('OK');
-});
-
-
-apiRouter.get(ServerUrlMap['Status.IsScanning'], function(request, response) {
-  return response.json(Horace.isScanningForBooks());
-});
-
-
-apiRouter.get(ServerUrlMap['Books'], function(request, response) {
-  logger.debug('getBooks');
-  var query = URL.parse(request.url, true).query;
-  return Horace.getBooks(query)
-    .then(function(books) {
-      books = books || [];
-      logger.debug('Got %d books', books.length);
-      return response.json(books);
-    })
-    .catch(function(err) {
-      logger.error('Error fetching books from Horace %o', error);
-      return response.status(500).send(err);
-    });
-});
-
-
-app.use(ServerUrlMap.API, apiRouter);
-
-
 //Set up websockets
 const server = app.listen(listenPort, function() {
   return logger.info("Listening on " + (this.address()));
@@ -164,3 +108,81 @@ io.on('connection', function(socket) {
       });
   });
 });
+
+
+// Set up routes
+//app.use(downloadDirURL, ServeStatic(serverTmpPath));
+app.use('/download/:fileName', function (request, response) {
+  logger.info('download file');
+  var fileName = request.params.fileName;
+  logger.info(`download: ${fileName}`);
+  var fileReadStream = FSExtra.createReadStream(Path.join(serverTmpPath, fileName));
+  fileReadStream.on('error', function(err) {
+    console.log('Error reading file for download', err);
+    response.end();
+  });
+  response.set('Content-Type', Mime.lookup(fileName));
+  response.set('Content-Disposition', `attachment; filename="${fileName}"`);
+  fileReadStream.pipe(response);
+});
+
+app.use(webrootURL, ServeStatic(webroot));
+app.use(ServerUrlMap.Config, function(req, res) {
+  var config = Config('web.client.config');
+  _.extend(config, {
+    webrootURL: webrootURL,
+    socketIOURL: socketIOURL
+  });
+  var str = `window.HoraceConf = ${JSON.stringify(config, null, 4)}`;
+  return res.send(str);
+});
+
+
+// Set up the api router
+apiRouter.get(ServerUrlMap['Command.StartScan'], function(request, response) {
+  logger.debug('Start Scan');
+  Horace.startScan();
+  return response.send('OK');
+});
+
+
+apiRouter.get(ServerUrlMap['Status.IsScanning'], function(request, response) {
+  return response.json(Horace.isScanningForBooks());
+});
+
+
+apiRouter.get(ServerUrlMap['Books'], function(request, response) {
+  logger.debug('getBooks');
+  var query = URL.parse(request.url, true).query;
+  return Horace.getBooks(query)
+    .then(function(books) {
+      books = books || [];
+      logger.debug('Got %d books', books.length);
+      return response.json(books);
+    })
+    .catch(function(err) {
+      logger.error('Error fetching books from Horace %o', error);
+      return response.status(500).send(err);
+    });
+});
+
+
+apiRouter.get(ServerUrlMap['Books.Distinct'], function(request, response) {
+  logger.debug(`get[${ServerUrlMap['Books.Distinct']}]`);
+  var columnName = request.params.columnName;
+  Horace.getDistinctBookAttribute(columnName)
+    .then(function(values){
+      logger.debug(`Got ${values.length} distinct values`)
+      response.json(values);
+      return;
+    })
+    .catch(function(err){
+      logger.error(`Error fetching distinct value for book['${columnName}']`, err);
+      response.sattus(500).send(err);
+      return;
+    });
+  return;
+});
+
+
+app.use(ServerUrlMap.API, apiRouter);

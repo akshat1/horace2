@@ -105,9 +105,9 @@ export function getBooks(opts) {
           logger.error('Error converting to array', curErr);
           return reject(curErr);
         } else {
-          var currentPage = parseInt(opts.currentPage);
-          var pageSize = parseInt(opts.pageSize);
-          var from = currentPage* pageSize;
+          var currentPage = parseInt(opts.currentPage) || 0;
+          var pageSize = parseInt(opts.pageSize) || 25;
+          var from = currentPage * pageSize;
           var to = from + pageSize;
           var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
@@ -124,6 +124,17 @@ export function getBooks(opts) {
     })
   });
 };//getBooks
+
+
+/**
+ * @param {String} columnName
+ * @param {object} query
+ * @returns {Promise}
+ * @resolves {Array}
+ */
+export function getDistinctBookAttribute(columnName, query) {
+  return collectionBooks.distinct(columnName, query);
+}
 
 
 /**

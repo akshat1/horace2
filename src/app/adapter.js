@@ -65,7 +65,7 @@ export function getBook(path) {
   var getBookProxy = function(adptr, index) {
     return adptr.getBook(path);
   };
-  let p = Utils.findPromise(adapters, getBookProxy, _.identity, true);
+  let p = Utils.findPromise(adapters, getBookProxy, _.identity);
   p.catch(function(err){
     logger.error(`adapter.getBook(${path}) encountered error`, err);
   });

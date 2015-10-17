@@ -10,7 +10,7 @@ import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
 import * as Net from './../util/net.js';
-
+window.Net = Net;
 
 const ServerEvents = HoraceEvents.Server;
 

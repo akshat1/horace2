@@ -14,9 +14,9 @@ import _ from 'lodash';
 import HoraceEvents from './../../../app/events.js';
 import UrlMap from './../../../app/urls.js';
 
-
 const ServerEvents = HoraceEvents.Server;
 const ClientURLMap = UrlMap.Client;
+window.ClientURLMap = ClientURLMap;
 
 // -------------- Websockets stuff --------------
 var socket = null
@@ -60,10 +60,38 @@ export function downloadFile(url, success) {
 
 export function getBooks(query) {
   return Http.get({
-    url          : ClientURLMap['Books'],
+    url          : ClientURLMap['Books'](),
     responseType : Http.ResponseType.JSON,
     data         : query
   });
+}
+
+
+function getDistinctBookAttribute(columnName) {
+  return Http.get({
+    url          : ClientURLMap['Books.Distinct'](columnName),
+    responseType : Http.ResponseType.JSON
+  });
+}
+
+
+export function getDistinctBookAdapters() {
+  return getDistinctBookAttribute('adapterId');
+}
+
+
+export function getDistinctBookAuthor() {
+  return getDistinctBookAttribute('authors');
+}
+
+
+export function getDistinctBookSubject() {
+  return getDistinctBookAttribute('subjects');
+}
+
+
+export function getDistinctBookYear() {
+  return getDistinctBookAttribute('year');
 }
 
 
@@ -76,7 +104,7 @@ export function requestDownload(book) {
 
 export function isServerScanningForBooks() {
   return Http.get({
-    url: ClientURLMap['Status.IsScanning'],
+    url: ClientURLMap['Status.IsScanning'](),
     responseType: Http.ResponseType.JSON
   });
 }
@@ -84,7 +112,7 @@ export function isServerScanningForBooks() {
 
 export function doStartScanning() {
   Http.get({
-    url: ClientURLMap['Command.StartScan']
+    url: ClientURLMap['Command.StartScan']()
   });
 }
 // ---------------- /End Point ------------------
