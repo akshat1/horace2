@@ -41,7 +41,10 @@ class Popup extends React.Component {
 
   @autobind
   componentDidMount() {
-    this.refs['popupElement'].getDOMNode().focus();
+    if (this.getItems().length < 1)
+      this.hide()
+    else
+      this.refs['popupElement'].getDOMNode().focus();
   }
 
 
@@ -58,7 +61,13 @@ class Popup extends React.Component {
 
   @autobind
   handleClick(e) {
-    this.hide();
+    var targetEl = e.currentTarget;
+    var root = this.refs['popupElement'].getDOMNode();
+    if(this.props.hideOnEveryClick){
+      this.hide();
+    } else if(targetEl !== root) {
+      this.hide();
+    }
   }
 
 
@@ -69,6 +78,10 @@ class Popup extends React.Component {
 
 
   render() {
+    if(this.getItems().length < 1){
+      return (<div style={{display: 'none'}}/>);
+    }
+
     return (
       <div className='h-popup' style={this.getStyle()} onBlur={this.handleBlur} onClick={this.handleClick} tabIndex={999} id={this.id} ref='popupElement'>
         {this.getItems()}
