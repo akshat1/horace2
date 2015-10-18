@@ -53,7 +53,7 @@ class NotificationList extends React.Component {
 
   @autobind
   handleClick(e) {
-    let targetElement = e.currentTarget;
+    var targetElement = e.currentTarget;
     this.setState({
       expanded: true,
       clickX: 0,

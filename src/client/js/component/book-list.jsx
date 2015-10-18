@@ -15,10 +15,11 @@ class BookList extends React.Component {
     window._BookList = this;
     this.columnMetadata = [
       {
-        columnName   : 'adapterId',
-        cssClassName : 'h-adapterId',
-        displayName  : 'Adapter',
-        isSortable   : true
+        columnName     : 'adapterId',
+        cssClassName   : 'h-adapterId',
+        displayName    : 'Adapter',
+        isSortable     : true,
+        isFiltered     : true
       }, {
         columnName   : 'title',
         cssClassName : 'h-title',
@@ -97,6 +98,25 @@ class BookList extends React.Component {
     Net.getBooks(query)
       .then(this.handleBooksResponse)
       .catch(this.handleError);
+  }
+
+
+  @autobind
+  getDistinctAdapters() {
+    console.debug('getDistinctAdapters()');
+    Net.getDistinctBookAdapters()
+      .then(function(distinctAdapters) {
+        this.setState({
+          distinctAdapters: distinctAdapters
+        });
+        return;
+      }.bind(this))
+      .catch(this.handleError);
+  }
+
+
+  getDistinct(columnName) {
+    return Net.getDistinct(columnName);
   }
 
 
@@ -197,6 +217,7 @@ class BookList extends React.Component {
             sortAscending  = {this.state.sortAscending}
             columns        = {this.state.displayColumns}
             columnMetadata = {this.columnMetadata}
+            getDistinct    = {this.getDistinct}
           />
         </div>
         {this.getBlockingWaitComponent()}

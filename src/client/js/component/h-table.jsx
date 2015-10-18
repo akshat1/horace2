@@ -3,6 +3,8 @@ import React from 'react';
 import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
+import ColumnFilter from './column-filter.jsx';
+
 
 const StyleClass = {
   Ascending  : 'fa-sort-asc',
@@ -21,6 +23,7 @@ const StyleClass = {
  *    sortAscending: isAscending
  *    tableClassName: String
  *    columns: [String]
+ *    getDistinct: function(<String>) {return [];}
  *    columnMetadata: [{     //optional, plus all properties of this are optional as well
  *      columnName     : String
  *      cssClassName   : String,
@@ -84,10 +87,23 @@ class HTable extends React.Component {
     var isAscending = this.props.sortAscending;
     if(isSorted)
       return (
-        <span className={`h-table-sort ${StyleClass.Sorted} ${isAscending ? StyleClass.Ascending : StyleClass.Descending}`}/>
+        <div className={`h-column-sort fa ${isAscending ? 'fa-sort-asc' : 'fa-sort-desc'}`}/>
       );
     else
+      return <div className={'h-column-sort'}/>;
+  }
+
+
+  getColumnFilterComponent(columnName, columnMetadata) {
+    var isFiltered = columnMetadata.isFiltered;
+    var getDistinct = function () {
+      return this.props.getDistinct(columnName);
+    };
+    if (isFiltered) {
+      return <ColumnFilter getOptions={getDistinct}/>;
+    } else {
       return;
+    }
   }
 
 
@@ -102,9 +118,14 @@ class HTable extends React.Component {
       let columnName = columns[i];
       let metadata = this.getColumnMetadata(columnName);
       if(metadata){
-        headerContents.push(<th className={`${metadata.cssClassName} ${metadata.isSortable ? StyleClass.Sortable : ''}`} onClick={this.makeColumnClickHandler(columnName, metadata)}>
-          {metadata.displayName}
-          {this.getColumnSortComponent(columnName, metadata)}
+        headerContents.push(<th className={metadata.cssClassName}>
+          <div className='h-column-header-wrapper'>
+            <div className={`h-column-name ${metadata.isSortable ? 'sortable' : ''}`} onClick={this.makeColumnClickHandler(columnName, metadata)}>
+              {this.getColumnSortComponent(columnName, metadata)}
+              {metadata.displayName}
+            </div>
+            {this.getColumnFilterComponent(columnName, metadata)}
+          </div>
         </th>);
       } else {
         headerContents.push(<th onClick={this.makeColumnClickHandler(columnName, metadata)}>{columnName}</th>);
