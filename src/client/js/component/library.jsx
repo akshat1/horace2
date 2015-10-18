@@ -6,6 +6,7 @@ import Path from 'path';
 import autobind from 'autobind-decorator';
 
 import BookList from './book-list.jsx';
+import MenuRenderer from './menu-renderer.jsx';
 import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
@@ -118,6 +119,7 @@ class Library extends React.Component {
           </div>
         </div>
         <BookList/>
+        <MenuRenderer/>
       </div>
     );
   }//render

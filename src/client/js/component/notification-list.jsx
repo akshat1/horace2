@@ -3,6 +3,7 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
 import Popup from './popup.jsx';
+import Menu from './menu.jsx';
 
 
 class NotificationWrapper extends React.Component {
@@ -100,12 +101,19 @@ class NotificationList extends React.Component {
   componentDidMount() {}
 
 
+  renderTriggerElement() {
+    if (this.props.notifications.length)
+      return (<span className='fa fa-bell'/>);
+    else
+      return (<span className='fa fa-bell-o'/>);
+  }
+
+
   render() {
     return (
-      <div className={this.getRootStyle()} onClick={this.handleClick}>
-        <span className='fa fa-bell'/>
-        {this.getPopup()}
-      </div>
+      <Menu items={this.getNotifications()} disabled={this.props.notifications.length === 0}>
+        {this.renderTriggerElement()}
+      </Menu>
     );
   }
 }
