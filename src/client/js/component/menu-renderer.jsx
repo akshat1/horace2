@@ -63,13 +63,39 @@ class MenuView extends React.Component {
   }
 
 
+  reposition() {
+    var el = this.refs['root'].getDOMNode();
+    var viewPort = el.offsetParent;
+    var style = this.state.style;
+    if ((viewPort.offsetWidth - (el.offsetLeft + el.offsetWidth)) < 0) {
+      delete style['left'];
+      style['right'] = 2;
+    }
+
+    if((viewPort.offsetHeight - (el.offsetTop + el.offsetHeight)) < 0) {
+      console.debug('delta: ', (viewPort.offsetHeight - (el.offsetTop + el.offsetHeight)) < 0);
+      style['bottom'] = 2;
+    }
+
+    this.setState({style: style});
+  }
+
+
+  @autobind
   componentDidMount() {
+    window._XXX = this;
+    this.reposition();
     document.body.addEventListener('click', this.handleClickOnBody);
   }
 
 
   componentWillUnmount() {
     document.body.removeEventListener('click', this.handleClickOnBody);
+  }
+
+
+  getRootStyleClass() {
+    return `h-menu ${this.props.view.className || ''}`;
   }
 
 
@@ -85,7 +111,7 @@ class MenuView extends React.Component {
 
   render() {
     return (
-      <div className={`h-menu`} style={this.state.style} tabIndex={999} ref='root'>
+      <div className={this.getRootStyleClass()} style={this.state.style} tabIndex={999} ref='root'>
         {this.renderMenuItems()}
       </div>
     );

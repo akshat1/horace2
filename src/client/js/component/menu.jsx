@@ -31,8 +31,9 @@ class Menu extends React.Component {
     console.debug('I was clicked');
     PubSub.broadcast('menu.clicked', {
       key: this.getKey(),
-      trigger : this.refs['trigger'].getDOMNode(),
-      items   : this.props.items
+      trigger   : this.refs['trigger'].getDOMNode(),
+      items     : this.props.items,
+      className : this.props.className
     });
   }
 

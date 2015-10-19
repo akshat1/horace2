@@ -7,6 +7,7 @@
 import Path from 'path';
 import Winston from 'winston';
 import Express from 'express';
+import BodyParser from 'body-parser';
 import ServeStatic from 'serve-static';
 import SocketIO from 'socket.io';
 import FSExtra from 'fs-extra';
@@ -53,6 +54,7 @@ const downloadDirURL = Path.join(serverSubDir, 'download');
 const webrootURL     = Path.join(serverSubDir, serverSubDir).replace(/\./, '/');
 const socketIOURL    = Path.join(serverSubDir, 'socket.io');
 const app = Express();
+app.use(BodyParser.json());
 const apiRouter = Express.Router();
 
 logger.info('listenPort     : ', listenPort);
@@ -151,9 +153,9 @@ apiRouter.get(ServerUrlMap['Status.IsScanning'], function(request, response) {
 });
 
 
-apiRouter.get(ServerUrlMap['Books'], function(request, response) {
+apiRouter.post(ServerUrlMap['Books'], function(request, response) {
   logger.debug('getBooks');
-  var query = URL.parse(request.url, true).query;
+  var query = request.body;
   return Horace.getBooks(query)
     .then(function(books) {
       books = books || [];
@@ -183,6 +185,5 @@ apiRouter.get(ServerUrlMap['Books.Distinct'], function(request, response) {
     });
   return;
 });
-
 
 app.use(ServerUrlMap.API, apiRouter);

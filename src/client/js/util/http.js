@@ -92,22 +92,24 @@ function _preparePayload(data, contentType, method) {
       payloadItems.push((encodeURIComponent(key)) + "=" + (encodeURIComponent(value)));
     }
     return payloadItems.join('&');
+  } else if(method === Method.POST && contentType === Mime.JSON) {
+    return JSON.stringify(data);
   } else {
     return console.error('Implement Me!');
   }
 };
 
+function _prepareHeaders(opts) {
+  var headers = {};
+  if (opts.hasOwnProperty('contentType'))
+    headers['Content-Type'] = opts.contentType;
+  return headers;
+}
+
 function _setHeaders(request, headers) {
-  var i, key, len, results, value;
-  if (headers == null) {
-    headers = {};
+  for (var key in headers){
+    request.setRequestHeader(key, headers[key]);
   }
-  results = [];
-  for (value = i = 0, len = headers.length; i < len; value = ++i) {
-    key = headers[value];
-    results.push(request.setRequestHeader(key, value));
-  }
-  return results;
 };
 
 function _getAjaxPromiseExecutor(request, opts) {
@@ -146,11 +148,12 @@ function _getAjaxPromiseExecutor(request, opts) {
 
 function ajax(opts) {
   var isAsync, method, payload, promise, request, url;
+  if(!opts.contentType)
+    opts.contentType = Mime.JSON;
   payload = _preparePayload(opts.data, opts.contentType, opts.method);
   method = opts.method || Method.GET;
   isAsync = opts.hasOwnProperty('async') ? opts.async : true;
   request = new XMLHttpRequest();
-  _setHeaders(request);
   if (opts.hasOwnProperty('timeout')) {
     request.timeout = opts.timeout;
   }
@@ -160,8 +163,12 @@ function ajax(opts) {
     url = opts.url;
   }
   request.open(method, url, isAsync, opts.user, opts.password);
+  _setHeaders(request, _prepareHeaders(opts));
   promise = new Promise(_getAjaxPromiseExecutor(request, opts));
-  request.send();
+  if(method === Method.POST)
+    request.send(payload);
+  else
+    request.send();
   return promise;
 };
 

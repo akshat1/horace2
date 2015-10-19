@@ -36,11 +36,13 @@ const StyleClass = {
 class HTable extends React.Component {
   constructor(props) {
     super(props);
+    this.distinctValuesFetched = {};
+    this.columnFilters = {};
+    this.state = {
+      distinctValues: {},
+      selectedDistinctValues: {}
+    }
   }
-
-
-  @autobind
-  componentDidMount() {}
 
 
   @autobind
@@ -94,15 +96,45 @@ class HTable extends React.Component {
   }
 
 
+  fetchDistinctValues(columnName) {
+    if(this.distinctValuesFetched[columnName])
+      return;
+    this.distinctValuesFetched[columnName] = true;
+    var _self = this;
+    this.props.getDistinct(columnName)
+    .then(function(values) {
+      var allDistinctValues = _self.state.distinctValues;
+      allDistinctValues[columnName] = values;
+      _self.setState({
+        distinctValues: allDistinctValues
+      });
+    });
+  }
+
+
+  getDistinctValues(columnName) {
+    return this.state.distinctValues[columnName] || [];
+  }
+
+
+  getSelectedDistinctValues(columnName) {
+    return this.state.selectedDistinctValues[columnName] || [];
+  }
+
+
+  @autobind
+  handleFilterChange(columnName, selectedValues) {
+    this.columnFilters[columnName] = selectedValues;
+    this.props.onFilterChange(this.columnFilters);
+  }
+
+
   @autobind
   getColumnFilterComponent(columnName, columnMetadata) {
     var _self = this;
     var isFiltered = columnMetadata.isFiltered;
-    var getDistinct = function () {
-      return _self.props.getDistinct(columnName);
-    };
     if (isFiltered) {
-      return <ColumnFilter getOptions={getDistinct} selectedOptions={[]}/>;
+      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedOptions={this.getSelectedDistinctValues(columnName)} onFilterChange={_self.handleFilterChange}/>;
     } else {
       return;
     }
@@ -119,6 +151,8 @@ class HTable extends React.Component {
     for (let i = 0, _len = columns.length; i < _len; i++){
       let columnName = columns[i];
       let metadata = this.getColumnMetadata(columnName);
+      if (metadata.isFiltered)
+        this.fetchDistinctValues(columnName, metadata);
       if(metadata){
         headerContents.push(<th key={`TH_${i}`} className={metadata.cssClassName}>
           <div className='h-column-header-wrapper'>

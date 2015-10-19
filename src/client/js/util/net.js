@@ -59,7 +59,7 @@ export function downloadFile(url, success) {
 
 
 export function getBooks(query) {
-  return Http.get({
+  return Http.post({
     url          : ClientURLMap['Books'](),
     responseType : Http.ResponseType.JSON,
     data         : query
