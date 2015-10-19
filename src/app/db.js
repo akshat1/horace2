@@ -87,6 +87,21 @@ export function saveBook(book) {
 };
 
 
+function prepareFilterQuery(filterOpts) {
+  var filter = {};
+  for (var key in filterOpts) {
+    var value = filterOpts[key];
+    if (value instanceof Array) {
+      value = {
+        '$in': value
+      }
+    }
+    filter[key] = value;
+  }
+  return filter;
+}
+
+
 export function getBooks(opts) {
   return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
@@ -98,16 +113,16 @@ export function getBooks(opts) {
       opts.sortAscending = `${opts.sortAscending}`.toLowerCase() === 'true'
       sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
       opts = _.assign(defaults, opts);
-      var cur = collectionBooks.find().sort(sortOpts);
-      console.log('sortOpts: ', opts);
+      var filter = prepareFilterQuery(opts.filter);
+      var cur = collectionBooks.find(filter).sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){
           logger.error('Error converting to array', curErr);
           return reject(curErr);
         } else {
-          var currentPage = parseInt(opts.currentPage);
-          var pageSize = parseInt(opts.pageSize);
-          var from = currentPage* pageSize;
+          var currentPage = parseInt(opts.currentPage) || 0;
+          var pageSize = parseInt(opts.pageSize) || 25;
+          var from = currentPage * pageSize;
           var to = from + pageSize;
           var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
@@ -124,6 +139,17 @@ export function getBooks(opts) {
     })
   });
 };//getBooks
+
+
+/**
+ * @param {String} columnName
+ * @param {object} query
+ * @returns {Promise}
+ * @resolves {Array}
+ */
+export function getDistinctBookAttribute(columnName, query) {
+  return collectionBooks.distinct(columnName, query);
+}
 
 
 /**

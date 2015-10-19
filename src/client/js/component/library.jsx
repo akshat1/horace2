@@ -6,11 +6,12 @@ import Path from 'path';
 import autobind from 'autobind-decorator';
 
 import BookList from './book-list.jsx';
+import MenuRenderer from './menu-renderer.jsx';
 import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
 import * as Net from './../util/net.js';
-
+window.Net = Net;
 
 const ServerEvents = HoraceEvents.Server;
 
@@ -81,7 +82,7 @@ class Library extends React.Component {
   @autobind
   getServerStatusIndicators() {
     var components = [];
-    components.push(<ScanningStatus isActive={this.state.isScanning} onClick={this.startScanning}/>);
+    components.push(<ScanningStatus key='server.status.scanning' isActive={this.state.isScanning} onClick={this.startScanning}/>);
 
     return (
       <div className='h-toolbar-item h-tool-bar-server-status-container'>
@@ -118,6 +119,7 @@ class Library extends React.Component {
           </div>
         </div>
         <BookList/>
+        <MenuRenderer/>
       </div>
     );
   }//render

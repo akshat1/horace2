@@ -24,20 +24,7 @@
     color: $text-light;
     font-size: 1.2em;
     color: $text-lighter;
-
-    &.h-sortable {
-      cursor: pointer;
-      &:hover {
-        background: lighten($background-dark, 10%);
-      }
-      &:active {
-        background: lighten($background-dark, 20%);
-      }
-    }
-
-    .h-table-sort {
-      margin-left: 0.5em;
-    }
+    padding: 0;
   }
 
   td, th {
@@ -59,10 +46,41 @@
     }
   }
 
+  .h-column-header-wrapper {
+    @include flex-box(row);
+
+    .h-column-name {
+      @include flex-item($grow: 1, $shrink: 0);
+      padding: 0 0 0 $space-M;
+
+      &.sortable {
+        &:hover {
+          background: lighten($background-dark, 10%);
+        }
+
+        &:active {
+          background: lighten($background-dark, 20%);
+        }
+      }
+    }
+
+    .h-column-sort {
+      display: inline-block;
+      width: toRem(20px);
+      text-align: center;
+    }
+
+    .h-column-filter {
+      @include flex-box(0, 0);
+      width: toRem(20px);
+      text-align: center;
+    }
+  }
+
   .h-adapterId {
     @include text-overflow;
-    width: toRem(80px);
-    max-width: toRem(80px);
+    width: toRem(110px);
+    max-width: toRem(110px);
   }
 
   .h-authors {

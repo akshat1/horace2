@@ -2,7 +2,7 @@
 
 import React from 'react';
 import autobind from 'autobind-decorator';
-import Popup from './popup.jsx';
+import Menu from './menu.jsx';
 
 
 class NotificationWrapper extends React.Component {
@@ -53,7 +53,7 @@ class NotificationList extends React.Component {
 
   @autobind
   handleClick(e) {
-    let targetElement = e.currentTarget;
+    var targetElement = e.currentTarget;
     this.setState({
       expanded: true,
       clickX: 0,
@@ -87,25 +87,22 @@ class NotificationList extends React.Component {
 
 
   @autobind
-  getPopup() {
-    if(this.state.expanded) {
-      return (
-        <Popup top={this.state.clickY} left={this.state.clickX} items={this.getNotifications()} hide={this.collapse} ref='popup'/>
-      );
-    }
-  }
-
-
-  @autobind
   componentDidMount() {}
+
+
+  renderTriggerElement() {
+    if (this.props.notifications.length)
+      return (<span className='fa fa-bell'/>);
+    else
+      return (<span className='fa fa-bell-o'/>);
+  }
 
 
   render() {
     return (
-      <div className={this.getRootStyle()} onClick={this.handleClick}>
-        <span className='fa fa-bell'/>
-        {this.getPopup()}
-      </div>
+      <Menu items={this.getNotifications()} disabled={this.props.notifications.length === 0}>
+        {this.renderTriggerElement()}
+      </Menu>
     );
   }
 }

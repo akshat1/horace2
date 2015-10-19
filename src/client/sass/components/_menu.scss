@@ -1,22 +1,24 @@
 @charset 'UTF-8';
 
-$_item-background: #FFF;
+$_item-background: $background-light;
 
-.h-popup {
+.h-menu {
   position: absolute;
   border: 1px solid $border-color;
   border-radius: 2px;
-  width: 500px;
-  z-index: 1;
+  min-width: 200px;
+  max-width: 500px;
   box-shadow: $box-shadow;
+  overflow: auto;
 }
 
 
-.h-popup-item {
+.h-menu-item {
   border-bottom: 1px solid $border-color;
   background: $_item-background;
+  padding: 0 $space-M;
 
   &:last-child {
-    border-bottom: none;
+    border-bottom: 1px solid transparent;
   }
 }

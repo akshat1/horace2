@@ -84,7 +84,7 @@ function _scanPath(path) {
 
 function _scanSequentially(paths) {
   logger.info("_scanSequentially([" + (paths.join(',')) + "])");
-  return Utils.forEachPromise(paths, _scanPath, true);
+  return Utils.forEachPromise(paths, _scanPath);
 };
 
 

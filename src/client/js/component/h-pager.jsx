@@ -33,7 +33,7 @@ class HPager extends React.Component{
   getPageSelectOptions() {
     var options = [];
     for(let i = 0, _len = this.props.maxPages; i < _len; i++){
-      options.push(<option value={i}>{i + 1}</option>);
+      options.push(<option value={i} key={i}>{i + 1}</option>);
     }
     return options;
   }

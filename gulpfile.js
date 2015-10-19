@@ -57,7 +57,7 @@ function clientDir() {
 
 
 var Paths = {
-  app_js_src          : 'src/app/js/**.js',
+  app_js_src          : 'src/app/**/*.js',
   app_js              : 'app',
   bower               : 'bower_components',
   sass                : clientDir('sass', '**', '*.scss'),
@@ -112,11 +112,11 @@ gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
 
 /* ********************************** Build App ********************************** */
 gulp.task('build-app', function() {
-  return gulp.src('src/app/**/*.js')
+  return gulp.src(Paths.app_js_src)
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest('app'));
+    .pipe(gulp.dest(Paths.app_js));
 });
 /* ********************************* /Build App ********************************** */
 

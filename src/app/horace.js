@@ -118,12 +118,21 @@ function isScanningForBooks() {
   return _isScanning;
 }
 
+
+function getDistinctBookAttribute(columnName, query) {
+  return DB.getDistinctBookAttribute(columnName, query);
+}
+
+
 var Horace = new Events.EventEmitter();
-Horace.startScan = startScan;
-Horace.getBooks = getBooks;
-Horace.getBook = getBook;
-Horace.requestDownload = requestDownload;
-Horace.isScanningForBooks = isScanningForBooks;
+_.extend(Horace, {
+  startScan                : startScan,
+  getBooks                 : getBooks,
+  getBook                  : getBook,
+  requestDownload          : requestDownload,
+  isScanningForBooks       : isScanningForBooks,
+  getDistinctBookAttribute : getDistinctBookAttribute
+});
 export default Horace;
 
 

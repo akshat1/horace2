@@ -119,7 +119,7 @@ export function getBook(path) {
         if (exifdata) {
           logger.info(`getBook(${path}) :: got exifdata. try resolving with book`);
           try {
-            resolve(new Book(path, getTitle(exifdata) || fileName, getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID));
+            resolve(new Book(path, getTitle(exifdata).trim() || fileName, getAuthors(exifdata), getSizeInBytes(exifdata), getYear(exifdata), getSubjects(exifdata), getPublisher(exifdata), ADAPTER_ID));
           } catch(err) {
             reject(err);
           }

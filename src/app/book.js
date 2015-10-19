@@ -38,7 +38,7 @@ class Book {
     this.id          = Utils.getHash(path);
     this.path        = path;
     this.title       = title;
-    this.authors     = authors.map(mapToLowerCase);
+    this.authors     = authors.map(mapToLowerCase).sort();
     this.sizeInBytes = isNaN(sizeInBytes) ? -1 : parseInt(sizeInBytes);
     this.year        = isNaN(year) ? -1 : parseInt(year);
     this.subjects    = subjects.map(mapToLowerCase);

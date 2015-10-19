@@ -15,10 +15,11 @@ class BookList extends React.Component {
     window._BookList = this;
     this.columnMetadata = [
       {
-        columnName   : 'adapterId',
-        cssClassName : 'h-adapterId',
-        displayName  : 'Adapter',
-        isSortable   : true
+        columnName     : 'adapterId',
+        cssClassName   : 'h-adapterId',
+        displayName    : 'Adapter',
+        isSortable     : true,
+        isFiltered     : true
       }, {
         columnName   : 'title',
         cssClassName : 'h-title',
@@ -42,11 +43,13 @@ class BookList extends React.Component {
         cssClassName   : 'h-year',
         displayName    : 'Year',
         isSortable     : true,
-        sortColumnName : 'year'
+        sortColumnName : 'year',
+        isFiltered     : true
       }
     ];
 
     this.state = {
+      filter: {},
       isPerformingBlockingAction: false,
       books: [],
       currentPage: 0,
@@ -65,7 +68,8 @@ class BookList extends React.Component {
       currentPage: state.currentPage,
       pageSize: state.pageSize,
       sortColumn: state.sortColumn,
-      sortAscending: state.sortAscending
+      sortAscending: state.sortAscending,
+      filter: state.filter
     };
   }
 
@@ -79,11 +83,13 @@ class BookList extends React.Component {
       maxPages: parseInt(res.maxPages),
       pageSize: parseInt(res.pageSize),
       sortColumn: res.sortColumn,
-      sortAscending: res.sortAscending
+      sortAscending: res.sortAscending,
+      filter: res.filter
     });
   }
 
 
+  @autobind
   handleError(err) {
     this.setState({isPerformingBlockingAction: false});
     console.error(err);
@@ -97,6 +103,25 @@ class BookList extends React.Component {
     Net.getBooks(query)
       .then(this.handleBooksResponse)
       .catch(this.handleError);
+  }
+
+
+  @autobind
+  getDistinctAdapters() {
+    console.debug('getDistinctAdapters()');
+    Net.getDistinctBookAdapters()
+      .then(function(distinctAdapters) {
+        this.setState({
+          distinctAdapters: distinctAdapters
+        });
+        return;
+      }.bind(this))
+      .catch(this.handleError);
+  }
+
+
+  getDistinct(columnName) {
+    return Net.getDistinctBookAttribute(columnName);
   }
 
 
@@ -131,12 +156,6 @@ class BookList extends React.Component {
 
 
   @autobind
-  setFilter(filter) {
-    console.warn('IMPLEMENT ME');
-  }//setFilter
-
-
-  @autobind
   setPageSize(size) {
     if(this.state.isPerformingBlockingAction)
       return;
@@ -149,6 +168,14 @@ class BookList extends React.Component {
   componentDidMount() {
     this.fetchBooks();
   }//componentDidMount
+
+
+  @autobind
+  handleFilterChange(filter) {
+    this.fetchBooks({
+      filter: filter
+    });
+  }
 
 
   @autobind
@@ -197,6 +224,8 @@ class BookList extends React.Component {
             sortAscending  = {this.state.sortAscending}
             columns        = {this.state.displayColumns}
             columnMetadata = {this.columnMetadata}
+            getDistinct    = {this.getDistinct}
+            onFilterChange = {this.handleFilterChange}
           />
         </div>
         {this.getBlockingWaitComponent()}

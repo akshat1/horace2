@@ -12,4 +12,4 @@ coverage
 documentation
 tmpjs
 build-tmp
-app
+/app
