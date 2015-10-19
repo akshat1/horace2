@@ -2,89 +2,66 @@
 
 import React from 'react';
 import autobind from 'autobind-decorator';
-import Popup from './popup.jsx';
+import Menu from './menu.jsx';
+
+
+class FilterOption extends React.Component {
+  constructor(props){
+    super(props);
+    this.state = {}
+  }
+
+
+  render() {
+    return (
+      <label key={this.props.label}>
+        <input type='checkbox' checked={this.props.selected}/>
+        {this.props.label}
+      </label>
+    );
+  }
+}
 
 
 class ColumnFilter extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      expanded: false
+      options: []
     }
   }
 
 
-  @autobind
-  collapse() {
-    this.setState({
-      expanded: false,
-      filterOptions: []
-    });
-  }
-
-
-  @autobind
-  expand(x, y) {
+  fetchOptions() {
+    var selectedValues = this.props.selectedOptions;
+    var _self = this;
+    console.debug('ColumnFilter.fetchOptions');
     this.props.getOptions()
-    .then(function(options) {
-      this.setState({
-        expanded: true,
-        clickX: x,
-        clickY: y,
+    .then(function(values) {
+      var options = values.map(function(v) {
+        var isSelected = selectedValues.find(
+          function(sV) {
+            return sV === v;
+          });//find
+        return (<FilterOption selected={isSelected} label={v}/>);
+      });//.map
+      _self.setState({
         options: options
-      });
-    }.bind(this))
-    .catch(function(err) {
-      console.error(err);
-    });
+      });//setState
+    })//then
   }
 
 
-  @autobind
-  handleClick(e) {
-    this.expand(0, e.currentTarget.clientHeight);
-  }
-
-
-  renderFilterOptions() {
-    /*
-    var options = this.props.options;
-    var optionComponents = options.map(function(o) {
-      return (
-        <div className='h-filter-option'>
-          <label>
-            <input type='checkbox'/>
-            {o}
-          </label>
-        </div>
-      );
-    });
-    */
-    return [<div className='h-filter-option'>
-        <label>
-          <input type='checkbox'/>
-          Sample
-        </label>
-      </div>];
-  }
-
-
-  @autobind
-  renderPopup() {
-    if (this.state.expanded) {
-      return (
-        <Popup top={this.state.clickY} left={this.state.clickX} items={this.renderFilterOptions()} hide={this.collapse} ref='popup'/>
-      );
-    }
+  componentDidMount() {
+    this.fetchOptions();
   }
 
 
   render() {
     return (
-      <div className='h-column-filter' onClick={this.handleClick}>
+      <Menu items={this.state.options} className='h-column-filter' disabled={this.state.options.length < 1}>
         <span className='fa fa-filter'/>
-        {this.renderPopup()}
-      </div>
+      </Menu>
     );
   }
 }

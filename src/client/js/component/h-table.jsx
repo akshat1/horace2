@@ -94,13 +94,15 @@ class HTable extends React.Component {
   }
 
 
+  @autobind
   getColumnFilterComponent(columnName, columnMetadata) {
+    var _self = this;
     var isFiltered = columnMetadata.isFiltered;
     var getDistinct = function () {
-      return this.props.getDistinct(columnName);
+      return _self.props.getDistinct(columnName);
     };
     if (isFiltered) {
-      return <ColumnFilter getOptions={getDistinct}/>;
+      return <ColumnFilter getOptions={getDistinct} selectedOptions={[]}/>;
     } else {
       return;
     }
@@ -118,7 +120,7 @@ class HTable extends React.Component {
       let columnName = columns[i];
       let metadata = this.getColumnMetadata(columnName);
       if(metadata){
-        headerContents.push(<th className={metadata.cssClassName}>
+        headerContents.push(<th key={`TH_${i}`} className={metadata.cssClassName}>
           <div className='h-column-header-wrapper'>
             <div className={`h-column-name ${metadata.isSortable ? 'sortable' : ''}`} onClick={this.makeColumnClickHandler(columnName, metadata)}>
               {this.getColumnSortComponent(columnName, metadata)}
@@ -144,7 +146,7 @@ class HTable extends React.Component {
    * this rowData object.
    */
   @autobind
-  getTableBodyRow(rowData) {
+  getTableBodyRow(rowData, rowIndex) {
     var columns = this.props.columns;
     var rowContent = [];
     for (let i = 0, _len = columns.length; i < _len; i++) {
@@ -153,10 +155,10 @@ class HTable extends React.Component {
       let metadata = this.getColumnMetadata(columnName);
       let className = metadata ? metadata.cssClassName : '';
       rowContent.push(
-        <td className={className}>{metadata.rowComponent? metadata.rowComponent(rowData) : cellData}</td>
+        <td key={`${rowIndex}_${i}`} className={className}>{metadata.rowComponent? metadata.rowComponent(rowData) : cellData}</td>
       );
     }
-    return (<tr>{rowContent}</tr>);
+    return (<tr key={rowIndex}>{rowContent}</tr>);
   }
 
 

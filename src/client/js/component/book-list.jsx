@@ -116,7 +116,7 @@ class BookList extends React.Component {
 
 
   getDistinct(columnName) {
-    return Net.getDistinct(columnName);
+    return Net.getDistinctBookAttribute(columnName);
   }
 
 

@@ -67,7 +67,7 @@ export function getBooks(query) {
 }
 
 
-function getDistinctBookAttribute(columnName) {
+export function getDistinctBookAttribute(columnName) {
   return Http.get({
     url          : ClientURLMap['Books.Distinct'](columnName),
     responseType : Http.ResponseType.JSON

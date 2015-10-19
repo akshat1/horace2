@@ -2,7 +2,6 @@
 
 import React from 'react';
 import autobind from 'autobind-decorator';
-import Popup from './popup.jsx';
 import Menu from './menu.jsx';
 
 
@@ -84,16 +83,6 @@ class NotificationList extends React.Component {
       }
       return <NotificationWrapper notificationContent={n} dismiss={dismiss}/>
     });
-  }
-
-
-  @autobind
-  getPopup() {
-    if(this.state.expanded) {
-      return (
-        <Popup top={this.state.clickY} left={this.state.clickX} items={this.getNotifications()} hide={this.collapse} ref='popup'/>
-      );
-    }
   }
 
 

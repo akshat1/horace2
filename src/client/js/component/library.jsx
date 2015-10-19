@@ -82,7 +82,7 @@ class Library extends React.Component {
   @autobind
   getServerStatusIndicators() {
     var components = [];
-    components.push(<ScanningStatus isActive={this.state.isScanning} onClick={this.startScanning}/>);
+    components.push(<ScanningStatus key='server.status.scanning' isActive={this.state.isScanning} onClick={this.startScanning}/>);
 
     return (
       <div className='h-toolbar-item h-tool-bar-server-status-container'>

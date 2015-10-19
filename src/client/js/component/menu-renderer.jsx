@@ -75,9 +75,9 @@ class MenuView extends React.Component {
 
   @autobind
   renderMenuItems() {
-    return this.props.view.items.map(function(i){
+    return this.props.view.items.map(function(i, index){
       return (
-        <div className='h-menu-item'>{i}</div>
+        <div className='h-menu-item' key={index}>{i}</div>
       );
     });
   }
@@ -150,7 +150,7 @@ class MenuRenderer extends React.Component {
   renderMenuViews() {
     var _self = this;
     return this.state.views.map(function(v) {
-      return <MenuView view={v} hide={_self.hideView}/>;
+      return <MenuView view={v} hide={_self.hideView} key={v.key}/>;
     });
   }
 
