@@ -11,6 +11,7 @@ import _ from 'lodash';
 import FSExtra from 'fs-extra';
 import Config from './config.js';
 import Sorting from './sorting.js';
+import Book from './book.js';
 
 const Collection = {
   Books: 'horace-books'
@@ -87,21 +88,6 @@ export function saveBook(book) {
 };
 
 
-function prepareFilterQuery(filterOpts) {
-  var filter = {};
-  for (var key in filterOpts) {
-    var value = filterOpts[key];
-    if (value instanceof Array) {
-      value = {
-        '$in': value
-      }
-    }
-    filter[key] = value;
-  }
-  return filter;
-}
-
-
 export function getBooks(opts) {
   return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
@@ -113,7 +99,8 @@ export function getBooks(opts) {
       opts.sortAscending = `${opts.sortAscending}`.toLowerCase() === 'true'
       sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
       opts = _.assign(defaults, opts);
-      var filter = prepareFilterQuery(opts.filter);
+      var filter = Book.mongoFilter(opts.filter);
+      console.log('filter: ', filter);
       var cur = collectionBooks.find(filter).sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){
@@ -148,7 +135,9 @@ export function getBooks(opts) {
  * @resolves {Array}
  */
 export function getDistinctBookAttribute(columnName, query) {
-  return collectionBooks.distinct(columnName, query);
+  return collectionBooks.distinct(columnName, query).then(function(values) {
+    return Book.distinguish(columnName, values);
+  });
 }
 
 

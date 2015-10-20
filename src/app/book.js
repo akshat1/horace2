@@ -11,6 +11,16 @@ function reduceToSortString(previousValue, currentValue, index, array) {
 }
 
 
+function yearToDisplayYear(year) {
+  return year === -1 ? 'Unknown' : year;
+}
+
+
+function displayYearToYear(displayYear) {
+  return displayYear === 'Unknown' ? -1 : parseInt(displayYear);
+}
+
+
 class Book {
   /**
    * Adapters may extend this class in order to add custom data
@@ -50,12 +60,51 @@ class Book {
   }
 
   setUpDisplayProperties() {
-    this.displayYear = this.year === -1 ? 'Unknown' : this.year;
+    this.displayYear = yearToDisplayYear(this.year);
   }
+
 
   setUpSortProperties() {
     this.sortStringAuthors = this.authors.reduce(reduceToSortString, '');
     this.sortStringSubjects = this.subjects.reduce(reduceToSortString, '');
+  }
+
+
+  static mongoFilter(opts) {
+    console.log('mongoFilter::', opts);
+    var filter = {};
+    console.log('opts.displayYear >> ', opts.displayYear);
+    if (opts.adapterId && (opts.adapterId.length > 0)) {
+      console.log(0);
+      filter['adapterId'] = {
+        '$in': opts.adapterId
+      };
+    }
+
+    if (opts.displayYear && (opts.displayYear.length > 0)) {
+      console.log(1);
+      filter['year'] = {
+        '$in': opts.displayYear.map(displayYearToYear)
+      }
+    }
+
+    if (opts.authors && (opts.authors.length > 0)) {
+      console.log(2);
+      filter['authors'] = {
+        '$in': opts.authors
+      };
+    }
+
+    return filter;
+  }
+
+
+  static distinguish(columnName, values) {
+    switch (columnName) {
+      case 'authors': return _.union(values);
+      case 'subjects': return _.union(values);
+      default: return values;
+    }
   }
 }
 

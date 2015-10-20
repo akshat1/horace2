@@ -31,13 +31,15 @@ class BookList extends React.Component {
         cssClassName   : 'h-authors',
         displayName    : 'Author',
         isSortable     : true,
-        sortColumnName : 'sortStringAuthors'
+        sortColumnName : 'sortStringAuthors',
+        isFiltered     : true
       }, {
         columnName     : 'subjects',
         cssClassName   : 'h-subjects',
         displayName    : 'Subjects',
         isSortable     : true,
-        sortColumnName : 'sortStringSubjects'
+        sortColumnName : 'sortStringSubjects',
+        isFiltered     : true
       }, {
         columnName     : 'displayYear',
         cssClassName   : 'h-year',

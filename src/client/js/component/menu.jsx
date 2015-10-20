@@ -29,19 +29,23 @@ class Menu extends React.Component {
     if(this.props.disabled)
       return;
     console.debug('I was clicked');
-    PubSub.broadcast('menu.clicked', {
-      key: this.getKey(),
+    PubSub.broadcast('menu.clicked', this.getBroadcastPayload());
+  }
+
+
+  getBroadcastPayload() {
+    return {
+      key       : this.getKey(),
       trigger   : this.refs['trigger'].getDOMNode(),
       items     : this.props.items,
       className : this.props.className
-    });
+    };
   }
 
+
+  @autobind
   componentDidUpdate(nextProps, nextState) {
-    PubSub.broadcast('menu.updated', {
-      key: this.getKey(),
-      items: this.props.items
-    });
+    PubSub.broadcast('menu.updated', this.getBroadcastPayload());
   }
 
 
