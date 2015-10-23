@@ -12,7 +12,7 @@ import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
 import * as Net from './../util/net.js';
-import { PagerModel } from './../model/library-model.js';
+import { PagerModel, SortModel } from './../model/library-model.js';
 
 
 window.Net = Net;
@@ -33,6 +33,7 @@ class Library extends React.Component {
       isPerformingBlockingAction : false,
       books                      : [],
       bookPager                  : new PagerModel(),
+      bookSort                   : new SortModel('title', true),
       sortColumn                 : 'title',
       sortAscending              : true,
       displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
@@ -64,11 +65,12 @@ class Library extends React.Component {
   getBooksQuery(opts) {
     let state = _.assign(this.state, opts);
     let pager = state.bookPager;
+    let sort  = state.bookSort;
     return {
       currentPage   : pager.currentPage,
       pageSize      : pager.pageSize,
-      sortColumn    : state.columnName,
-      sortAscending : state.sortAscending,
+      sortColumn    : sort.columnName,
+      sortAscending : sort.isAscending,
       filter        : state.filter
     };
   }
@@ -77,12 +79,12 @@ class Library extends React.Component {
   @autobind
   handleBooksResponse(res) {
     let pager = new PagerModel(parseInt(res.currentPage), parseInt(res.pageSize), parseInt(res.maxPages));
+    let sort  = new SortModel(res.sortColumn, res.sortAscending);
     this.setState({
       isPerformingBlockingAction: false,
       books: res.books,
       bookPager: pager,
-      columnName: res.sortColumn,
-      sortAscending: res.sortAscending,
+      bookSort: sort,
       filter: res.filter
     });
   }
@@ -127,20 +129,19 @@ class Library extends React.Component {
 
 
   @autobind
-  sortData(sort, sortAscending, data) {
+  sortData(sortColumn, isAscending) {
     if(this.state.isPerformingBlockingAction)
       return;
 
     this.fetchBooks({
-      columnName: sort,
-      sortAscending: sortAscending
+      bookSort: new SortModel(sortColumn, isAscending)
     });
   }//sortData
 
 
   @autobind
-  changeSort(sort, sortAscending){
-    this.sortData(sort, sortAscending);
+  changeSort(sortColumn, isAscending){
+    this.sortData(sortColumn, isAscending);
   }//changeSort
 
 
@@ -220,6 +221,7 @@ class Library extends React.Component {
   render() {
     let state     = this.state;
     let bookPager = state.bookPager;
+    let bookSort  = state.bookSort;
     return (
       <div className='h-library'>
         <div className='h-tool-bar'>
@@ -242,8 +244,8 @@ class Library extends React.Component {
           books                      = {state.books}
           changeSort                 = {this.changeSort}
           setFilter                  = {this.setFilter}
-          sortColumn                 = {state.columnName}
-          sortAscending              = {state.sortAscending}
+          sortColumn                 = {bookSort.columnName}
+          sortAscending              = {bookSort.isAscending}
           displayColumns             = {state.displayColumns}
           getDistinct                = {this.getDistinct}
           onFilterChange             = {this.handleFilterChange}
