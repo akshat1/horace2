@@ -39,8 +39,6 @@ class Library extends React.Component {
       books                      : [],
       bookPager                  : new PagerModel(),
       bookSort                   : new SortModel('title', true),
-      sortColumn                 : 'title',
-      sortAscending              : true,
       displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
     }
   }//constructor
