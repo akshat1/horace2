@@ -65,20 +65,6 @@ class Library extends React.Component {
   }
 
 
-  getBooksQuery(opts) {
-    let state = _.assign(this.state, opts);
-    let pager = state.bookPager;
-    let sort  = state.bookSort;
-    return {
-      currentPage   : pager.currentPage,
-      pageSize      : pager.pageSize,
-      sortColumn    : sort.columnName,
-      sortAscending : sort.isAscending,
-      filter        : state.filter
-    };
-  }
-
-
   @autobind
   handleBooksResponse(res) {
     let newState = res;
