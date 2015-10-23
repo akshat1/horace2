@@ -4,6 +4,7 @@ import EventEmitter from 'events';
 import React from 'react';
 import Path from 'path';
 import autobind from 'autobind-decorator';
+import _ from 'lodash';
 
 import BookList from './book-list.jsx';
 import MenuRenderer from './menu-renderer.jsx';
@@ -11,7 +12,8 @@ import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
 import * as Net from './../util/net.js';
-import _ from 'lodash';
+import { PagerModel } from './../model/library-model.js';
+
 
 window.Net = Net;
 
@@ -30,9 +32,7 @@ class Library extends React.Component {
       filter                     : {},
       isPerformingBlockingAction : false,
       books                      : [],
-      currentPage                : 0,
-      maxPages                   : 0,
-      pageSize                   : 25,
+      bookPager                  : new PagerModel(),
       sortColumn                 : 'title',
       sortAscending              : true,
       displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
@@ -63,25 +63,25 @@ class Library extends React.Component {
 
   getBooksQuery(opts) {
     let state = _.assign(this.state, opts);
+    let pager = state.bookPager;
     return {
-      currentPage: state.currentPage,
-      pageSize: state.pageSize,
-      sortColumn: state.sortColumn,
-      sortAscending: state.sortAscending,
-      filter: state.filter
+      currentPage   : pager.currentPage,
+      pageSize      : pager.pageSize,
+      sortColumn    : state.columnName,
+      sortAscending : state.sortAscending,
+      filter        : state.filter
     };
   }
 
 
   @autobind
   handleBooksResponse(res) {
+    let pager = new PagerModel(parseInt(res.currentPage), parseInt(res.pageSize), parseInt(res.maxPages));
     this.setState({
       isPerformingBlockingAction: false,
       books: res.books,
-      currentPage: parseInt(res.currentPage),
-      maxPages: parseInt(res.maxPages),
-      pageSize: parseInt(res.pageSize),
-      sortColumn: res.sortColumn,
+      bookPager: pager,
+      columnName: res.sortColumn,
       sortAscending: res.sortAscending,
       filter: res.filter
     });
@@ -118,7 +118,11 @@ class Library extends React.Component {
     if(typeof index === 'string'){
       index = Number(index);
     }
-    this.fetchBooks({currentPage: index});
+
+    let pager = this.state.bookPager;
+    this.fetchBooks({
+      bookPager: new PagerModel(index, pager.pageSize, pager.maxPages)
+    });
   }//setPage
 
 
@@ -128,7 +132,7 @@ class Library extends React.Component {
       return;
 
     this.fetchBooks({
-      sortColumn: sort,
+      columnName: sort,
       sortAscending: sortAscending
     });
   }//sortData
@@ -214,7 +218,8 @@ class Library extends React.Component {
 
 
   render() {
-    let state = this.state;
+    let state     = this.state;
+    let bookPager = state.bookPager;
     return (
       <div className='h-library'>
         <div className='h-tool-bar'>
@@ -232,12 +237,12 @@ class Library extends React.Component {
         <BookList
           isPerformingBlockingAction = {state.isPerformingBlockingAction}
           setPage                    = {this.setPage}
-          currentPage                = {state.currentPage}
-          maxPages                   = {state.maxPages}
+          currentPage                = {bookPager.currentPage}
+          maxPages                   = {bookPager.maxPages}
           books                      = {state.books}
           changeSort                 = {this.changeSort}
           setFilter                  = {this.setFilter}
-          sortColumn                 = {state.sortColumn}
+          sortColumn                 = {state.columnName}
           sortAscending              = {state.sortAscending}
           displayColumns             = {state.displayColumns}
           getDistinct                = {this.getDistinct}
