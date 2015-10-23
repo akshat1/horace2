@@ -1,5 +1,10 @@
 'use strict';
 
+/*
+TODO: Make server getBooks accept pager, sort and model as individual items
+TODO: Make server getBooks return these properties in response
+*/
+
 import EventEmitter from 'events';
 import React from 'react';
 import Path from 'path';
@@ -78,15 +83,9 @@ class Library extends React.Component {
 
   @autobind
   handleBooksResponse(res) {
-    let pager = new PagerModel(parseInt(res.currentPage), parseInt(res.pageSize), parseInt(res.maxPages));
-    let sort  = new SortModel(res.sortColumn, res.sortAscending);
-    this.setState({
-      isPerformingBlockingAction: false,
-      books: res.books,
-      bookPager: pager,
-      bookSort: sort,
-      filter: res.filter
-    });
+    let newState = res;
+    newState.isPerformingBlockingAction = false;
+    this.setState(newState);
   }
 
 
@@ -99,9 +98,12 @@ class Library extends React.Component {
 
 
   fetchBooks(opts) {
-    this.setState({isPerformingBlockingAction: true})
-    let query = this.getBooksQuery(opts);
-    Net.getBooks(query)
+    this.setState({isPerformingBlockingAction: true});
+    let state  = this.state;
+    let pager  = opts.bookPager || state.bookPager;
+    let sort   = opts.bookSort  || state.bookSort;
+    let filter = opts.filter    || state.filter;
+    Net.getBooks(pager, sort, filter)
       .then(this.handleBooksResponse)
       .catch(this.handleError);
   }
@@ -146,15 +148,6 @@ class Library extends React.Component {
 
 
   @autobind
-  setPageSize(size) {
-    if(this.state.isPerformingBlockingAction)
-      return;
-
-    this.fetchBooks({pageSize: size});
-  }//setPageSize
-
-
-  @autobind
   handleFilterChange(filter) {
     this.fetchBooks({
       filter: filter
@@ -177,7 +170,7 @@ class Library extends React.Component {
   @autobind
   componentDidMount() {
     this.wireWebSockets();
-    this.fetchBooks();
+    this.fetchBooks({});
     Net.isServerScanningForBooks()
       .then(this.setScanning)
       .catch(function(err){
@@ -218,38 +211,54 @@ class Library extends React.Component {
   }
 
 
-  render() {
+  renderToolbar() {
+    let state = this.state;
+    return (
+      <div className='h-tool-bar'>
+        <div className='h-toolbar-section-left'>
+          <NotificationList notifications={state.notifications} dismiss={this.dismissNotification}/>
+        </div>
+        <div className='h-toolbar-section-center'/>
+        <div className='h-toolbar-section-right'>
+          {this.getServerStatusIndicators()}
+          <div className='h-toolbar-item h-logo'>
+            Horace
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+
+  renderBookList() {
     let state     = this.state;
     let bookPager = state.bookPager;
     let bookSort  = state.bookSort;
+
+    return (
+      <BookList
+        isPerformingBlockingAction = {state.isPerformingBlockingAction}
+        setPage                    = {this.setPage}
+        currentPage                = {bookPager.currentPage}
+        maxPages                   = {bookPager.maxPages}
+        books                      = {state.books}
+        changeSort                 = {this.changeSort}
+        setFilter                  = {this.setFilter}
+        sortColumn                 = {bookSort.columnName}
+        sortAscending              = {bookSort.isAscending}
+        displayColumns             = {state.displayColumns}
+        getDistinct                = {this.getDistinct}
+        onFilterChange             = {this.handleFilterChange}
+      />
+    );
+  }
+
+
+  render() {
     return (
       <div className='h-library'>
-        <div className='h-tool-bar'>
-          <div className='h-toolbar-section-left'>
-            <NotificationList notifications={state.notifications} dismiss={this.dismissNotification}/>
-          </div>
-          <div className='h-toolbar-section-center'/>
-          <div className='h-toolbar-section-right'>
-            {this.getServerStatusIndicators()}
-            <div className='h-toolbar-item h-logo'>
-              Horace
-            </div>
-          </div>
-        </div>
-        <BookList
-          isPerformingBlockingAction = {state.isPerformingBlockingAction}
-          setPage                    = {this.setPage}
-          currentPage                = {bookPager.currentPage}
-          maxPages                   = {bookPager.maxPages}
-          books                      = {state.books}
-          changeSort                 = {this.changeSort}
-          setFilter                  = {this.setFilter}
-          sortColumn                 = {bookSort.columnName}
-          sortAscending              = {bookSort.isAscending}
-          displayColumns             = {state.displayColumns}
-          getDistinct                = {this.getDistinct}
-          onFilterChange             = {this.handleFilterChange}
-        />
+        {this.renderToolbar()}
+        {this.renderBookList()}
         <MenuRenderer/>
       </div>
     );
