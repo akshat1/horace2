@@ -4,9 +4,6 @@ import HTable from './h-table.jsx';
 import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
 import * as Net from './../util/net.js';
-import * as Sorting from './../../../app/sorting.js';
-
-var SortDirection = Sorting.SortDirection;
 
 class BookList extends React.Component {
   constructor(props) {
