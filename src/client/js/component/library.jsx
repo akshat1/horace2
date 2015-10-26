@@ -73,6 +73,7 @@ class Library extends React.Component {
   @autobind
   wirePubSub() {
     PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
+    PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
   }
 
 
@@ -80,6 +81,12 @@ class Library extends React.Component {
   handlePageSetEvent(payload) {
     if (payload.key === 'bookPager')
       this.setPage(payload.pageNumber);
+  }
+
+  @autobind
+  handleSortEvent(payload) {
+    if (payload.key === 'bookTable')
+      this.sortData(payload.sortModel);
   }
 
 
@@ -133,20 +140,14 @@ class Library extends React.Component {
 
 
   @autobind
-  sortData(sortColumn, isAscending) {
+  sortData(sortModel) {
     if(this.state.isPerformingBlockingAction)
       return;
 
     this.fetchBooks({
-      bookSort: new SortModel(sortColumn, isAscending)
+      bookSort: sortModel
     });
   }//sortData
-
-
-  @autobind
-  changeSort(sortColumn, isAscending){
-    this.sortData(sortColumn, isAscending);
-  }//changeSort
 
 
   @autobind
@@ -242,7 +243,6 @@ class Library extends React.Component {
         currentPage                = {bookPager.currentPage}
         maxPages                   = {bookPager.maxPages}
         books                      = {state.books}
-        changeSort                 = {this.changeSort}
         setFilter                  = {this.setFilter}
         sortColumn                 = {bookSort.columnName}
         sortAscending              = {bookSort.isAscending}

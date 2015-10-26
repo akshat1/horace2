@@ -87,8 +87,8 @@ class BookList extends React.Component {
         />
         <div className='h-table-wrapper'>
           <HTable
+            pubSubKey      = 'bookTable'
             rows           = {props.books}
-            changeSort     = {props.changeSort}
             setFilter      = {props.setFilter}
             sortColumnName = {props.sortColumn}
             sortAscending  = {props.sortAscending}

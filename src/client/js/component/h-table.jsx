@@ -4,6 +4,11 @@ import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
 import ColumnFilter from './column-filter.jsx';
+import { PagerModel, SortModel } from './../../../app/model/library-model.js';
+import PubSub from './../util/pubsub.js';
+import HoraceEvents from './../../../app/events.js';
+
+const ClientEvents = HoraceEvents.Client;
 
 
 const StyleClass = {
@@ -53,7 +58,11 @@ class HTable extends React.Component {
         // if we clicked on the same column as the current sort column then simply flip the sort direction
         // otherwise the current column becomes the sort column and the direction becomes ascending.
         let isAscending = sortColumnName === this.props.sortColumnName ? !this.props.sortAscending : true;
-        this.props.changeSort(sortColumnName, isAscending);
+        //this.props.changeSort(sortColumnName, isAscending);
+        PubSub.broadcast(ClientEvents.TABLE_SET_SORT, {
+          key       : this.props.pubSubKey,
+          sortModel : new SortModel(sortColumnName, isAscending)
+        });
       }.bind(this);
     else
       return _.noop;
