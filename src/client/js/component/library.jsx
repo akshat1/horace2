@@ -17,7 +17,7 @@ import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
 import * as Net from './../util/net.js';
-import { PagerModel, SortModel } from './../model/library-model.js';
+import { PagerModel, SortModel } from './../../../app/model/library-model.js';
 
 
 window.Net = Net;

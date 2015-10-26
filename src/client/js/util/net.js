@@ -14,7 +14,7 @@ import _ from 'lodash';
 import HoraceEvents from './../../../app/events.js';
 import UrlMap from './../../../app/urls.js';
 
-import { PagerModel, SortModel } from './../model/library-model.js';
+import { PagerModel, SortModel } from './../../../app/model/library-model.js';
 
 const ServerEvents = HoraceEvents.Server;
 const ClientURLMap = UrlMap.Client;
@@ -60,30 +60,20 @@ export function downloadFile(url, success) {
 }
 
 
-//TODO: Make server accept these individually
-function _getBooksQuery(pager, sort, filter) {
-  return {
-    currentPage   : pager.currentPage,
-    pageSize      : pager.pageSize,
-    sortColumn    : sort.columnName,
-    sortAscending : sort.isAscending,
-    filter        : filter
-  }
-}
-
-
 export function getBooks(pager, sort, filter) {
   return Http.post({
     url          : ClientURLMap['Books'](),
     responseType : Http.ResponseType.JSON,
-    data         : _getBooksQuery(pager, sort, filter)
+    data         : {
+      pager  : pager,
+      sort   : sort,
+      filter : filter
+    }
   }).then(function(res) {
-    let pager = new PagerModel(parseInt(res.currentPage), parseInt(res.pageSize), parseInt(res.maxPages));
-    let sort  = new SortModel(res.sortColumn, res.sortAscending);
     return {
       books     : res.books,
-      bookPager : pager,
-      bookSort  : sort,
+      bookPager : res.pager,
+      bookSort  : res.sort,
       filter    : res.filter
     };
   });

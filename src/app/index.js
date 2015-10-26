@@ -15,6 +15,8 @@ import URL from 'url';
 import _ from 'lodash';
 import Mime from 'mime';
 
+
+import { PagerModel, SortModel } from './model/library-model.js';
 import HoraceEvents from './events.js';
 import UrlMap from './urls.js';
 import Config from './config.js';
@@ -157,10 +159,8 @@ apiRouter.post(ServerUrlMap['Books'], function(request, response) {
   logger.debug('getBooks');
   var query = request.body;
   return Horace.getBooks(query)
-    .then(function(books) {
-      books = books || [];
-      logger.debug('Got %d books', books.length);
-      return response.json(books);
+    .then(function(res) {
+      return response.json(res);
     })
     .catch(function(err) {
       logger.error('Error fetching books from Horace %o', error);
