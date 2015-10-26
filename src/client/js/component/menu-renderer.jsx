@@ -3,7 +3,7 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
 
-import * as PubSub from './../util/pubsub.js'
+import PubSub from './../util/pubsub.js'
 
 
 /**

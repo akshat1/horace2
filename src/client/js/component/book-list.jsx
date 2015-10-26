@@ -81,9 +81,9 @@ class BookList extends React.Component {
     return (
       <div className='h-book-list'>
         <HPager
-          setPage={props.setPage}
-          currentPage={props.currentPage}
-          maxPages={props.maxPages}
+          pubSubKey   = 'bookPager'
+          currentPage = {props.currentPage}
+          maxPages    = {props.maxPages}
         />
         <div className='h-table-wrapper'>
           <HTable

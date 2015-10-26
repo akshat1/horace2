@@ -1,11 +1,15 @@
 'use strict';
 
 const HoraceEvents = {
+  Client : {
+    PAGER_SET_PAGE : 'pager.set.page'
+  },
+
   Server : {
-    BOOK_READY_FOR_DOWNLOAD : 'horace.websocket.bookReadyForDownload',
-    REQUEST_BOOK_DOWNLOAD   : 'horace.websocket.requestBookDownload',
-    SCANNER_SCANSTARTED     : 'horace.websocket.scannerStarted',
-    SCANNER_SCANSTOPPED     : 'horace.websocket.scannerStopped'
+    BOOK_READY_FOR_DOWNLOAD : 'websocket.bookReadyForDownload',
+    REQUEST_BOOK_DOWNLOAD   : 'websocket.requestBookDownload',
+    SCANNER_SCANSTARTED     : 'websocket.scannerStarted',
+    SCANNER_SCANSTOPPED     : 'websocket.scannerStopped'
   },
 
   IPC : {

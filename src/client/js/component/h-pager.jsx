@@ -2,6 +2,12 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
 
+import PubSub from './../util/pubsub.js';
+import HoraceEvents from './../../../app/events.js';
+
+const ClientEvents = HoraceEvents.Client;
+
+
 class HPager extends React.Component{
   constructor(props) {
     super(props);
@@ -9,21 +15,30 @@ class HPager extends React.Component{
 
 
   // ------------------- Logic (or lack of) ----------------------
+  setPage(pageNumber) {
+    //this.props.setPage(pageNumber);
+    PubSub.broadcast(ClientEvents.PAGER_SET_PAGE, {
+      key        : this.props.pubSubKey,
+      pageNumber : pageNumber
+    });
+  }
+
+
   @autobind
   handlePreviousClick() {
     if (this.props.currentPage)
-      this.props.setPage(this.props.currentPage - 1);
+      this.setPage(this.props.currentPage - 1);
   }
 
   @autobind
   handleNextClick() {
     if (this.props.currentPage < this.props.maxPages)
-      this.props.setPage(this.props.currentPage + 1);
+      this.setPage(this.props.currentPage + 1);
   }
 
   @autobind
   handlePageSelect(e) {
-    this.props.setPage(e.currentTarget.value);
+    this.setPage(e.currentTarget.value);
   }
 
   // -------------------------/ Logic ----------------------------

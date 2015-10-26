@@ -8,7 +8,7 @@ Simple pubsub implementation
 var listenerMap = {};
 
 
-export function getListenerArray(eventName) {
+function getListenerArray(eventName) {
   var arr = listenerMap[eventName];
   if (!arr)
     arr = listenerMap[eventName] = [];
@@ -17,18 +17,18 @@ export function getListenerArray(eventName) {
 }
 
 
-export function subscribe(eventName, fn) {
+function subscribe(eventName, fn) {
   getListenerArray(eventName).push(fn);
 }
 
 
-export function removeListener(eventName, fn) {
+function unsubscribe(eventName, fn) {
   var arr = getListenerArray(eventName);
   arr = arr.remove(fn);
 };
 
 
-export function broadcast(eventName, payload) {
+function broadcast(eventName, payload) {
   var arr = getListenerArray(eventName);
   for(let i = 0; i < arr.length; i++) {
     let fn = arr[i];
@@ -39,3 +39,12 @@ export function broadcast(eventName, payload) {
     }
   }
 }
+
+const PubSub = {
+  getListenerArray : getListenerArray,
+  subscribe        : subscribe,
+  unsubscribe      : unsubscribe,
+  broadcast        : broadcast
+};
+
+export default PubSub;

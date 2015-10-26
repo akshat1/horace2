@@ -11,6 +11,7 @@ import Path from 'path';
 import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
+import PubSub from './../util/pubsub.js'
 import BookList from './book-list.jsx';
 import MenuRenderer from './menu-renderer.jsx';
 import ScanningStatus from './scanning-status.jsx';
@@ -23,6 +24,7 @@ import { PagerModel, SortModel } from './../../../app/model/library-model.js';
 window.Net = Net;
 
 const ServerEvents = HoraceEvents.Server;
+const ClientEvents = HoraceEvents.Client;
 
 class Library extends React.Component {
   constructor(props) {
@@ -41,6 +43,9 @@ class Library extends React.Component {
       bookSort                   : new SortModel('title', true),
       displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
     }
+
+    this.wireWebSockets();
+    this.wirePubSub();
   }//constructor
 
 
@@ -62,6 +67,19 @@ class Library extends React.Component {
     Net.onWebSocket(ServerEvents.BOOK_READY_FOR_DOWNLOAD, function(payload){
       this.generateFileDownloadNotification(payload.path);
     }.bind(this));
+  }
+
+
+  @autobind
+  wirePubSub() {
+    PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
+  }
+
+
+  @autobind
+  handlePageSetEvent(payload) {
+    if (payload.key === 'bookPager')
+      this.setPage(payload.pageNumber);
   }
 
 
@@ -153,7 +171,6 @@ class Library extends React.Component {
 
   @autobind
   componentDidMount() {
-    this.wireWebSockets();
     this.fetchBooks({});
     Net.isServerScanningForBooks()
       .then(this.setScanning)
@@ -222,7 +239,6 @@ class Library extends React.Component {
     return (
       <BookList
         isPerformingBlockingAction = {state.isPerformingBlockingAction}
-        setPage                    = {this.setPage}
         currentPage                = {bookPager.currentPage}
         maxPages                   = {bookPager.maxPages}
         books                      = {state.books}
