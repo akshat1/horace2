@@ -3,7 +3,8 @@
 const HoraceEvents = {
   Client : {
     PAGER_SET_PAGE : 'pager.set.page',
-    TABLE_SET_SORT : 'table.set.sort'
+    TABLE_SET_SORT : 'table.set.sort',
+    DOWNLOAD_BOOK  : 'download.book'
   },
 
   Server : {

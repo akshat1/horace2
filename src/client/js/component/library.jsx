@@ -74,6 +74,7 @@ class Library extends React.Component {
   wirePubSub() {
     PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
+    PubSub.subscribe(ClientEvents.DOWNLOAD_BOOK, this.handleBookDownloadRequested);
   }
 
 
@@ -155,6 +156,12 @@ class Library extends React.Component {
     this.fetchBooks({
       filter: filter
     });
+  }
+
+
+  handleBookDownloadRequested(book) {
+    console.debug('handleBookDownloadRequested(%O)', book);
+    Net.requestDownload(book);
   }
 
 

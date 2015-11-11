@@ -3,7 +3,11 @@ import React from 'react';
 import HTable from './h-table.jsx';
 import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
+import PubSub from './../util/pubsub.js'
 import * as Net from './../util/net.js';
+import HoraceEvents from './../../../app/events.js';
+const ClientEvents = HoraceEvents.Client;
+
 
 class BookList extends React.Component {
   constructor(props) {
@@ -51,14 +55,14 @@ class BookList extends React.Component {
   @autobind
   getCustomTitleRowComponent(book) {
     var downloadBook = function() {
-      Net.requestDownload(book);
-    }.bind(this);
+      PubSub.broadcast(ClientEvents.DOWNLOAD_BOOK, book);
+    };
 
     return (
       <span className='h-book-title'>
         {book.title}
         <span className='h-book-actions'>
-          <span className='fa fa-cloud-download' onClick={this.props.downloadBook}/>
+          <span className='fa fa-cloud-download' onClick={downloadBook}/>
         </span>
       </span>
     );
