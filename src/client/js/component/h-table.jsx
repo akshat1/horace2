@@ -23,7 +23,6 @@ const StyleClass = {
  * Props:
  *    rows: []
  *    changeSort: function(sortColumnName, isAscending) {}
- *    setFilter: function(){}
  *    sortColumnName: String
  *    sortAscending: isAscending
  *    tableClassName: String
@@ -58,7 +57,6 @@ class HTable extends React.Component {
         // if we clicked on the same column as the current sort column then simply flip the sort direction
         // otherwise the current column becomes the sort column and the direction becomes ascending.
         let isAscending = sortColumnName === this.props.sortColumnName ? !this.props.sortAscending : true;
-        //this.props.changeSort(sortColumnName, isAscending);
         PubSub.broadcast(ClientEvents.TABLE_SET_SORT, {
           key       : this.props.pubSubKey,
           sortModel : new SortModel(sortColumnName, isAscending)
@@ -132,18 +130,11 @@ class HTable extends React.Component {
 
 
   @autobind
-  handleFilterChange(columnName, selectedValues) {
-    this.columnFilters[columnName] = selectedValues;
-    this.props.onFilterChange(this.columnFilters);
-  }
-
-
-  @autobind
   getColumnFilterComponent(columnName, columnMetadata) {
     var _self = this;
     var isFiltered = columnMetadata.isFiltered;
     if (isFiltered) {
-      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedOptions={this.getSelectedDistinctValues(columnName)} onFilterChange={_self.handleFilterChange}/>;
+      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedOptions={this.getSelectedDistinctValues(columnName)} />;
     } else {
       return;
     }

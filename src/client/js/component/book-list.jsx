@@ -3,7 +3,7 @@ import React from 'react';
 import HTable from './h-table.jsx';
 import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
-import PubSub from './../util/pubsub.js'
+import PubSub from './../util/pubsub.js';
 import * as Net from './../util/net.js';
 import HoraceEvents from './../../../app/events.js';
 const ClientEvents = HoraceEvents.Client;
@@ -93,13 +93,11 @@ class BookList extends React.Component {
           <HTable
             pubSubKey      = 'bookTable'
             rows           = {props.books}
-            setFilter      = {props.setFilter}
             sortColumnName = {props.sortColumn}
             sortAscending  = {props.sortAscending}
             columns        = {props.displayColumns}
             columnMetadata = {this.columnMetadata}
             getDistinct    = {props.getDistinct}
-            onFilterChange = {props.onFilterChange}
           />
         </div>
         {this.getBlockingWaitComponent()}

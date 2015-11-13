@@ -4,9 +4,12 @@ import React from 'react';
 import autobind from 'autobind-decorator';
 import Menu from './menu.jsx';
 import _ from 'lodash';
+import PubSub from './../util/pubsub.js';
+import HoraceEvents from './../../../app/events.js';
+const ClientEvents = HoraceEvents.Client;
 
 
-const FILTER_DEBOUNCE_INTERVAL = 1000;
+const FILTER_DEBOUNCE_INTERVAL = 750;
 
 
 function isValueSelected(value, selectedValues) {
@@ -44,7 +47,6 @@ class ColumnFilter extends React.Component {
     super(props);
     this.state = {};
     this.selectedValuesMap = {};
-    window._CFilter = this;
     this.updateFilter = _.debounce(this.updateFilter, FILTER_DEBOUNCE_INTERVAL);
   }
 
@@ -66,7 +68,10 @@ class ColumnFilter extends React.Component {
 
   updateFilter() {
     var selectedFilterValues = Object.keys(this.selectedValuesMap);
-    this.props.onFilterChange(this.props.columnName, selectedFilterValues);
+    console.debug('broadcast');
+    var eventPayload = {};
+    eventPayload[this.props.columnName] = selectedFilterValues;
+    PubSub.broadcast(ClientEvents.BOOKS_SET_FILTER, eventPayload);
   }
 
 

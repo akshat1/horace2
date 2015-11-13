@@ -74,6 +74,7 @@ class Library extends React.Component {
   wirePubSub() {
     PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
+    PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange)
     PubSub.subscribe(ClientEvents.DOWNLOAD_BOOK, this.handleBookDownloadRequested);
   }
 
@@ -153,8 +154,9 @@ class Library extends React.Component {
 
   @autobind
   handleFilterChange(filter) {
+    var newFilter = _.extend(this.state.filter, filter);
     this.fetchBooks({
-      filter: filter
+      filter: newFilter
     });
   }
 
@@ -250,12 +252,10 @@ class Library extends React.Component {
         currentPage                = {bookPager.currentPage}
         maxPages                   = {bookPager.maxPages}
         books                      = {state.books}
-        setFilter                  = {this.setFilter}
         sortColumn                 = {bookSort.columnName}
         sortAscending              = {bookSort.isAscending}
         displayColumns             = {state.displayColumns}
         getDistinct                = {this.getDistinct}
-        onFilterChange             = {this.handleFilterChange}
       />
     );
   }
