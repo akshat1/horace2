@@ -130,7 +130,7 @@ export function getBooks(params) {
             books  : books,
             pager  : new PagerModel(currentPage, pageSize, maxPages),
             sort   : sort,
-            filter : filter
+            filter : params.filter || {}
           });
         }
       });//cur.toArray

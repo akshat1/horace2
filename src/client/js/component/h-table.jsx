@@ -125,7 +125,7 @@ class HTable extends React.Component {
 
 
   getSelectedDistinctValues(columnName) {
-    return this.state.selectedDistinctValues[columnName] || [];
+    return this.props.selectedDistinctValues[columnName] || [];
   }
 
 
@@ -134,7 +134,7 @@ class HTable extends React.Component {
     var _self = this;
     var isFiltered = columnMetadata.isFiltered;
     if (isFiltered) {
-      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedOptions={this.getSelectedDistinctValues(columnName)} />;
+      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedValues={this.getSelectedDistinctValues(columnName)} />;
     } else {
       return;
     }

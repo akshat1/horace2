@@ -20,21 +20,44 @@ function isValueSelected(value, selectedValues) {
 class ColumnFilterOption extends React.Component {
   constructor(props) {
     super(props);
+    this.state = {
+      selected: false
+    };
   }
 
 
   @autobind
   handleChange(e) {
     var value = this.props.value;
-    var isSelected = this.refs['checkbox'].getDOMNode().checked;
-    this.props.updateFilterSelection(value, isSelected);
+    var selected = this.refs['checkbox'].getDOMNode().checked;
+    this.setState({
+      selected: selected
+    });
+    this.props.updateFilterSelection(value, selected);
+  }
+
+
+  componentWillUpdate(nextProps, nextState) {
+    if (nextProps.selected != this.state.selected) {
+      this.setState({
+        selected: nextProps.selected
+      });
+    }
+  }
+
+
+  renderInputElement() {
+    if (this.state.selected)
+      return <input type='checkbox' onChange={this.handleChange} ref='checkbox' checked/>
+    else
+      return <input type='checkbox' onChange={this.handleChange} ref='checkbox'/>
   }
 
 
   render() {
     return (
       <label key={this.props.key}>
-        <input type='checkbox' onChange={this.handleChange} ref='checkbox'/>
+        {this.renderInputElement()}
         {this.props.label}
       </label>
     );
@@ -51,24 +74,8 @@ class ColumnFilter extends React.Component {
   }
 
 
-  getItems() {
-    var _self = this;
-    var props = this.props;
-    var selectedValues = props.selectedValues;
-    return this.props.distinctValues.map(function(v) {
-      return {
-        selected : isValueSelected(v, selectedValues),
-        value    : v,
-        label    : v,
-        key      : v
-      }
-    });
-  }
-
-
   updateFilter() {
     var selectedFilterValues = Object.keys(this.selectedValuesMap);
-    console.debug('broadcast');
     var eventPayload = {};
     eventPayload[this.props.columnName] = selectedFilterValues;
     PubSub.broadcast(ClientEvents.BOOKS_SET_FILTER, eventPayload);
@@ -88,19 +95,21 @@ class ColumnFilter extends React.Component {
   @autobind
   renderItems() {
     var _self = this;
-    var options = this.getItems().map(function(item){
+    var props = this.props;
+    var selectedValues = props.selectedValues;
+    return this.props.distinctValues.map(function(v) {
+      let isSelected = isValueSelected(v, selectedValues);
       return (
-        <ColumnFilterOption value={item.value} key={item.key} label={item.label} updateFilterSelection={_self.handleFilterChange}/>
+        <ColumnFilterOption value={v} key={v} label={v} selected={isSelected} updateFilterSelection={_self.handleFilterChange}/>
       );
     });
-    return options;
   }
 
 
   render() {
     if (this.props.distinctValues.length)
       return (
-        <Menu items={this.renderItems()} className='h-column-filter'>
+        <Menu items={this.renderItems} className='h-column-filter'>
           <span className='fa fa-filter'/>
         </Menu>
       );

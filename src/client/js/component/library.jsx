@@ -248,7 +248,9 @@ class Library extends React.Component {
 
     return (
       <BookList
+        filter                     = {state.filter}
         isPerformingBlockingAction = {state.isPerformingBlockingAction}
+        selectedValues             = {this.props.filter}
         currentPage                = {bookPager.currentPage}
         maxPages                   = {bookPager.maxPages}
         books                      = {state.books}

@@ -98,6 +98,7 @@ class BookList extends React.Component {
             columns        = {props.displayColumns}
             columnMetadata = {this.columnMetadata}
             getDistinct    = {props.getDistinct}
+            selectedDistinctValues = {props.filter}
           />
         </div>
         {this.getBlockingWaitComponent()}
