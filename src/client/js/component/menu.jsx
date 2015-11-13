@@ -28,7 +28,6 @@ class Menu extends React.Component {
   handleClick(e) {
     if(this.props.disabled)
       return;
-    console.debug('I was clicked');
     PubSub.broadcast('menu.clicked', this.getBroadcastPayload());
   }
 
