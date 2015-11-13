@@ -4,6 +4,11 @@ import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
 import ColumnFilter from './column-filter.jsx';
+import { PagerModel, SortModel } from './../../../app/model/library-model.js';
+import PubSub from './../util/pubsub.js';
+import HoraceEvents from './../../../app/events.js';
+
+const ClientEvents = HoraceEvents.Client;
 
 
 const StyleClass = {
@@ -18,7 +23,6 @@ const StyleClass = {
  * Props:
  *    rows: []
  *    changeSort: function(sortColumnName, isAscending) {}
- *    setFilter: function(){}
  *    sortColumnName: String
  *    sortAscending: isAscending
  *    tableClassName: String
@@ -53,7 +57,10 @@ class HTable extends React.Component {
         // if we clicked on the same column as the current sort column then simply flip the sort direction
         // otherwise the current column becomes the sort column and the direction becomes ascending.
         let isAscending = sortColumnName === this.props.sortColumnName ? !this.props.sortAscending : true;
-        this.props.changeSort(sortColumnName, isAscending);
+        PubSub.broadcast(ClientEvents.TABLE_SET_SORT, {
+          key       : this.props.pubSubKey,
+          sortModel : new SortModel(sortColumnName, isAscending)
+        });
       }.bind(this);
     else
       return _.noop;
@@ -118,14 +125,7 @@ class HTable extends React.Component {
 
 
   getSelectedDistinctValues(columnName) {
-    return this.state.selectedDistinctValues[columnName] || [];
-  }
-
-
-  @autobind
-  handleFilterChange(columnName, selectedValues) {
-    this.columnFilters[columnName] = selectedValues;
-    this.props.onFilterChange(this.columnFilters);
+    return this.props.selectedDistinctValues[columnName] || [];
   }
 
 
@@ -134,7 +134,7 @@ class HTable extends React.Component {
     var _self = this;
     var isFiltered = columnMetadata.isFiltered;
     if (isFiltered) {
-      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedOptions={this.getSelectedDistinctValues(columnName)} onFilterChange={_self.handleFilterChange}/>;
+      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedValues={this.getSelectedDistinctValues(columnName)} />;
     } else {
       return;
     }

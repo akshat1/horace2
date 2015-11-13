@@ -7,8 +7,10 @@
 import MongoDB from 'mongodb';
 import Winston from 'winston';
 import _ from 'lodash';
-
 import FSExtra from 'fs-extra';
+
+
+import { PagerModel, SortModel } from './model/library-model.js';
 import Config from './config.js';
 import Sorting from './sorting.js';
 import Book from './book.js';
@@ -88,38 +90,47 @@ export function saveBook(book) {
 };
 
 
-export function getBooks(opts) {
+function _transformBooksQuery(pager, sort, filter) {
+  return {
+    currentPage   : pager.currentPage,
+    pageSize      : pager.pageSize,
+    sortColumn    : sort.columnName,
+    sortAscending : sort.isAscending,
+    filter        : filter
+  };
+}
+
+
+export function getBooks(params) {
   return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
       var defaults = {
         sortColumn: 'title',
         sortAscending: true
       };
+      var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
+      var pager    = params.pager;
+      var sort     = params.sort;
+      var filter   = params.filter ? Book.mongoFilter(params.filter) : {};
       var sortOpts = {};
-      opts.sortAscending = `${opts.sortAscending}`.toLowerCase() === 'true'
-      sortOpts[opts.sortColumn] = opts.sortAscending ? 1 : -1;
-      opts = _.assign(defaults, opts);
-      var filter = Book.mongoFilter(opts.filter);
-      console.log('filter: ', filter);
+      sortOpts[sort.columnName] = sort.isAscending ? 1 : -1;
       var cur = collectionBooks.find(filter).sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){
           logger.error('Error converting to array', curErr);
           return reject(curErr);
         } else {
-          var currentPage = parseInt(opts.currentPage) || 0;
-          var pageSize = parseInt(opts.pageSize) || 25;
+          var currentPage = pager.currentPage;
+          var pageSize = pager.pageSize;
           var from = currentPage * pageSize;
           var to = from + pageSize;
           var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
           resolve({
-            books         : books,
-            currentPage   : currentPage,
-            maxPages      : maxPages,
-            pageSize      : pageSize,
-            sortColumn    : opts.sortColumn,
-            sortAscending : opts.sortAscending
+            books  : books,
+            pager  : new PagerModel(currentPage, pageSize, maxPages),
+            sort   : sort,
+            filter : params.filter || {}
           });
         }
       });//cur.toArray

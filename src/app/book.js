@@ -71,6 +71,7 @@ class Book {
 
 
   static mongoFilter(opts) {
+    opts = opts || {};
     console.log('mongoFilter::', opts);
     var filter = {};
     console.log('opts.displayYear >> ', opts.displayYear);

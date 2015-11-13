@@ -14,6 +14,8 @@ import _ from 'lodash';
 import HoraceEvents from './../../../app/events.js';
 import UrlMap from './../../../app/urls.js';
 
+import { PagerModel, SortModel } from './../../../app/model/library-model.js';
+
 const ServerEvents = HoraceEvents.Server;
 const ClientURLMap = UrlMap.Client;
 window.ClientURLMap = ClientURLMap;
@@ -58,11 +60,22 @@ export function downloadFile(url, success) {
 }
 
 
-export function getBooks(query) {
+export function getBooks(pager, sort, filter) {
   return Http.post({
     url          : ClientURLMap['Books'](),
     responseType : Http.ResponseType.JSON,
-    data         : query
+    data         : {
+      pager  : pager,
+      sort   : sort,
+      filter : filter
+    }
+  }).then(function(res) {
+    return {
+      books     : res.books,
+      bookPager : res.pager,
+      bookSort  : res.sort,
+      filter    : res.filter
+    };
   });
 }
 

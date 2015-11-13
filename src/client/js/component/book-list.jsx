@@ -3,11 +3,11 @@ import React from 'react';
 import HTable from './h-table.jsx';
 import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
+import PubSub from './../util/pubsub.js';
 import * as Net from './../util/net.js';
-import * as Sorting from './../../../app/sorting.js';
-import _ from 'lodash';
+import HoraceEvents from './../../../app/events.js';
+const ClientEvents = HoraceEvents.Client;
 
-var SortDirection = Sorting.SortDirection;
 
 class BookList extends React.Component {
   constructor(props) {
@@ -49,142 +49,14 @@ class BookList extends React.Component {
         isFiltered     : true
       }
     ];
-
-    this.state = {
-      filter: {},
-      isPerformingBlockingAction: false,
-      books: [],
-      currentPage: 0,
-      maxPages: 0,
-      pageSize: 25,
-      sortColumn: 'title',
-      sortAscending: true,
-      displayColumns: ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
-    };
   }//constructor
-
-
-  getBooksQuery(opts) {
-    let state = _.assign(this.state, opts);
-    return {
-      currentPage: state.currentPage,
-      pageSize: state.pageSize,
-      sortColumn: state.sortColumn,
-      sortAscending: state.sortAscending,
-      filter: state.filter
-    };
-  }
-
-
-  @autobind
-  handleBooksResponse(res) {
-    this.setState({
-      isPerformingBlockingAction: false,
-      books: res.books,
-      currentPage: parseInt(res.currentPage),
-      maxPages: parseInt(res.maxPages),
-      pageSize: parseInt(res.pageSize),
-      sortColumn: res.sortColumn,
-      sortAscending: res.sortAscending,
-      filter: res.filter
-    });
-  }
-
-
-  @autobind
-  handleError(err) {
-    this.setState({isPerformingBlockingAction: false});
-    console.error(err);
-    alert(`Error ${err.message}`);
-  }//handleError
-
-
-  fetchBooks(opts) {
-    this.setState({isPerformingBlockingAction: true})
-    let query = this.getBooksQuery(opts);
-    Net.getBooks(query)
-      .then(this.handleBooksResponse)
-      .catch(this.handleError);
-  }
-
-
-  @autobind
-  getDistinctAdapters() {
-    console.debug('getDistinctAdapters()');
-    Net.getDistinctBookAdapters()
-      .then(function(distinctAdapters) {
-        this.setState({
-          distinctAdapters: distinctAdapters
-        });
-        return;
-      }.bind(this))
-      .catch(this.handleError);
-  }
-
-
-  getDistinct(columnName) {
-    return Net.getDistinctBookAttribute(columnName);
-  }
-
-
-  @autobind
-  setPage(index) {
-    if(this.state.isPerformingBlockingAction)
-      return;
-
-    if(typeof index === 'string'){
-      index = Number(index);
-    }
-    this.fetchBooks({currentPage: index});
-  }//setPage
-
-
-  @autobind
-  sortData(sort, sortAscending, data) {
-    if(this.state.isPerformingBlockingAction)
-      return;
-
-    this.fetchBooks({
-      sortColumn: sort,
-      sortAscending: sortAscending
-    });
-  }//sortData
-
-
-  @autobind
-  changeSort(sort, sortAscending){
-    this.sortData(sort, sortAscending);
-  }//changeSort
-
-
-  @autobind
-  setPageSize(size) {
-    if(this.state.isPerformingBlockingAction)
-      return;
-
-    this.fetchBooks({pageSize: size});
-  }//setPageSize
-
-
-  @autobind
-  componentDidMount() {
-    this.fetchBooks();
-  }//componentDidMount
-
-
-  @autobind
-  handleFilterChange(filter) {
-    this.fetchBooks({
-      filter: filter
-    });
-  }
 
 
   @autobind
   getCustomTitleRowComponent(book) {
     var downloadBook = function() {
-      Net.requestDownload(book);
-    }.bind(this);
+      PubSub.broadcast(ClientEvents.DOWNLOAD_BOOK, book);
+    };
 
     return (
       <span className='h-book-title'>
@@ -198,7 +70,7 @@ class BookList extends React.Component {
 
 
   getBlockingWaitComponent() {
-    var className = `h-blocking-ui-wait ${this.state.isPerformingBlockingAction ? 'visible' : ''}`;
+    var className = `h-blocking-ui-wait ${this.props.isPerformingBlockingAction ? 'visible' : ''}`;
     return (
       <div className={className}>
         <span className='fa fa-refresh fa-spin'/>
@@ -209,25 +81,24 @@ class BookList extends React.Component {
 
 
   render() {
-    let styles = this.state.styles;
+    let props = this.props;
     return (
       <div className='h-book-list'>
         <HPager
-          setPage={this.setPage}
-          currentPage={this.state.currentPage}
-          maxPages={this.state.maxPages}
+          pubSubKey   = 'bookPager'
+          currentPage = {props.currentPage}
+          maxPages    = {props.maxPages}
         />
         <div className='h-table-wrapper'>
           <HTable
-            rows           = {this.state.books}
-            changeSort     = {this.changeSort}
-            setFilter      = {this.setFilter}
-            sortColumnName = {this.state.sortColumn}
-            sortAscending  = {this.state.sortAscending}
-            columns        = {this.state.displayColumns}
+            pubSubKey      = 'bookTable'
+            rows           = {props.books}
+            sortColumnName = {props.sortColumn}
+            sortAscending  = {props.sortAscending}
+            columns        = {props.displayColumns}
             columnMetadata = {this.columnMetadata}
-            getDistinct    = {this.getDistinct}
-            onFilterChange = {this.handleFilterChange}
+            getDistinct    = {props.getDistinct}
+            selectedDistinctValues = {props.filter}
           />
         </div>
         {this.getBlockingWaitComponent()}

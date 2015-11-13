@@ -15,13 +15,13 @@ import URL from 'url';
 import _ from 'lodash';
 import Mime from 'mime';
 
+
+import { PagerModel, SortModel } from './model/library-model.js';
 import HoraceEvents from './events.js';
 import UrlMap from './urls.js';
 import Config from './config.js';
 import Utils from './utils.js';
 import Horace from './horace.js';
-
-console.log(UrlMap);
 
 const ServerUrlMap = UrlMap.Server;
 
@@ -79,18 +79,17 @@ const io = SocketIO.listen(server, {
 
 //Websocket broadcasts
 Horace.on(ServerEvents.SCANNER_SCANSTARTED, function() {
-  console.log('Broadcast ', ServerEvents.SCANNER_SCANSTARTED);
   io.emit(ServerEvents.SCANNER_SCANSTARTED);
 });
 
 
 Horace.on(ServerEvents.SCANNER_SCANSTOPPED, function() {
-  console.log('Broadcast ', ServerEvents.SCANNER_SCANSTOPPED);
   io.emit(ServerEvents.SCANNER_SCANSTOPPED);
 })
 
 
 io.on('connection', function(socket) {
+  console.log('WS Connected!'); //TODO: Find out why this is printed twice
   socket.emit('hello', {
     id: socket.id
   });
@@ -120,7 +119,7 @@ app.use('/download/:fileName', function (request, response) {
   logger.info(`download: ${fileName}`);
   var fileReadStream = FSExtra.createReadStream(Path.join(serverTmpPath, fileName));
   fileReadStream.on('error', function(err) {
-    console.log('Error reading file for download', err);
+    console.error('Error reading file for download', err);
     response.end();
   });
   response.set('Content-Type', Mime.lookup(fileName));
@@ -157,10 +156,8 @@ apiRouter.post(ServerUrlMap['Books'], function(request, response) {
   logger.debug('getBooks');
   var query = request.body;
   return Horace.getBooks(query)
-    .then(function(books) {
-      books = books || [];
-      logger.debug('Got %d books', books.length);
-      return response.json(books);
+    .then(function(res) {
+      return response.json(res);
     })
     .catch(function(err) {
       logger.error('Error fetching books from Horace %o', error);

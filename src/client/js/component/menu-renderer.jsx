@@ -3,7 +3,7 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
 
-import * as PubSub from './../util/pubsub.js'
+import PubSub from './../util/pubsub.js'
 
 
 /**
@@ -101,7 +101,8 @@ class MenuView extends React.Component {
 
   @autobind
   renderMenuItems() {
-    return this.props.view.items.map(function(i, index){
+    var items = typeof this.props.view.items === 'function' ? this.props.view.items() : this.props.view.items;
+    return items.map(function(i, index){
       return (
         <div className='h-menu-item' key={index}>{i}</div>
       );
@@ -135,8 +136,8 @@ class MenuRenderer extends React.Component {
     var views = this.state.views.filter(function(v) {
       return v.key !== payload.key;
     });
-    if(payload.items.length > 0)
-      views.push(payload);
+    /*if(items.length > 0)*/
+    views.push(payload);
     this.setState({
       views: views
     });
