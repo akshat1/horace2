@@ -4,21 +4,21 @@ $_toolbar-padding: $space-S;
 
 .h-toolbar-section-left {
   @include flex-item();
-  @include flex-box(row, $justify-content: flex-start);
+  @include flex-box(row, $justify-content: flex-start, $align-items: center);
   padding: $_toolbar-padding;
 }
 
 
 .h-toolbar-section-center {
   @include flex-item($grow: 1);
-  @include flex-box(row, $justify-content: flex-center);
+  @include flex-box(row, $justify-content: flex-center, $align-items: center);
   padding: $_toolbar-padding 0;
 }
 
 
 .h-toolbar-section-right {
   @include flex-item();
-  @include flex-box(row, $justify-content: flex-end);
+  @include flex-box(row, $justify-content: flex-end, $align-items: center);
   padding: $_toolbar-padding;
 }
 

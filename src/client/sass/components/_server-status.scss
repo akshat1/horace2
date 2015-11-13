@@ -20,7 +20,7 @@
 }
 
 .h-tool-bar-server-status-container {
-  @include flex-box(row);
+  @include flex-box($direction: row, $align-items: center);
 }
 
 
