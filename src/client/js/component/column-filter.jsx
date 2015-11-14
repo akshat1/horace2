@@ -65,6 +65,85 @@ class ColumnFilterOption extends React.Component {
 }
 
 
+class ColumnFilter extends Menu {
+  constructor(props) {
+    super();
+    this.key = _.uniqueId('columnFilter_');
+    this.selectedValuesMap = {};
+    this.updateFilter = _.debounce(this.updateFilter, FILTER_DEBOUNCE_INTERVAL);
+    this.state = {
+      distinctValues: []
+    };
+  }
+
+
+  updateFilter() {
+    var selectedFilterValues = Object.keys(this.selectedValuesMap);
+    var eventPayload = {};
+    eventPayload[this.props.columnName] = selectedFilterValues;
+    PubSub.broadcast(ClientEvents.BOOKS_SET_FILTER, eventPayload);
+  }
+
+
+  @autobind
+  handleFilterChange(value, isSelected) {
+    if(isSelected)
+      this.selectedValuesMap[value] = isSelected;
+    else
+      delete this.selectedValuesMap[value];
+    this.updateFilter();
+  }
+
+
+  getItems() {
+    var _self = this;
+    var props = this.props;
+    var state = this.state;
+    var selectedValues = props.selectedValues;
+    return state.distinctValues.map(function(v) {
+      let isSelected = isValueSelected(v, selectedValues);
+      return (
+        <ColumnFilterOption value={v} key={v} label={v} selected={isSelected} updateFilterSelection={_self.handleFilterChange}/>
+      );
+    });
+  }
+
+
+  getBroadcastPayload() {
+    return {
+      key       : this.getKey(),
+      trigger   : this.refs['trigger'].getDOMNode(),
+      items     : this.getItems(),
+      className : this.props.className
+    };
+  }
+
+
+  getChildren() {
+    return (<span className='fa fa-filter'/>);
+  }
+
+
+  fetchSelectedItems() {
+    return Net.getDistinctBookAttribute(this.props.columnName)
+      .then(function(values){
+        this.setState({
+          distinctValues: values
+        });
+      }.bind(this));
+  }
+
+
+  @autobind
+  handleClick(e) {
+    if(this.props.disabled)
+      return;
+    this.fetchSelectedItems().then(function() {
+      PubSub.broadcast('menu.clicked', this.getBroadcastPayload());
+    }.bind(this));
+  }
+}
+/*
 class ColumnFilter extends React.Component {
   constructor(props) {
     super(props);
@@ -117,5 +196,6 @@ class ColumnFilter extends React.Component {
       return (<span/>);
   }
 }
+*/
 
 export default ColumnFilter;

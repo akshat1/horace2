@@ -257,7 +257,6 @@ class Library extends React.Component {
         sortColumn                 = {bookSort.columnName}
         sortAscending              = {bookSort.isAscending}
         displayColumns             = {state.displayColumns}
-        getDistinct                = {this.getDistinct}
       />
     );
   }
