@@ -80,31 +80,18 @@ export function getBooks(pager, sort, filter) {
 }
 
 
+var _distinctValues = {};
 export function getDistinctBookAttribute(columnName) {
-  return Http.get({
-    url          : ClientURLMap['Books.Distinct'](columnName),
-    responseType : Http.ResponseType.JSON
-  });
-}
-
-
-export function getDistinctBookAdapters() {
-  return getDistinctBookAttribute('adapterId');
-}
-
-
-export function getDistinctBookAuthor() {
-  return getDistinctBookAttribute('authors');
-}
-
-
-export function getDistinctBookSubject() {
-  return getDistinctBookAttribute('subjects');
-}
-
-
-export function getDistinctBookYear() {
-  return getDistinctBookAttribute('year');
+  if (_distinctValues[columnName])
+    return Promise.resolve(_distinctValues[columnName]);
+  else
+    return Http.get({
+      url          : ClientURLMap['Books.Distinct'](columnName),
+      responseType : Http.ResponseType.JSON
+    }).then(function(values) {
+      _distinctValues[columnName] = values;
+      return values;
+    });
 }
 
 

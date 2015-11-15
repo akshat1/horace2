@@ -97,7 +97,6 @@ class BookList extends React.Component {
             sortAscending  = {props.sortAscending}
             columns        = {props.displayColumns}
             columnMetadata = {this.columnMetadata}
-            getDistinct    = {props.getDistinct}
             selectedDistinctValues = {props.filter}
           />
         </div>

@@ -103,27 +103,6 @@ class HTable extends React.Component {
   }
 
 
-  fetchDistinctValues(columnName) {
-    if(this.distinctValuesFetched[columnName])
-      return;
-    this.distinctValuesFetched[columnName] = true;
-    var _self = this;
-    this.props.getDistinct(columnName)
-    .then(function(values) {
-      var allDistinctValues = _self.state.distinctValues;
-      allDistinctValues[columnName] = values;
-      _self.setState({
-        distinctValues: allDistinctValues
-      });
-    });
-  }
-
-
-  getDistinctValues(columnName) {
-    return this.state.distinctValues[columnName] || [];
-  }
-
-
   getSelectedDistinctValues(columnName) {
     return this.props.selectedDistinctValues[columnName] || [];
   }
@@ -134,7 +113,7 @@ class HTable extends React.Component {
     var _self = this;
     var isFiltered = columnMetadata.isFiltered;
     if (isFiltered) {
-      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} distinctValues={this.getDistinctValues(columnName)} selectedValues={this.getSelectedDistinctValues(columnName)} />;
+      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} selectedValues={this.getSelectedDistinctValues(columnName)} />;
     } else {
       return;
     }
@@ -151,8 +130,6 @@ class HTable extends React.Component {
     for (let i = 0, _len = columns.length; i < _len; i++){
       let columnName = columns[i];
       let metadata = this.getColumnMetadata(columnName);
-      if (metadata.isFiltered)
-        this.fetchDistinctValues(columnName, metadata);
       if(metadata){
         headerContents.push(<th key={`TH_${i}`} className={metadata.cssClassName}>
           <div className='h-column-header-wrapper'>

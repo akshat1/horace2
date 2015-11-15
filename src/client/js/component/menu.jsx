@@ -53,10 +53,15 @@ class Menu extends React.Component {
   }
 
 
+  getChildren() {
+    return this.props.children;
+  }
+
+
   render() {
     return (
       <div className={this.getRootStyleClass()} onClick={this.handleClick} ref='trigger'>
-        {this.props.children}
+        {this.getChildren()}
       </div>
     );
   }
