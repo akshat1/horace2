@@ -35,7 +35,7 @@ class Menu extends React.Component {
   getBroadcastPayload() {
     return {
       key       : this.getKey(),
-      trigger   : this.refs['trigger'].getDOMNode(),
+      trigger   : this.refs['trigger'],
       items     : this.props.items,
       className : this.props.className
     };

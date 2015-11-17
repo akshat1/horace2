@@ -54,7 +54,7 @@ class MenuView extends React.Component {
 
   @autobind
   handleClickOnBody(e) {
-    if(isDOMDescendentOf(e.target, this.refs['root'].getDOMNode())) {
+    if(isDOMDescendentOf(e.target, this.refs['root'])) {
       if (this.props.hideOnEveryClick)
         this.hide();
     } else {
@@ -64,7 +64,7 @@ class MenuView extends React.Component {
 
 
   reposition() {
-    var el = this.refs['root'].getDOMNode();
+    var el = this.refs['root'];
     var viewPort = el.offsetParent;
     var style = this.state.style;
     if ((viewPort.offsetWidth - (el.offsetLeft + el.offsetWidth)) < 0) {

@@ -26,6 +26,7 @@ class BookList extends React.Component {
         displayName  : 'Title',
         isSortable   : true,
         rowComponent : this.getCustomTitleRowComponent
+        //isFiltered   : true
       }, {
         columnName     : 'authors',
         cssClassName   : 'h-authors',

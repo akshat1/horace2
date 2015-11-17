@@ -1,0 +1,44 @@
+@charset 'utf8';
+
+.h-popup {
+  @include position(absolute, 0, 0, 0, 0);
+  background: rgba(0, 0, 0, 0.2);
+}
+
+
+.h-popup-contents {
+  @include flex-box($direction: column);
+  @include position(absolute, 50%, auto, auto, 50%);
+  transform: translate(-50%, -50%);
+  box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.5);
+  background: #FFF;
+}
+
+
+.h-popup-title {
+  @include flex-item($grow: 0, $shrink: 0);
+  @include flex-box($direction: row);
+  background: gray;
+  color: #FFF;
+  padding: $space-S $space-M;
+}
+
+
+.h-popup-title-contents {
+  @include flex-item($grow: 1, $shrink: 0);
+}
+
+
+.h-popup-title-controls {
+  @include flex-item($grow: 0, $shrink: 0);
+}
+
+
+.h-popup-close {
+  @include flex-item($grow: 0, $shrink: 0);
+}
+
+
+.h-popup-body {
+  @include flex-item($grow: 1, $shrink: 1);
+}

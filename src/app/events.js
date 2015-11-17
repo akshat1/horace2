@@ -2,9 +2,11 @@
 
 const HoraceEvents = {
   Client : {
-    PAGER_SET_PAGE : 'pager.set.page',
-    TABLE_SET_SORT : 'table.set.sort',
-    DOWNLOAD_BOOK  : 'download.book'
+    PAGER_SET_PAGE   : 'pager.set.page',
+    TABLE_SET_SORT   : 'table.set.sort',
+    BOOKS_SET_FILTER : 'books.filter.set',
+    BOOKS_SHOW_FILTER: 'books.filter.show',
+    DOWNLOAD_BOOK    : 'download.book'
   },
 
   Server : {
