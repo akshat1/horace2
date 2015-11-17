@@ -1,15 +1,39 @@
 @charset 'UTF-8';
 
 .h-column-filter {
-  float: right;
-  border-left: 1px solid $border-color;
+  .h-column-filter-root {
+    @include flex-box($direction: column);
+    //TODO: Reponsive?
+    height: 400px;
+    width: 600px;
 
-  input[type="checkbox"] {
-    margin-right: $space-M;
-  }
+    input[type="checkbox"] {
+      margin-right: $space-M;
+    }
 
-  label {
-    cursor: pointer;
+
+    label {
+      cursor: pointer;
+    }
+
+
+    .h-column-filter-filter {
+      @include flex-item($grow: 0, $shrink: 1);
+      @include flex-box($direction: row);
+      padding: $space-L;
+
+      input[type=text] {
+        @include flex-item($grow: 1);
+        padding: $space-M;
+      }
+    }
+
+
+    .h-column-filter-options {
+      @include flex-item($grow: 1, $shrink: 1);
+      padding: 0 $space-L $space-L $space-L;
+      overflow: auto;
+    }
   }
 }
 

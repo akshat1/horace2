@@ -14,6 +14,7 @@ import _ from 'lodash';
 import PubSub from './../util/pubsub.js'
 import BookList from './book-list.jsx';
 import MenuRenderer from './menu-renderer.jsx';
+import ColumnFilter from './column-filter.jsx';
 import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import HoraceEvents from './../../../app/events.js';
@@ -41,7 +42,12 @@ class Library extends React.Component {
       books                      : [],
       bookPager                  : new PagerModel(),
       bookSort                   : new SortModel('title', true),
-      displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear']
+      displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear'],
+      adapterFilterPopupVisible     : false,
+      titleFilterPopupVisible       : false,
+      authorsFilterPopupVisible     : false,
+      subjectsFilterPopupVisible    : false,
+      displayYearFilterPopupVisible : false
     }
 
     this.wireWebSockets();
@@ -74,7 +80,8 @@ class Library extends React.Component {
   wirePubSub() {
     PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
-    PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange)
+    PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
+    PubSub.subscribe(ClientEvents.BOOKS_SHOW_FILTER, this.showFilterPopup)
     PubSub.subscribe(ClientEvents.DOWNLOAD_BOOK, this.handleBookDownloadRequested);
   }
 
@@ -106,6 +113,44 @@ class Library extends React.Component {
     console.error(err);
     alert(`Error ${err.message}`);
   }//handleError
+
+
+  @autobind
+  showFilterPopup(columnName) {
+    //TODO: Maybe some sort of map?
+    switch(columnName) {
+      case 'adapterId': {
+        this.setState({
+          adapterFilterPopupVisible: true
+        });
+      }
+      break;
+      case 'title': {
+        this.setState({
+          titleFilterPopupVisible: true
+        });
+      }
+      break;
+      case 'authors': {
+        this.setState({
+          authorsFilterPopupVisible: true
+        });
+      }
+      break;
+      case 'subjects': {
+        this.setState({
+          subjectsFilterPopupVisible: true
+        });
+      }
+      break;
+      case 'displayYear': {
+        this.setState({
+          displayYearFilterPopupVisible: true
+        });
+      }
+      break;
+    }
+  }
 
 
   fetchBooks(opts) {
@@ -162,7 +207,6 @@ class Library extends React.Component {
 
 
   handleBookDownloadRequested(book) {
-    console.debug('handleBookDownloadRequested(%O)', book);
     Net.requestDownload(book);
   }
 
@@ -222,6 +266,14 @@ class Library extends React.Component {
   }
 
 
+  @autobind
+  dismissPopup(flagName) {
+    var args = {};
+    args[flagName] = false;
+    this.setState(args);
+  }
+
+
   renderToolbar() {
     let state = this.state;
     return (
@@ -262,12 +314,40 @@ class Library extends React.Component {
   }
 
 
+  renderMenuRenderer() {
+    return <MenuRenderer/>;
+  }
+
+
+  renderFilterPopups() {
+    var _self = this;
+    var popups = [];
+    var getDismissFunction = function(flagName) {
+      return function() {
+        _self.dismissPopup(flagName);
+      };
+    };
+    if (this.state.adapterFilterPopupVisible)
+      popups.push(<ColumnFilter columnName='adapterId' className='h-column-filter h-column-filter-adapters' dismiss={getDismissFunction('adapterFilterPopupVisible')}/>);
+    if (this.state.titleFilterPopupVisible)
+      popups.push(<ColumnFilter columnName='title' className='h-column-filter h-column-filter-title' dismiss={getDismissFunction('titleFilterPopupVisible')}/>);
+    if (this.state.authorsFilterPopupVisible)
+      popups.push(<ColumnFilter columnName='authors' className='h-column-filter h-column-filter-authors' dismiss={getDismissFunction('authorsFilterPopupVisible')}/>);
+    if (this.state.subjectsFilterPopupVisible)
+      popups.push(<ColumnFilter columnName='subjects' className='h-column-filter h-column-filter-subjects' dismiss={getDismissFunction('subjectsFilterPopupVisible')}/>);
+    if (this.state.displayYearFilterPopupVisible)
+      popups.push(<ColumnFilter columnName='displayYear' className='h-column-filter h-column-filter-year' dismiss={getDismissFunction('displayYearFilterPopupVisible')}/>);
+    return popups;
+  }
+
+
   render() {
     return (
       <div className='h-library'>
         {this.renderToolbar()}
         {this.renderBookList()}
-        <MenuRenderer/>
+        {this.renderMenuRenderer()}
+        {this.renderFilterPopups()}
       </div>
     );
   }//render

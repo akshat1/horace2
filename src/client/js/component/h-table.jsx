@@ -112,8 +112,12 @@ class HTable extends React.Component {
   getColumnFilterComponent(columnName, columnMetadata) {
     var _self = this;
     var isFiltered = columnMetadata.isFiltered;
+    var showfilterPopup = function () {
+      PubSub.broadcast(ClientEvents.BOOKS_SHOW_FILTER, columnName);
+    }
     if (isFiltered) {
-      return <ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} selectedValues={this.getSelectedDistinctValues(columnName)} />;
+      return (<button onClick={showfilterPopup} className='h-column-filter-trigger fa fa-filter'></button>);
+      //<ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} selectedValues={this.getSelectedDistinctValues(columnName)} />;
     } else {
       return;
     }
