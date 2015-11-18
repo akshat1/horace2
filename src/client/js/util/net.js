@@ -10,22 +10,19 @@ Provides both HTTP as well as Websocket related utils.
 */
 
 import Http from './http.js';
-import _ from 'lodash';
 import HoraceEvents from './../../../app/events.js';
 import UrlMap from './../../../app/urls.js';
-
-import { PagerModel, SortModel } from './../../../app/model/library-model.js';
 
 const ServerEvents = HoraceEvents.Server;
 const ClientURLMap = UrlMap.Client;
 window.ClientURLMap = ClientURLMap;
 
 // -------------- Websockets stuff --------------
-var socket = null
+var socket = null;
 export function getSocket() {
   if(!socket) {
-    socket = io.connect(window.location.origin, {
-      path: HoraceConf.socketIOURL
+    socket = window.io.connect(window.location.origin, {
+      path: window.HoraceConf.socketIOURL
     });
   }
   return socket;
@@ -50,7 +47,7 @@ export function offWebSocket(eventName, callback) {
 
 
 // ----------------- End Point ------------------
-export function downloadFile(url, success) {
+export function downloadFile(url) {
   var frame = document.createElement('iframe');
   frame.className = 'h-download-frame';
   frame.height = '100px';

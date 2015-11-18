@@ -42,7 +42,7 @@ class NotificationList extends React.Component {
     super(props);
     this.state = {
       expanded: false
-    }
+    };
   }
 
 
@@ -80,8 +80,8 @@ class NotificationList extends React.Component {
     return this.props.notifications.map(function(n) {
       var dismiss = function() {
         _self.props.dismiss(n);
-      }
-      return <NotificationWrapper notificationContent={n} dismiss={dismiss}/>
+      };
+      return <NotificationWrapper notificationContent={n} dismiss={dismiss}/>;
     });
   }
 

@@ -3,20 +3,21 @@ import React from 'react';
 import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
-import ColumnFilter from './column-filter.jsx';
-import { PagerModel, SortModel } from './../../../app/model/library-model.js';
+import { SortModel } from './../../../app/model/library-model.js';
 import PubSub from './../util/pubsub.js';
 import HoraceEvents from './../../../app/events.js';
 
 const ClientEvents = HoraceEvents.Client;
 
-
+/*
+TODO: Use this
 const StyleClass = {
   Ascending  : 'fa-sort-asc',
   Descending : 'fa-sort-desc',
   Sorted     : 'fa',
   Sortable   : 'h-sortable'
 };
+*/
 
 
 /**
@@ -45,7 +46,7 @@ class HTable extends React.Component {
     this.state = {
       distinctValues: {},
       selectedDistinctValues: {}
-    }
+    };
   }
 
 
@@ -53,7 +54,7 @@ class HTable extends React.Component {
   makeColumnClickHandler(columnName, columnMetadata) {
     var sortColumnName = columnMetadata.sortColumnName || columnName;
     if(columnMetadata.isSortable)
-      return function(e){
+      return function(){
         // if we clicked on the same column as the current sort column then simply flip the sort direction
         // otherwise the current column becomes the sort column and the direction becomes ascending.
         let isAscending = sortColumnName === this.props.sortColumnName ? !this.props.sortAscending : true;
@@ -110,11 +111,10 @@ class HTable extends React.Component {
 
   @autobind
   getColumnFilterComponent(columnName, columnMetadata) {
-    var _self = this;
     var isFiltered = columnMetadata.isFiltered;
     var showfilterPopup = function () {
       PubSub.broadcast(ClientEvents.BOOKS_SHOW_FILTER, columnName);
-    }
+    };
     if (isFiltered) {
       return (<button onClick={showfilterPopup} className='h-column-filter-trigger fa fa-filter'></button>);
       //<ColumnFilter key={`CFilter_${columnName}`} columnName={columnName} selectedValues={this.getSelectedDistinctValues(columnName)} />;

@@ -4,7 +4,6 @@ import HTable from './h-table.jsx';
 import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
 import PubSub from './../util/pubsub.js';
-import * as Net from './../util/net.js';
 import HoraceEvents from './../../../app/events.js';
 const ClientEvents = HoraceEvents.Client;
 

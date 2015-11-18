@@ -5,6 +5,7 @@ import autobind from 'autobind-decorator';
 import Popup from './popup.jsx';
 import _ from 'lodash';
 import PubSub from './../util/pubsub.js';
+import * as Net from './../util/net.js';
 import HoraceEvents from './../../../app/events.js';
 const ClientEvents = HoraceEvents.Client;
 
@@ -24,7 +25,7 @@ class ColumnFilterOption extends React.Component {
 
 
   @autobind
-  handleChange(e) {
+  handleChange() {
     var value = this.props.value;
     var selected = this.refs['checkbox'].checked;
     this.setState({

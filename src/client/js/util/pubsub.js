@@ -25,7 +25,7 @@ function subscribe(eventName, fn) {
 function unsubscribe(eventName, fn) {
   var arr = getListenerArray(eventName);
   arr = arr.remove(fn);
-};
+}
 
 
 function broadcast(eventName, payload) {

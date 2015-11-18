@@ -6,7 +6,8 @@ function mapToLowerCase(a) {
   return (a||'').toLowerCase();
 }
 
-function reduceToSortString(previousValue, currentValue, index, array) {
+//function reduceToSortString(previousValue, currentValue, index, array) {
+function reduceToSortString(previousValue, currentValue) {
   return (previousValue || '') + '_' + (currentValue || '');
 }
 
@@ -84,7 +85,7 @@ class Book {
       console.log(1);
       filter['year'] = {
         '$in': opts.displayYear.map(displayYearToYear)
-      }
+      };
     }
 
     if (opts.authors && (opts.authors.length > 0)) {

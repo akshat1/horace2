@@ -29,7 +29,9 @@ var gulpFilter = require('gulp-filter');
 var mocha      = require('gulp-mocha');
 var nconf      = require('nconf');
 var jsdoc      = require('gulp-jsdoc');
-var sourcemaps = require("gulp-sourcemaps");
+var sourcemaps = require('gulp-sourcemaps');
+var eslint     = require('gulp-eslint');
+var replace    = require('gulp-replace');
 
 // MISC
 var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
@@ -62,6 +64,7 @@ var Paths = {
   bower               : 'bower_components',
   sass                : clientDir('sass', '**', '*.scss'),
   client_js           : clientDir('js', '**', '*.js'),
+  client_jsx          : clientDir('js', '**', '*.jsx'),
   client_js_entry     : clientDir('js', 'index.js'),
   resources_src       : clientDir('resources', '**', '*'),
   tmp                 : tmpDir(),
@@ -181,8 +184,20 @@ gulp.task('html', function() {
 /* ******************************** /Build Client ******************************** */
 
 
-/* *********************************** Quality ********************************** * /
+/* *********************************** Quality ********************************** */
 // TODO: Migrate tests to JS, Get JSLint
+
+gulp.task('eslint', function() {
+  return gulp.src([Paths.app_js_src, Paths.client_js, Paths.client_jsx])
+    .pipe(replace('@autobind', '')) //ESlint doesn't support ES7 features. So no decorators
+    .pipe(replace(/import autobind.*;/, '')) //ESlint doesn't support ES7 features. So no decorators
+    .pipe(eslint({
+      config: 'eslint-config.json'
+    }))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
+});
+/*
 var coffeeTestOptions = {};
 var coffeeTestGrep = nconf.get('ct-grep');
 console.log('coffeeTestGrep: ', coffeeTestGrep);

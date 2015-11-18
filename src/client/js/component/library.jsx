@@ -5,13 +5,12 @@ TODO: Make server getBooks accept pager, sort and model as individual items
 TODO: Make server getBooks return these properties in response
 */
 
-import EventEmitter from 'events';
 import React from 'react';
 import Path from 'path';
 import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
-import PubSub from './../util/pubsub.js'
+import PubSub from './../util/pubsub.js';
 import BookList from './book-list.jsx';
 import MenuRenderer from './menu-renderer.jsx';
 import ColumnFilter from './column-filter.jsx';
@@ -48,7 +47,7 @@ class Library extends React.Component {
       authorsFilterPopupVisible     : false,
       subjectsFilterPopupVisible    : false,
       displayYearFilterPopupVisible : false
-    }
+    };
 
     this.wireWebSockets();
     this.wirePubSub();
@@ -81,7 +80,7 @@ class Library extends React.Component {
     PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
     PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
-    PubSub.subscribe(ClientEvents.BOOKS_SHOW_FILTER, this.showFilterPopup)
+    PubSub.subscribe(ClientEvents.BOOKS_SHOW_FILTER, this.showFilterPopup);
     PubSub.subscribe(ClientEvents.DOWNLOAD_BOOK, this.handleBookDownloadRequested);
   }
 
@@ -123,32 +122,27 @@ class Library extends React.Component {
         this.setState({
           adapterFilterPopupVisible: true
         });
-      }
-      break;
+      } break;
       case 'title': {
         this.setState({
           titleFilterPopupVisible: true
         });
-      }
-      break;
+      } break;
       case 'authors': {
         this.setState({
           authorsFilterPopupVisible: true
         });
-      }
-      break;
+      } break;
       case 'subjects': {
         this.setState({
           subjectsFilterPopupVisible: true
         });
-      }
-      break;
+      } break;
       case 'displayYear': {
         this.setState({
           displayYearFilterPopupVisible: true
         });
-      }
-      break;
+      } break;
     }
   }
 
@@ -229,7 +223,7 @@ class Library extends React.Component {
     Net.isServerScanningForBooks()
       .then(this.setScanning)
       .catch(function(err){
-        console.error('Error findind out if server is currently scanning');
+        console.error('Error finding out if server is currently scanning', err);
       });
     setTimeout(this.generateNotification, 500);
   }

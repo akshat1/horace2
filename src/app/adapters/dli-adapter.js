@@ -38,37 +38,37 @@ function getValuesForPattern (metadata, pattern) {
     }
   }
   return Object.keys(values);
-};
+}
 
 
 function getTitle(metadata) {
   return metadata.title;
-};
+}
 
 
 function getAuthors(metadata) {
   return metadata.authors || getValuesForPattern(metadata, Pattern.author);
-};
+}
 
 
-function getSizeInBytes(metadata) {
+function getSizeInBytes() { //metadata
   return -1;
-};
+}
 
 
 function getSubjects(metadata) {
   return metadata.subjects || getValuesForPattern(metadata, Pattern.subject);
-};
+}
 
 
 function getPublisher(metadata) {
   return metadata.publisher;
-};
+}
 
 
 function getYear(metadata) {
   return metadata.year;
-};
+}
 
 
 export function getBook(path) {
@@ -80,13 +80,13 @@ export function getBook(path) {
       } else {
         let m = JSON.parse(manifestFileContent);
         try {
-        let book = new Book(path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID);
-        resolve(book);
+          let book = new Book(path, getTitle(m), getAuthors(m), getSizeInBytes(m), getYear(m), getSubjects(m), getPublisher(m), ADAPTER_ID);
+          resolve(book);
         } catch(err) {
           reject(err);
         }
       }
-    }//handleDLIManifest
+    };//handleDLIManifest
 
     let handleStat = function(statErr, stat) {
       logger.debug(`dli.getBook(${path}).handleStat`);
@@ -110,7 +110,7 @@ export function getBook(path) {
           });
         }
       }
-    }//handleStat
+    };//handleStat
 
     FS.stat(path, handleStat);
   });

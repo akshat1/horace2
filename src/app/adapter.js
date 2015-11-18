@@ -29,9 +29,9 @@ function loadAdapters() {
   logger.info('Loading adapters. . .');
   var adapterPaths = Config('horace.defaultAdapters');
   adapterPaths = adapterPaths.concat(Config('horace.adapters'));
-  logger.info("adapters to be loaded: \n\t" + (adapterPaths.join('\n\t')));
+  logger.info('adapters to be loaded: \n\t' + (adapterPaths.join('\n\t')));
   adapters = adapterPaths.map(function(adapterPath) {
-    logger.info("adapterPath: " + adapterPath);
+    logger.info('adapterPath: ' + adapterPath);
     return require(adapterPath);
   });
   adapters = [];
@@ -62,7 +62,7 @@ export function getBook(path) {
   if(adapters.length < 1) {
     throw new Error('No adapters configured in system');
   }
-  var getBookProxy = function(adptr, index) {
+  var getBookProxy = function(adptr) {
     return adptr.getBook(path);
   };
   let p = Utils.findPromise(adapters, getBookProxy, _.identity);
@@ -85,10 +85,10 @@ export function getBookForDownload(book, targetFormat) {
   return new Promise(function(resolve, reject) {
     var adapter = getAdapterForBook(book);
     if (!adapter) {
-      var err = new Error("Adapter >" + book.adapterId + "< not found.");
-      logger.error(new Error("Adapter >" + book.adapterId + "< not found."));
+      var err = new Error(`Adapter >${book.adapterId}< not found.`);
+      logger.error(new Error(`Adapter >${book.adapterId}< not found.`));
       reject(err);
     }
     return resolve(adapter.getBookForDownload(book, targetFormat));
   });
-};
+}

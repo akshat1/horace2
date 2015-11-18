@@ -15,7 +15,7 @@ export function getHash(path) {
     hash = hash & hash;
   }
   return hash;
-};
+}
 
 
 /**
@@ -36,7 +36,7 @@ export function conditionalRace(promises, condition, breakOnError) {
   pending = promises.length;
   primary = new Promise(function(resolve, reject) {
     var checkCompletion, index, j, len, p, results;
-  checkCompletion = function() {
+    checkCompletion = function() {
       if (pending === 0) {
         return resolve();
       }
@@ -44,7 +44,7 @@ export function conditionalRace(promises, condition, breakOnError) {
     results = [];
     for (index = j = 0, len = promises.length; j < len; index = ++j) {
       p = promises[index];
-      p["catch"](function(err) {
+      p.catch(function(err) {
         console.trace(err);
         pending--;
         if (breakOnError) {
@@ -65,7 +65,7 @@ export function conditionalRace(promises, condition, breakOnError) {
     return results;
   });
   return primary;
-};
+}
 
 
 /**
@@ -107,7 +107,7 @@ export function findPromise(arr, fnGetter, fnCondition, breakOnError) {
         } else {
           return next();
         }
-      })["catch"](function(err) {
+      }).catch(function(err) {
         console.error(`findPromise broke for the index ${index} which gave the candidate ${candidate.getAdapterId()}`);
         console.trace(err);
         if (breakOnError) {
@@ -119,7 +119,7 @@ export function findPromise(arr, fnGetter, fnCondition, breakOnError) {
     };
     return tick();
   });
-};
+}
 
 
 /**
@@ -148,7 +148,7 @@ export function forEachPromise(arr, fn, breakOnError) {
       return fn(candidate, index).then(function(resultForIndex) {
         result.push(resultForIndex);
         return next();
-      })["catch"](function(err) {
+      }).catch(function(err) {
         console.error(err);
         if (breakOnError) {
           return reject(err);
@@ -159,14 +159,14 @@ export function forEachPromise(arr, fn, breakOnError) {
     };
     return tick();
   });
-};
+}
 
 
 export function testSequential() {
   var arr, fn;
   arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
   fn = function(x) {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function(resolve) {
       var inner;
       inner = function() {
         return resolve(x);
@@ -175,4 +175,4 @@ export function testSequential() {
     });
   };
   return forEachPromise(arr, fn);
-};
+}
