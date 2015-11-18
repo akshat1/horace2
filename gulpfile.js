@@ -186,7 +186,7 @@ gulp.task('html', function() {
 // TODO: Migrate tests to JS, Get JSLint
 
 gulp.task('eslint', function() {
-  return gulp.src(Paths.app_js_src)
+  return gulp.src([Paths.app_js_src, Paths.client_js])
     .pipe(eslint({
       config: 'eslint-config.json'
     }))

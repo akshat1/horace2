@@ -7,6 +7,7 @@ const Method = {
   DELETE : 'DELETE'
 };
 
+
 const StatusCode = {
   OK                  : 200,
   NotModified         : 304,
@@ -19,6 +20,7 @@ const StatusCode = {
   InternalServerError : 500
 };
 
+
 const Mime = {
   TEXT           : 'text/plain',
   HALJSON        : 'application/hal+json',
@@ -27,6 +29,7 @@ const Mime = {
   FORMDATA       : 'multipart/form-data',
   XML            : 'text/xml'
 };
+
 
 const ResponseType = {
   DOMSTRING   : '',
@@ -37,6 +40,7 @@ const ResponseType = {
   TEXT        : 'text'
 };
 
+
 const ReadyState = {
   UNINITIALIZED : 0,
   LOADING       : 1,
@@ -45,24 +49,6 @@ const ReadyState = {
   COMPLETE      : 4
 };
 
-/*
-  If request.responseType isnt '' then use that
-  else, if 'content-type' header is supplied then match mime-type to response-type
- */
-
-function _inferResponseType(request) {
-  var contentType, responseType;
-  responseType = request.contentType;
-  if (responseType) {
-    return responseType;
-  }
-  contentType = request.getResponseHeader('content-type');
-  if (contentType === Mime.HALJSON || contentType === Mime.JSON) {
-    return ResponseType.JSON;
-  } else {
-    return '';
-  }
-};
 
 function _extractResult(request, opts) {
   var responseType;
@@ -77,11 +63,13 @@ function _extractResult(request, opts) {
     default:
       return request.responseText;
   }
-};
+}
 
-function _extractError(request, opts) {
+
+function _extractError(request) {
   return new Error(request.responseText);
-};
+}
+
 
 function _preparePayload(data, contentType, method) {
   var key, payloadItems, value;
@@ -89,7 +77,7 @@ function _preparePayload(data, contentType, method) {
     payloadItems = [];
     for (key in data) {
       value = data[key];
-      payloadItems.push((encodeURIComponent(key)) + "=" + (encodeURIComponent(value)));
+      payloadItems.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
     }
     return payloadItems.join('&');
   } else if(method === Method.POST && contentType === Mime.JSON) {
@@ -97,7 +85,8 @@ function _preparePayload(data, contentType, method) {
   } else {
     return console.error('Implement Me!');
   }
-};
+}
+
 
 function _prepareHeaders(opts) {
   var headers = {};
@@ -106,11 +95,13 @@ function _prepareHeaders(opts) {
   return headers;
 }
 
+
 function _setHeaders(request, headers) {
   for (var key in headers){
     request.setRequestHeader(key, headers[key]);
   }
-};
+}
+
 
 function _getAjaxPromiseExecutor(request, opts) {
   return function(resolve, reject) {
@@ -128,7 +119,7 @@ function _getAjaxPromiseExecutor(request, opts) {
       }
     };
   };
-};
+}
 
 /*
   opts:
@@ -158,7 +149,7 @@ function ajax(opts) {
     request.timeout = opts.timeout;
   }
   if (opts.method === Method.GET) {
-    url = opts.url + "?" + payload;
+    url = `${opts.url}?${payload}`;
   } else {
     url = opts.url;
   }
@@ -170,7 +161,7 @@ function ajax(opts) {
   else
     request.send();
   return promise;
-};
+}
 
 
 module.exports = {
