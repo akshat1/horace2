@@ -4,9 +4,6 @@ import React from 'react';
 import autobind from 'autobind-decorator';
 
 
-const FILTER_DEBOUNCE_INTERVAL = 750;
-
-
 class Popup extends React.Component {
   constructor(props) {
     super(props);

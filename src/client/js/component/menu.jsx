@@ -4,7 +4,7 @@ import React from 'react';
 import autobind from 'autobind-decorator';
 import _ from 'lodash';
 
-import PubSub from './../util/pubsub.js'
+import PubSub from './../util/pubsub.js';
 
 
 /**
@@ -25,7 +25,7 @@ class Menu extends React.Component {
 
 
   @autobind
-  handleClick(e) {
+  handleClick() {
     if(this.props.disabled)
       return;
     PubSub.broadcast('menu.clicked', this.getBroadcastPayload());
@@ -43,7 +43,7 @@ class Menu extends React.Component {
 
 
   @autobind
-  componentDidUpdate(nextProps, nextState) {
+  componentDidUpdate() {
     PubSub.broadcast('menu.updated', this.getBroadcastPayload());
   }
 

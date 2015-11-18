@@ -3,7 +3,7 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
 
-import PubSub from './../util/pubsub.js'
+import PubSub from './../util/pubsub.js';
 
 
 /**
@@ -11,7 +11,7 @@ whether or not child is a descendent of parent
 */
 function isDOMDescendentOf(child, parent){
   if (child.parentNode === parent)
-    return true
+    return true;
   if (child.parentNode)
     return isDOMDescendentOf(child.parentNode, parent);
   else

@@ -1,9 +1,6 @@
 'use strict';
 import React from 'react';
 import autobind from 'autobind-decorator';
-import _ from 'lodash';
-
-import * as Net from './../util/net.js';
 
 
 const Style = {
