@@ -24,6 +24,6 @@ const HoraceEvents = {
     SCANNER_SCANSTOPPED : 'horace.ipc.scanner.scanStopped',
     SCANNER_BOOKFOUND   : 'horace.ipc.scanner.bookFound'
   }
-}
+};
 
 export default HoraceEvents;

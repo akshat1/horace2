@@ -1,9 +1,9 @@
 'use strict';
+/*eslint-disable no-unused-vars*/
 
 import Path from 'path';
 import FS from 'fs';
 import Winston from 'winston';
-import Utils from '../utils.js';
 import Book from '../book.js';
 import Formats from '../formats.js';
 
@@ -11,7 +11,7 @@ import Formats from '../formats.js';
 const ADAPTER_ID = 'horace.txt';
 const SUPPORTED_EXPORT_FORMATS = [Formats.TXT];
 const DEFAULT_ENCODING = 'utf8';
-const GUTENBERG_LICENSE_TEXT = 'This eBook is for the use of anyone anywhere at no cost and with almost no restrictions whatsoever.  You may copy it, give it away or re-use it under the terms of the Project Gutenberg License included with this eBook or online at www.gutenberg.net';
+//const GUTENBERG_LICENSE_TEXT = 'This eBook is for the use of anyone anywhere at no cost and with almost no restrictions whatsoever.  You may copy it, give it away or re-use it under the terms of the Project Gutenberg License included with this eBook or online at www.gutenberg.net';
 const GUTENBERG_START_TAG = /\*\*\*\s*START OF (THE|THIS) PROJECT GUTENBERG EBOOK.*\s*.*\*\*\*/;
 
 const GutenbergSearchPattern = {
@@ -49,7 +49,7 @@ function getGutenbergInfoBlock(text) {
   } else {
     return null;
   }
-};
+}
 
 
 /**
@@ -75,7 +75,7 @@ function isTextFile(path) {
       });//FS.stat
     }
   });//new Promise
-};
+}
 
 
 /**
@@ -86,7 +86,7 @@ function isTextFile(path) {
  */
 function getTitle(path, text) {
   return Promise.resolve(Path.basename(path));
-};
+}
 
 
 /**
@@ -96,7 +96,7 @@ function getTitle(path, text) {
  */
 function getAuthors(text) {
   return Promise.resolve(['Unknown']);
-};
+}
 
 
 /**
@@ -107,7 +107,7 @@ function getAuthors(text) {
  */
 function getSizeInBytes(path) {
   return Promise.resolve(-1);
-};
+}
 
 
 /**
@@ -117,7 +117,7 @@ function getSizeInBytes(path) {
  */
 function getYear(text) {
   return Promise.resolve(-1);
-};
+}
 
 
 /**
@@ -127,7 +127,7 @@ function getYear(text) {
  */
 function getSubjects() {
   return Promise.resolve([]);
-};
+}
 
 
 /**
@@ -137,12 +137,12 @@ function getSubjects() {
  */
 function getPublisher() {
   return Promise.resolve('Unknown');
-};
+}
 
 
 function getTitleForGutenberg(tag) {
   return tag.replace(GutenbergReplacePattern.Title, '').replace(/\s+/, ' ');
-};
+}
 
 
 function getAuthorsForGutenberg(tag) {
@@ -150,22 +150,22 @@ function getAuthorsForGutenberg(tag) {
   return tag.split('\n').map(function(a) {
     return a.trim();
   });
-};
+}
 
 
 function getYearForGutenberg() {
   return Promise.resolve(-1);
-};
+}
 
 
 function getSubjectsForGutenberg() {
   return Promise.resolve(['GBSubject']);
-};
+}
 
 
 function getPublisherForGutenberg() {
   return Promise.resolve('GBPublisher');
-};
+}
 
 
 function getGutenbergBook(path, infoBlock, text) {
@@ -183,7 +183,7 @@ function getGutenbergBook(path, infoBlock, text) {
       }
     }
     if (!title) {
-      throw new Error("Did not find title :( out of " + tags.length + " tags (tags was " + (typeof tags) + ")\n\n" + (JSON.stringify(tags)));
+      throw new Error(`Did not find title :( out of ${tags.length} tags (tags was ${(typeof tags)})\n\n${JSON.stringify(tags)}`);
     }
     if (!(authors != null ? authors.length : void 0)) {
       authors = ['Unknown'];
@@ -197,7 +197,7 @@ function getGutenbergBook(path, infoBlock, text) {
       }
     }).catch(reject);
   });//return new Promise
-};
+}
 
 
 function getUnidentifiedBookInfo(path, text) {
@@ -212,7 +212,7 @@ function getUnidentifiedBookInfo(path, text) {
     })
     .catch(reject);
   });
-};
+}
 
 
 /**
@@ -221,7 +221,7 @@ function getUnidentifiedBookInfo(path, text) {
  * @resolves {Book}
  */
 export function getBook(path) {
-  logger.info("TxtAdapter.getBook(" + path + ")");
+  logger.info(`TxtAdapter.getBook(${path})`);
   return new Promise(function(resolve, reject) {
     isTextFile(path)
     .then(function(isText) {
@@ -252,7 +252,7 @@ export function getBook(path) {
       reject(isTextFileErr);
     });//catch
   });//new Promise
-};
+}
 
 
 /**
@@ -268,14 +268,14 @@ export function getBookForDownload(book, format) {
   return new Promise(function(resolve, reject) {
     var rStream;
     if (book.adapterId !== getAdapterId()) {
-      reject(new Error("This book does not belong to this adapter [" + ADAPTER_ID + "]"));
+      reject(new Error(`This book does not belong to this adapter [${ADAPTER_ID}]`));
       return;
     }
     if (SUPPORTED_EXPORT_FORMATS.indexOf(format) < 0) {
-      reject(new Error("Target format not supported (>" + format + "<)"));
+      reject(new Error(`Target format not supported (>${format}<)`));
       return;
     }
     rStream = FS.createReadStream(book.path);
     return resolve(rStream);
   });
-};
+}

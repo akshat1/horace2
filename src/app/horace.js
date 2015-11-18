@@ -8,12 +8,10 @@ import Events from 'events';
 import FS from 'fs';
 import IPC from 'node-ipc';
 import ChildProcess from 'child_process';
-import FSExtra from 'fs-extra';
 import _ from 'lodash';
 import Winston from 'winston';
 
 import Config from './config.js';
-import * as Utils from './utils.js';
 import * as IPCUtils from './ipc.js';
 import * as DB from './db.js';
 import * as Adapter from './adapter.js';
@@ -54,19 +52,19 @@ function startScan() {
       reject(err);
     }
   });
-};
+}
 
 
 function getBooks(opts) {
   logger.info('getBooks');
   return DB.getBooks(opts);
-};
+}
 
 
 function getBook(id) {
   logger.info(`getBook(${id})`);
   return DB.getBook(id);
-};
+}
 
 
 function requestDownload(id) {
@@ -81,7 +79,7 @@ function requestDownload(id) {
           let tmpFileWStream = FS.createWriteStream(tmpFilePath);
           bookRStream.pipe(tmpFileWStream);
           bookRStream.on('error', function(rStreamError) {
-            logger.error('Book read stream threw an error %o', err);
+            logger.error('Book read stream threw an error %o', rStreamError);
             reject(rStreamError);
           });
 
@@ -102,16 +100,16 @@ function requestDownload(id) {
         }
 
       }).catch(function(err1) {
-        console.error("Error while preparing " + id + " for download\n", err1);
+        console.error(`Error while preparing ${id} for download\n`, err1);
         return reject(err1);
       });
 
     }).catch(function(err) {
-      console.err("Error fetching book: " + id + ": ", err);
+      console.err(`Error fetching book: ${id} `, err);
       return reject(err);
     });
   });
-};
+}
 
 
 function isScanningForBooks() {
@@ -144,30 +142,30 @@ IPC.config.silent = true;
 IPC.config.retry  = 1500;
 
 function _ipcServer() {
-  IPC.server.on(IPCEvents.HELLOFROM_SCANNER, function(data, socket) {
+  IPC.server.on(IPCEvents.HELLOFROM_SCANNER, function() { //data, socket
     if (Config('horace.scan.serverstart')) {
       logger.info('horace.scan.serverstart set to true. Scanning now.');
       return startScan();
     }
   });
 
-  IPC.server.on(IPCEvents.ERROR_OCCURRED, function(data, socket) {
+  IPC.server.on(IPCEvents.ERROR_OCCURRED, function(data) {
     logger.error('Somebody had an error', data);
     return console.error(data);
   });
 
-  IPC.server.on(IPCEvents.SCANNER_SCANSTARTED, function(data, socket) {
+  IPC.server.on(IPCEvents.SCANNER_SCANSTARTED, function() {
     _isScanning = true;
     Horace.emit(ServerEvents.SCANNER_SCANSTARTED);
   });
 
-  return IPC.server.on(IPCEvents.SCANNER_SCANSTOPPED, function(data, socket) {
+  return IPC.server.on(IPCEvents.SCANNER_SCANSTOPPED, function() {
     logger.info('Scaning Finished');
     _isScanning = false;
     getBook();
     Horace.emit(ServerEvents.SCANNER_SCANSTOPPED);
   });
-};
+}
 
 
 IPC.serve(_ipcServer);

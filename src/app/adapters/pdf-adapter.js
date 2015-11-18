@@ -9,7 +9,7 @@ import FS from 'fs';
 import ChildProcess from 'child_process';
 import Winston from 'winston';
 
-import Book from '../book.js'
+import Book from '../book.js';
 import Formats from '../formats.js';
 
 const Exec = ChildProcess.exec;
@@ -60,23 +60,23 @@ function getExif(path) {
 
 function getTitle(exifdata) {
   return exifdata['Title'] || exifdata['FileName'];
-};
+}
 
 function getAuthors(exifdata) {
   return [exifdata['Author']];
-};
+}
 
-function getSizeInBytes(exifdata) {
+function getSizeInBytes() {//exifdata
   return -1;
-};
+}
 
 function getSubjects(exifdata) {
   return [exifdata['Subject']];
-};
+}
 
 function getPublisher() {
   return '';
-};
+}
 
 function getYear() {
   return -1;
@@ -93,16 +93,16 @@ export function getBookForDownload(book, targetFormat) {
   logger.info('getBookForDownload(%o)', book);
   return new Promise(function(resolve, reject) {
     if (SUPPORTED_EXPORT_FORMATS.indexOf(targetFormat) < 0) {
-      let err = new Error("Target format not supported (>" + targetFormat + "<)");
+      let err = new Error(`Target format not supported >${targetFormat}<`);
       logger.error(err);
       reject(err);
       return;
     }
-    logger.debug("create readstream for path: >" + book.path + "<");
+    logger.debug(`create readstream for path: >${book.path}<`);
     let rStream = FS.createReadStream(book.path);
     return resolve(rStream);
   });
-};
+}
 
 
 export function getBook(path) {
@@ -133,4 +133,4 @@ export function getBook(path) {
       });
     }
   });
-};
+}

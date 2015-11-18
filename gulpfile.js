@@ -29,7 +29,8 @@ var gulpFilter = require('gulp-filter');
 var mocha      = require('gulp-mocha');
 var nconf      = require('nconf');
 var jsdoc      = require('gulp-jsdoc');
-var sourcemaps = require("gulp-sourcemaps");
+var sourcemaps = require('gulp-sourcemaps');
+var eslint     = require('gulp-eslint');
 
 // MISC
 var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
@@ -181,8 +182,18 @@ gulp.task('html', function() {
 /* ******************************** /Build Client ******************************** */
 
 
-/* *********************************** Quality ********************************** * /
+/* *********************************** Quality ********************************** */
 // TODO: Migrate tests to JS, Get JSLint
+
+gulp.task('eslint', function() {
+  return gulp.src(Paths.app_js_src)
+    .pipe(eslint({
+      config: 'eslint-config.json'
+    }))
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
+});
+/*
 var coffeeTestOptions = {};
 var coffeeTestGrep = nconf.get('ct-grep');
 console.log('coffeeTestGrep: ', coffeeTestGrep);

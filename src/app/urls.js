@@ -14,14 +14,13 @@ var Client = {};
 function getClientFunction(prefix, path){
   return function () {
     let params = path.match(/(:[^:\/]+)/g) || [];
-    let parts = prefix;
     let finalPath = path;
     let paramValues = Array.prototype.slice.apply(arguments);
-    for (let i = 0, _argsLen = arguments.length, _paramsLen = params.length; i < _argsLen && i < params.length; i++ ){
+    for (let i = 0, _argsLen = arguments.length, _paramsLen = params.length; i < _argsLen && i < _paramsLen; i++ ){
       finalPath = finalPath.replace(params[i], encodeURIComponent(paramValues[i]));
     }
     return (prefix + '/' + finalPath).replace(/\/+/g, '/');
-  }
+  };
 }
 
 
@@ -47,8 +46,8 @@ register('Config', '/config');
 registerApi('Books', '/books');
 registerApi('Books.Distinct', '/books/distinct/:columnName');
 register('fileDownload', function(fileName) {
-    return `/download/${fileName}`;
-  });
+  return `/download/${fileName}`;
+});
 
 
 var UrlMap = {

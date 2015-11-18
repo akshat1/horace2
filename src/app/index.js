@@ -11,16 +11,12 @@ import BodyParser from 'body-parser';
 import ServeStatic from 'serve-static';
 import SocketIO from 'socket.io';
 import FSExtra from 'fs-extra';
-import URL from 'url';
 import _ from 'lodash';
 import Mime from 'mime';
 
-
-import { PagerModel, SortModel } from './model/library-model.js';
 import HoraceEvents from './events.js';
 import UrlMap from './urls.js';
 import Config from './config.js';
-import Utils from './utils.js';
 import Horace from './horace.js';
 
 const ServerUrlMap = UrlMap.Server;
@@ -38,8 +34,8 @@ const logger = new Winston.Logger({
 
 // Run Gulp if required
 if (Config('horace.rebuildClientAtStartup')) {
-  Gulp = require('gulp');
-  GulpFile = require('../gulpfile.js');
+  var Gulp = require('gulp');
+  require('../gulpfile.js');
   Gulp.start('default');
 }
 
@@ -50,7 +46,6 @@ const serverTmpPath  = Path.join(__dirname, '..', Config('horace.tmpDirPath'));
 const serverSubDir   = Config('horace.urlSubDir').replace(/\/$/, '') || '/';
 const webroot        = Path.join(__dirname, '..', Config('horace.webroot'));
 const listenPort     = new Number(Config('horace.port')).valueOf();
-const downloadDirURL = Path.join(serverSubDir, 'download');
 const webrootURL     = Path.join(serverSubDir, serverSubDir).replace(/\./, '/');
 const socketIOURL    = Path.join(serverSubDir, 'socket.io');
 const app = Express();
@@ -60,7 +55,6 @@ const apiRouter = Express.Router();
 logger.info('listenPort     : ', listenPort);
 logger.info('serverTmpPath  : ', serverTmpPath);
 logger.info('webroot        : ', webroot);
-//logger.info('downloadDirURL : ', downloadDirURL);
 logger.info('webrootURL     : ', webrootURL);
 
 FSExtra.ensureDir(serverTmpPath);
@@ -69,7 +63,7 @@ FSExtra.ensureDir(webroot);
 
 //Set up websockets
 const server = app.listen(listenPort, function() {
-  return logger.info("Listening on " + (this.address()));
+  return logger.info(`Listening on ${this.address()}`);
 });
 
 const io = SocketIO.listen(server, {
@@ -85,7 +79,7 @@ Horace.on(ServerEvents.SCANNER_SCANSTARTED, function() {
 
 Horace.on(ServerEvents.SCANNER_SCANSTOPPED, function() {
   io.emit(ServerEvents.SCANNER_SCANSTOPPED);
-})
+});
 
 
 io.on('connection', function(socket) {
@@ -98,7 +92,7 @@ io.on('connection', function(socket) {
     logger.debug('BOOK DOWNLOAD REQUESTED // %o', query);
     return Horace.requestDownload(parseInt(query.bookId))
       .then(function(tmpFilePath) {
-        logger.debug("\n$$$$$\nsend message that the download is ready at " + tmpFilePath + ".");
+        logger.debug(`\n$$$$$\nsend message that the download is ready at ${tmpFilePath}.`);
         let fileName = Path.basename(tmpFilePath);
         return socket.emit(ServerEvents.BOOK_READY_FOR_DOWNLOAD, {
           path: ServerUrlMap.fileDownload(fileName)
@@ -112,7 +106,6 @@ io.on('connection', function(socket) {
 
 
 // Set up routes
-//app.use(downloadDirURL, ServeStatic(serverTmpPath));
 app.use('/download/:fileName', function (request, response) {
   logger.info('download file');
   var fileName = request.params.fileName;
@@ -160,7 +153,7 @@ apiRouter.post(ServerUrlMap['Books'], function(request, response) {
       return response.json(res);
     })
     .catch(function(err) {
-      logger.error('Error fetching books from Horace %o', error);
+      logger.error('Error fetching books from Horace %o', err);
       return response.status(500).send(err);
     });
 });
@@ -171,7 +164,7 @@ apiRouter.get(ServerUrlMap['Books.Distinct'], function(request, response) {
   var columnName = request.params.columnName;
   Horace.getDistinctBookAttribute(columnName)
     .then(function(values){
-      logger.debug(`Got ${values.length} distinct values`)
+      logger.debug(`Got ${values.length} distinct values`);
       response.json(values);
       return;
     })

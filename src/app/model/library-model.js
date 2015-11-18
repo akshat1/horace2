@@ -1,4 +1,4 @@
-'use strict'
+'use strict';
 
 const DEFAULT_PAGER_PAGE_SIZE = 25;
 

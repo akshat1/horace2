@@ -41,4 +41,4 @@ NConf.argv().env().file({
  */
 export default function(key) {
   return NConf.get(key);
-};
+}

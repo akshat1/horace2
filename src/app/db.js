@@ -6,17 +6,13 @@
 
 import MongoDB from 'mongodb';
 import Winston from 'winston';
-import _ from 'lodash';
-import FSExtra from 'fs-extra';
 
-
-import { PagerModel, SortModel } from './model/library-model.js';
+import { PagerModel } from './model/library-model.js';
 import Config from './config.js';
-import Sorting from './sorting.js';
 import Book from './book.js';
 
 const Collection = {
-  Books: 'horace-books'
+  Books: 'books'
 };
 
 const logLevel = Config('horace.db.logLevel');
@@ -46,7 +42,6 @@ database = new Engine.Db dbLocation, {}
 const client = MongoDB.MongoClient;
 const url = 'mongodb://localhost:27017/horace?maxPoolSize=10';
 
-var _isConnected = false;
 var collectionBooks = null;
 
 
@@ -56,7 +51,7 @@ var ConnectPromise = new Promise(function(resolve, reject) {
     if(connectErr) {
       reject(connectErr);
     } else {
-      collectionBooks = db.collection('books');
+      collectionBooks = db.collection(Collection.Books);
       resolve();
     }
   });
@@ -74,7 +69,7 @@ export function saveBook(book) {
           logger.error('Upsert error %o', err);
           return reject(err);
         } else {
-          logger.info("Saved book " + book.id);
+          logger.info(`Saved book ${book.id}`);
           return resolve();
         }
       };
@@ -87,9 +82,10 @@ export function saveBook(book) {
     });
     return p;
   });
-};
+}
 
 
+/*
 function _transformBooksQuery(pager, sort, filter) {
   return {
     currentPage   : pager.currentPage,
@@ -99,16 +95,13 @@ function _transformBooksQuery(pager, sort, filter) {
     filter        : filter
   };
 }
+*/
 
 
 export function getBooks(params) {
   return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
-      var defaults = {
-        sortColumn: 'title',
-        sortAscending: true
-      };
-      var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
+      //var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
       var pager    = params.pager;
       var sort     = params.sort;
       var filter   = params.filter ? Book.mongoFilter(params.filter) : {};
@@ -134,9 +127,9 @@ export function getBooks(params) {
           });
         }
       });//cur.toArray
-    })
+    });
   });
-};//getBooks
+}//getBooks
 
 
 /**
@@ -177,11 +170,10 @@ export function getBook(id) {
         });
       } catch (_error) {
         err = _error;
-        logger.error("Error occurred while trying to fetch id: " + id + "\n", err);
+        logger.error(`Error occurred while trying to fetch id: ${id} \n`, err);
         return reject(err);
       }
     });
     return p;
   });
-};
-
+}

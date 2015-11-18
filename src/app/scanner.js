@@ -6,7 +6,6 @@ import IPC from 'node-ipc';
 import Path from 'path';
 import FS from 'graceful-fs';
 import Winston from 'winston';
-import _ from 'lodash';
 
 import HoraceEvents from './events.js';
 import * as IPCUtils from './ipc.js';
@@ -56,16 +55,16 @@ function _getChildren(path) {
       }
     });
   });
-};
+}
 
 
 function _scanChildren(path) {
   return _getChildren(path).then(_scanSequentially);
-};
+}
 
 
 function _scanPath(path) {
-  logger.info("_scanPath(" + path + ")");
+  logger.info(`_scanPath(${path})`);
   if(!path){
     return;
   }
@@ -79,13 +78,13 @@ function _scanPath(path) {
         return _scanChildren(path);
       }
     });
-};
+}
 
 
 function _scanSequentially(paths) {
-  logger.info("_scanSequentially([" + (paths.join(',')) + "])");
+  logger.info(`_scanSequentially([${paths.join(',')}])`);
   return Utils.forEachPromise(paths, _scanPath);
-};
+}
 
 
 // ----------------- Start IPC ---------------------
