@@ -322,13 +322,13 @@ class Library extends React.Component {
       };
     };
     if (this.state.adapterFilterPopupVisible)
-      popups.push(<ColumnFilter columnName='adapterId' className='h-column-filter h-column-filter-adapters' dismiss={getDismissFunction('adapterFilterPopupVisible')}/>);
+      popups.push(<ColumnFilter key='cfAdapterId' columnName='adapterId' className='h-column-filter h-column-filter-adapters' dismiss={getDismissFunction('adapterFilterPopupVisible')}/>);
     if (this.state.titleFilterPopupVisible)
-      popups.push(<ColumnFilter columnName='title' className='h-column-filter h-column-filter-title' dismiss={getDismissFunction('titleFilterPopupVisible')}/>);
+      popups.push(<ColumnFilter key='cfTitle' columnName='title' className='h-column-filter h-column-filter-title' dismiss={getDismissFunction('titleFilterPopupVisible')}/>);
     if (this.state.authorsFilterPopupVisible)
-      popups.push(<ColumnFilter columnName='authors' className='h-column-filter h-column-filter-authors' dismiss={getDismissFunction('authorsFilterPopupVisible')}/>);
+      popups.push(<ColumnFilter key='cfAuthors' columnName='authors' className='h-column-filter h-column-filter-authors' dismiss={getDismissFunction('authorsFilterPopupVisible')}/>);
     if (this.state.subjectsFilterPopupVisible)
-      popups.push(<ColumnFilter columnName='subjects' className='h-column-filter h-column-filter-subjects' dismiss={getDismissFunction('subjectsFilterPopupVisible')}/>);
+      popups.push(<ColumnFilter key='cfSubjects' columnName='subjects' className='h-column-filter h-column-filter-subjects' dismiss={getDismissFunction('subjectsFilterPopupVisible')}/>);
     if (this.state.displayYearFilterPopupVisible)
       popups.push(<ColumnFilter columnName='displayYear' className='h-column-filter h-column-filter-year' dismiss={getDismissFunction('displayYearFilterPopupVisible')}/>);
     return popups;

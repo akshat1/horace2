@@ -134,7 +134,7 @@ class ColumnFilter extends React.Component {
     if(!filteredValues)
       throw new Error('No filtered values');
     return filteredValues.map(function(v) {
-      return (<ColumnFilterOption label={v} value={v} selected={isValueSelected(v, selectedValuesMap)} onChange={this.handleFilterChange}/>);
+      return (<ColumnFilterOption key={v} label={v} value={v} selected={isValueSelected(v, selectedValuesMap)} onChange={this.handleFilterChange}/>);
     }.bind(this));
   }
 
