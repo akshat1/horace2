@@ -3,7 +3,7 @@
   "description": "Horace Two",
   "author": "SpeedySan",
   "private": true,
-  "licnse": "none",
+  "license": "none",
   "scripts": {
     "start": "node app/index.js"
   },
