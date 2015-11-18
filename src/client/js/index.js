@@ -6,6 +6,6 @@ import Library from './component/library.jsx';
 document.addEventListener('DOMContentLoaded', function() {
   React.render(
     <Library />,
-    document.body
+    document.getElementById('libraryRoot')
   );
 });
