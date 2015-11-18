@@ -18,10 +18,11 @@ Unfortunately there is no simple install for Horace at the moment, as it is stil
 3. Install Haml (sudo gem install haml)
 4. Install bower (sudo npm install bower -g)
 5. Install gulp (sudo npm install gulp -g)
-6. Create a config.json file in the project root with path to your books folder
-7. Build the front-end by running gulp
-8. Run npm start
-9. Point your browser to localhost:8080
+6. Install mongodb
+7. Create a config.json file in the project root with path to your books folder
+8. Build the front-end by running gulp
+9. Run npm start
+10. Point your browser to localhost:8080
 
 ### Configuration
 Configuration options for Horace can be seen in app/config.coffee. One may create a config.json file in the project root to override these settings.
