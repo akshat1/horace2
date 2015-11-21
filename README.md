@@ -1,4 +1,5 @@
 # horace2
+https://travis-ci.org/akshat1/horace2.svg
 
 ### Introduction
 Horace is an e-book management software. Horace is intended to be
