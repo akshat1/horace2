@@ -26,7 +26,9 @@ var source     = require('vinyl-source-stream');
 var rename     = require('gulp-rename');
 var bower      = require('gulp-main-bower-files');
 var gulpFilter = require('gulp-filter');
+require('babel-core/register');
 var mocha      = require('gulp-mocha');
+var istanbul   = require('gulp-babel-istanbul');
 var nconf      = require('nconf');
 var jsdoc      = require('gulp-jsdoc');
 var sourcemaps = require('gulp-sourcemaps');
@@ -78,7 +80,7 @@ var Paths = {
   csslib_src          : clientDir('lib', '**', '*.css'),
   csslib              : distDir('lib'),
   jslib               : distDir('lib'),
-  test                : 'test/**/*.coffee',
+  test                : 'test/**/*.js',
   jsonlint_conf       : Path.join(__dirname, 'build-config', 'coffeelint.json'),
   coverage            : 'coverage',
   jsdoc_app           : 'documentation/app',
@@ -197,6 +199,28 @@ gulp.task('eslint', function() {
     .pipe(eslint.format())
     .pipe(eslint.failAfterError());
 });
+
+
+var testOptions = {};
+var testGrep = nconf.get('test-grep');
+if(testGrep) {
+  console.log('testGrep: ', testGrep);
+  testOptions['grep'] = testGrep;
+}
+
+gulp.task('test', function() {
+  return gulp.src([Paths.app_js_src])
+    .pipe(istanbul({includeUntested: true}))
+    .pipe(istanbul.hookRequire())
+    .on('finish', function () {
+      return gulp.src(Paths.test)
+        .pipe(mocha(testOptions))
+        .pipe(istanbul.writeReports({
+          dir: Paths.coverage
+        }));
+    });
+});
+
 /*
 var coffeeTestOptions = {};
 var coffeeTestGrep = nconf.get('ct-grep');
