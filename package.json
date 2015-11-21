@@ -49,6 +49,7 @@
     "gulp-replace": "^0.5.4",
     "gulp-ruby-haml": "0.0.4",
     "gulp-sass": "^2.0.1",
+    "gulp-sourcemaps": "^1.6.0",
     "jsdoc": "^3.3.2",
     "lodash": "^3.9.3",
     "mocha": "^2.2.5",
