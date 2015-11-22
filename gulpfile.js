@@ -29,6 +29,7 @@ var nconf      = require('nconf');
 var sourcemaps = require('gulp-sourcemaps');
 var eslint     = require('gulp-eslint');
 var replace    = require('gulp-replace');
+var esdoc      = require("gulp-esdoc");
 
 // MISC
 var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
@@ -194,7 +195,19 @@ gulp.task('eslint', function() {
     .pipe(eslint.failAfterError());
 });
 
-/*********************************** /Quality ********************************** */
+/* ********************************** /Quality ********************************** */
+
+
+/* ************************************* Doc ************************************ */
+
+gulp.task('esdoc', function() {
+  return gulp.src('./src')
+    .pipe(esdoc({
+      destination: './documentation'
+    }));
+});
+
+/* ************************************ /Doc ************************************ */
 
 
 /* ********************************* Top Level *********************************** */
