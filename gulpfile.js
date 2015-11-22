@@ -13,7 +13,6 @@ Notes:
 
 var gulp       = require('gulp');
 var changed    = require('gulp-changed');
-var _          = require('lodash');
 var sass       = require('gulp-sass');
 var del        = require('del');
 var FS         = require('fs');
@@ -26,11 +25,7 @@ var source     = require('vinyl-source-stream');
 var rename     = require('gulp-rename');
 var bower      = require('gulp-main-bower-files');
 var gulpFilter = require('gulp-filter');
-require('babel-core/register');
-var mocha      = require('gulp-mocha');
-var istanbul   = require('gulp-babel-istanbul');
 var nconf      = require('nconf');
-var jsdoc      = require('gulp-jsdoc');
 var sourcemaps = require('gulp-sourcemaps');
 var eslint     = require('gulp-eslint');
 var replace    = require('gulp-replace');
@@ -187,7 +182,6 @@ gulp.task('html', function() {
 
 
 /* *********************************** Quality ********************************** */
-// TODO: Migrate tests to JS, Get JSLint
 
 gulp.task('eslint', function() {
   return gulp.src([Paths.app_js_src, Paths.client_js, Paths.client_jsx])
@@ -200,49 +194,7 @@ gulp.task('eslint', function() {
     .pipe(eslint.failAfterError());
 });
 
-
-var testOptions = {};
-var testGrep = nconf.get('test-grep');
-if(testGrep) {
-  console.log('testGrep: ', testGrep);
-  testOptions['grep'] = testGrep;
-}
-
-gulp.task('test', function() {
-  return gulp.src([Paths.app_js_src])
-    .pipe(istanbul({includeUntested: true}))
-    .pipe(istanbul.hookRequire())
-    .on('finish', function () {
-      return gulp.src(Paths.test)
-        .pipe(mocha(testOptions))
-        .pipe(istanbul.writeReports({
-          dir: Paths.coverage
-        }));
-    });
-});
-
-/*
-var coffeeTestOptions = {};
-var coffeeTestGrep = nconf.get('ct-grep');
-console.log('coffeeTestGrep: ', coffeeTestGrep);
-if(coffeeTestGrep){
-  coffeeTestOptions['grep'] = coffeeTestGrep;
-}
-console.log('coffeeTestOptions: ', coffeeTestOptions);
-gulp.task('coffee-test', function (cb) {
-  return gulp.src([Paths.client_coffee, Paths.app_coffee])
-    .pipe(istanbul({includeUntested: true}))
-    .pipe(istanbul.hookRequire())
-    .on('finish', function () {
-      gulp.src(Paths.test)
-        .pipe(mocha(coffeeTestOptions))
-        .pipe(istanbul.writeReports({
-          dir: Paths.coverage
-        }))
-        .on('cnd', cb);
-    })
-});
-/ * ********************************* /Quality *********************************** */
+/*********************************** /Quality ********************************** */
 
 
 /* ********************************* Top Level *********************************** */
