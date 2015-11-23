@@ -27,9 +27,8 @@ var bower      = require('gulp-main-bower-files');
 var gulpFilter = require('gulp-filter');
 var nconf      = require('nconf');
 var sourcemaps = require('gulp-sourcemaps');
-var eslint     = require('gulp-eslint');
-var replace    = require('gulp-replace');
 var esdoc      = require("gulp-esdoc");
+
 
 // MISC
 var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
@@ -56,6 +55,7 @@ function clientDir() {
 }
 
 
+// TODO: This is getting a bit silly. Simplify this
 var Paths = {
   app_js_src          : 'src/app/**/*.js',
   app_js              : 'app',
@@ -64,6 +64,7 @@ var Paths = {
   client_js           : clientDir('js', '**', '*.js'),
   client_jsx          : clientDir('js', '**', '*.jsx'),
   client_js_entry     : clientDir('js', 'index.js'),
+  client_js_for_test  : 'compiled-fe',
   resources_src       : clientDir('resources', '**', '*'),
   tmp                 : tmpDir(),
   dist                : distDir(),
@@ -76,6 +77,8 @@ var Paths = {
   csslib_src          : clientDir('lib', '**', '*.css'),
   csslib              : distDir('lib'),
   jslib               : distDir('lib'),
+  test_src            : 'test-src/**/*.js',
+  test_dest           : 'test',
   test                : 'test/**/*.js',
   jsonlint_conf       : Path.join(__dirname, 'build-config', 'coffeelint.json'),
   coverage            : 'coverage',
@@ -84,31 +87,18 @@ var Paths = {
 };
 
 
+var BabelOptions = {
+  optional: ['es7.decorators']
+}
+
+require('./gulpfile-quality.js')(nconf, Paths, BabelOptions);
+
+
 /* ************************************ Setup ************************************ */
 gulp.task('clean', function() {
   del([Paths.dist, Paths.tmp]);
 });
 /* *********************************** /Setup ************************************ */
-
-
-/* ******************************** Documentation ******************************** */
-/*
-//TODO Use ESDoc
-gulp.task ('app-jsdoc', function() {
-  return gulp.src(Paths.app_js)
-    .pipe(jsdoc(Paths.jsdoc_app));
-})
-
-
-gulp.task ('client-jsdoc', function() {
-  return gulp.src(Paths.client_js)
-    .pipe(jsdoc(Paths.jsdoc_client));
-})
-
-
-gulp.task('jsdoc', ['app-jsdoc', 'client-jsdoc']);
-*/
-/* ******************************** Documentation ******************************** */
 
 
 /* ********************************** Build App ********************************** */
@@ -127,9 +117,7 @@ gulp.task('js', function() {
   return browserify(Paths.client_js_entry, {
       debug: true
     })
-    .transform(babelify.configure({
-      optional: ["es7.decorators"]
-    }))
+    .transform(babelify.configure(BabelOptions))
     .bundle()
     .pipe(source('horace.js'))
     .pipe(gulp.dest(Paths.js));
@@ -180,22 +168,6 @@ gulp.task('html', function() {
     .pipe(gulp.dest(Paths.html));
 });
 /* ******************************** /Build Client ******************************** */
-
-
-/* *********************************** Quality ********************************** */
-
-gulp.task('eslint', function() {
-  return gulp.src([Paths.app_js_src, Paths.client_js, Paths.client_jsx])
-    .pipe(replace('@autobind', '')) //ESlint doesn't support ES7 features. So no decorators
-    .pipe(replace(/import autobind.*;/, '')) //ESlint doesn't support ES7 features. So no decorators
-    .pipe(eslint({
-      config: 'eslint-config.json'
-    }))
-    .pipe(eslint.format())
-    .pipe(eslint.failAfterError());
-});
-
-/* ********************************** /Quality ********************************** */
 
 
 /* ************************************* Doc ************************************ */
