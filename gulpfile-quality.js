@@ -59,7 +59,7 @@ module.exports = function(nconf, Paths, BabelOptions) {
 
 
   gulp.task('plato', function(done) {
-    var platoDestination = nconf.get('plato-dest') || 'plat';
+    var platoDestination = nconf.get('plato-dest') || 'plato';
     return gulp.src([Path.join(Paths.app_js, '**', '*.js'), Path.join(Paths.client_js_for_test, '**', '*.js')])
       .pipe(plato(platoDestination, {
         title: 'XCompiled. Take it with salt.',
