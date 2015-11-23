@@ -63,7 +63,7 @@ export function getBook(path) {
   if(adapters.length < 1) {
     throw new Error('No adapters configured in system');
   }
-  var getBookProxy = function(adptr, index) {
+  var getBookProxy = function(adptr) {
     var book = adptr.getBook(path);
     return book;
   };
