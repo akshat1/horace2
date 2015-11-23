@@ -32,7 +32,8 @@ function loadAdapters() {
   logger.info('adapters to be loaded: \n\t' + (adapterPaths.join('\n\t')));
   adapters = adapterPaths.map(function(adapterPath) {
     logger.info('adapterPath: ' + adapterPath);
-    return require(adapterPath);
+    var a = require(adapterPath);
+    return a;
   });
   adapters = [];
   adapterMap = {};
@@ -46,12 +47,12 @@ function loadAdapters() {
 
 loadAdapters();
 
-function toArray() {
+export function toArray() {
   return adapters;
 }
 
 
-function getAdapterForBook(book) {
+export function getAdapterForBook(book) {
   return adapterMap[book.adapterId];
 }
 
@@ -62,8 +63,9 @@ export function getBook(path) {
   if(adapters.length < 1) {
     throw new Error('No adapters configured in system');
   }
-  var getBookProxy = function(adptr) {
-    return adptr.getBook(path);
+  var getBookProxy = function(adptr, index) {
+    var book = adptr.getBook(path);
+    return book;
   };
   let p = Utils.findPromise(adapters, getBookProxy, _.identity);
   p.catch(function(err){

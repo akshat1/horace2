@@ -48,6 +48,7 @@ module.exports = function(nconf, Paths, BabelOptions) {
       .pipe(istanbul({
         includeUntested: true
       }))
+      .pipe(istanbul.hookRequire())
       .on('finish', function() {
         return gulp.src([Paths.test])
           .pipe(mocha(testOptions))

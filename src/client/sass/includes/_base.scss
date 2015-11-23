@@ -25,7 +25,9 @@ a {
 
 /* ******************* /Native ******************* */
 
-
+#libraryRoot {
+  @include position('absolute', 0, 0, 0, 0);
+}
 
 
 .h-library {

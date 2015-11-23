@@ -7,22 +7,25 @@ function mapToLowerCase(a) {
 }
 
 //function reduceToSortString(previousValue, currentValue, index, array) {
-function reduceToSortString(previousValue, currentValue) {
-  return (previousValue || '') + '_' + (currentValue || '');
+export function reduceToSortString(previousValue, currentValue) {
+  if(previousValue)
+    return (previousValue || '') + '_' + (currentValue || '');
+  else
+    return currentValue;
 }
 
 
-function yearToDisplayYear(year) {
+export function yearToDisplayYear(year) {
   return year === -1 ? 'Unknown' : year;
 }
 
 
-function displayYearToYear(displayYear) {
+export function displayYearToYear(displayYear) {
   return displayYear === 'Unknown' ? -1 : parseInt(displayYear);
 }
 
 
-class Book {
+export class Book {
   /**
    * Adapters may extend this class in order to add custom data
    * @constructor Book
@@ -52,7 +55,7 @@ class Book {
     this.authors     = authors.map(mapToLowerCase).sort();
     this.sizeInBytes = isNaN(sizeInBytes) ? -1 : parseInt(sizeInBytes);
     this.year        = isNaN(year) ? -1 : parseInt(year);
-    this.subjects    = subjects.map(mapToLowerCase);
+    this.subjects    = subjects.map(mapToLowerCase).sort();
     this.publisher   = publisher.toLowerCase();
     this.adapterId   = adapterId;
 
