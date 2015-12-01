@@ -1,9 +1,12 @@
 'use strict';
 
 /* eslint-disable no-unused-vars */
-import React from 'react';
-import ReactDOM from 'react-dom';
-import Library from './component/library.jsx';
+/* istanbul ignore next having to ignore imports is getting old */
+var React = require('react');
+/* istanbul ignore next having to ignore imports is getting old */
+var ReactDOM = require('react-dom');
+/* istanbul ignore next having to ignore imports is getting old */
+var Library = require('./component/library.jsx');
 
 document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
