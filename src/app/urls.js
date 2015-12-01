@@ -1,17 +1,13 @@
 'use strict';
 
 
-const _api = '/api';
-
-
-var Server = {
-  API: _api
-};
-
-var Client = {};
-
-
-function getClientFunction(prefix, path){
+/**
+ * Returns a function which will itself return a string given values for rest parameters in path
+ * @params {String} prefix
+ * @params {String} path
+ * @returns {function}
+ */
+export function getClientFunction(prefix, path){
   return function () {
     let params = path.match(/(:[^:\/]+)/g) || [];
     let finalPath = path;
@@ -24,36 +20,32 @@ function getClientFunction(prefix, path){
 }
 
 
-// Path will be prefixed by _api for client
+// Path will be prefixed by api for client
 // Should be use for end-points which are registered
 // into ApiRouter in index.js
-function registerApi(key, path) {
-  Client[key] = typeof path === 'string' ? getClientFunction(_api, path) : path;
-  Server[key] = path;
+export function register(key, path, api, serverMap, clientMap) {
+  clientMap[key] = typeof path === 'string' ? getClientFunction(api, path) : path;
+  serverMap[key] = path;
 }
 
 
-// For URLS without any prefix on client or server
-function register(key, path) {
-  Client[key] = typeof path === 'string' ? getClientFunction('', path) : path;
-  Server[key] = path;
+export function doRegistrations(api, serverMap, clientMap) {
+  register('Command.StartScan', '/command/StartScan', api, serverMap, clientMap);
+  register('Status.IsScanning', '/status/isScanning', api, serverMap, clientMap);
+  register('Config', '/config', '', serverMap, clientMap);
+  register('Books', '/books', api, serverMap, clientMap);
+  register('Books.Distinct', '/books/distinct/:columnName', api, serverMap, clientMap);
+  register('fileDownload', getClientFunction('', '/download/:fileName'), '', serverMap, clientMap);
 }
-
-
-registerApi('Command.StartScan', '/command/StartScan');
-registerApi('Status.IsScanning', '/status/isScanning');
-register('Config', '/config');
-registerApi('Books', '/books');
-registerApi('Books.Distinct', '/books/distinct/:columnName');
-register('fileDownload', function(fileName) {
-  return `/download/${fileName}`;
-});
 
 
 var UrlMap = {
-  Server: Server,
-  Client: Client,
+  Server: {
+    API: '/api'
+  },
+  Client: {},
   getClientFunction: getClientFunction
 };
+doRegistrations(UrlMap.Server.API, UrlMap.Server, UrlMap.Client);
 
 export default UrlMap;

@@ -105,7 +105,7 @@ io.on('connection', function(socket) {
 
 
 // Set up routes
-app.use('/download/:fileName', function (request, response) {
+app.use(ServerUrlMap.fileDownload(), function (request, response) {
   logger.info('download file');
   var fileName = request.params.fileName;
   logger.info(`download: ${fileName}`);
