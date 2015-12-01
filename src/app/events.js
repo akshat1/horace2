@@ -1,5 +1,6 @@
 'use strict';
 
+/* istanbul ignore next */
 export const Client = {
   PAGER_SET_PAGE   : 'pager.set.page',
   TABLE_SET_SORT   : 'table.set.sort',
@@ -9,6 +10,7 @@ export const Client = {
 };
 
 
+/* istanbul ignore next */
 export const Server = {
   BOOK_READY_FOR_DOWNLOAD : 'websocket.bookReadyForDownload',
   REQUEST_BOOK_DOWNLOAD   : 'websocket.requestBookDownload',
@@ -17,6 +19,7 @@ export const Server = {
 };
 
 
+/* istanbul ignore next */
 export const IPC = {
   ERROR_OCCURRED      : 'horace.ipc.worker.errorOccurred',
   HELLOFROM_SCANNER   : 'horace.ipc.helloFrom.scanner',
