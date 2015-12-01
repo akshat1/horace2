@@ -1,5 +1,9 @@
 'use strict';
-export const ID = {
-  HORACE  : 'master',
-  SCANNER : 'worker.scanner'
+
+/* istanbul ignore next */
+module.exports = {
+  ID : {
+    HORACE  : 'master',
+    SCANNER : 'worker.scanner'
+  }
 };
