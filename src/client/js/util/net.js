@@ -10,10 +10,9 @@ Provides both HTTP as well as Websocket related utils.
 */
 
 import Http from './http.js';
-import HoraceEvents from './../../../app/events.js';
+import {Server as ServerEvents} from './../../../app/events.js';
 import UrlMap from './../../../app/urls.js';
 
-const ServerEvents = HoraceEvents.Server;
 const ClientURLMap = UrlMap.Client;
 window.ClientURLMap = ClientURLMap;
 

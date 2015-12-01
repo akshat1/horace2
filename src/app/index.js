@@ -14,14 +14,13 @@ import FSExtra from 'fs-extra';
 import _ from 'lodash';
 import Mime from 'mime';
 
-import HoraceEvents from './events.js';
+import {Server as ServerEvents} from './events.js';
 import UrlMap from './urls.js';
 import Config from './config.js';
 import Horace from './horace.js';
 
 const ServerUrlMap = UrlMap.Server;
 
-const ServerEvents = HoraceEvents.Server;
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({

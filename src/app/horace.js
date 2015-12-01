@@ -15,10 +15,8 @@ import Config from './config.js';
 import * as IPCUtils from './ipc.js';
 import * as DB from './db.js';
 import * as Adapter from './adapter.js';
-import HoraceEvents from './events.js';
+import {IPC as IPCEvents, Server as ServerEvents} from './events.js';
 
-const IPCEvents = HoraceEvents.IPC;
-const ServerEvents = HoraceEvents.Server;
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({

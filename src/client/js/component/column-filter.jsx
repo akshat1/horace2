@@ -6,8 +6,7 @@ import Popup from './popup.jsx';
 import _ from 'lodash';
 import PubSub from './../util/pubsub.js';
 import * as Net from './../util/net.js';
-import HoraceEvents from './../../../app/events.js';
-const ClientEvents = HoraceEvents.Client;
+import {Client as ClientEvents} from './../../../app/events.js';
 
 
 const FILTER_DEBOUNCE_INTERVAL = 750;

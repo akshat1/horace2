@@ -3,9 +3,7 @@ import React from 'react';
 import autobind from 'autobind-decorator';
 
 import PubSub from './../util/pubsub.js';
-import HoraceEvents from './../../../app/events.js';
-
-const ClientEvents = HoraceEvents.Client;
+import {Client as ClientEvents} from './../../../app/events.js';
 
 
 class HPager extends React.Component{

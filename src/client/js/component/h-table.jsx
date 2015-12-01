@@ -5,9 +5,8 @@ import _ from 'lodash';
 
 import { SortModel } from './../../../app/model/library-model.js';
 import PubSub from './../util/pubsub.js';
-import HoraceEvents from './../../../app/events.js';
+import {Client as ClientEvents} from './../../../app/events.js';
 
-const ClientEvents = HoraceEvents.Client;
 
 /*
 TODO: Use this

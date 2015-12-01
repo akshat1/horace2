@@ -16,15 +16,13 @@ import MenuRenderer from './menu-renderer.jsx';
 import ColumnFilter from './column-filter.jsx';
 import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
-import HoraceEvents from './../../../app/events.js';
+import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
 import * as Net from './../util/net.js';
 import { PagerModel, SortModel } from './../../../app/model/library-model.js';
 
 
 window.Net = Net;
 
-const ServerEvents = HoraceEvents.Server;
-const ClientEvents = HoraceEvents.Client;
 
 class Library extends React.Component {
   constructor(props) {
