@@ -6,7 +6,7 @@
  */
 
 
-import Winston from 'Winston';
+import Winston from 'winston';
 import _ from 'lodash';
 
 import Config from './config.js';
