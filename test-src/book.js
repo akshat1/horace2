@@ -6,7 +6,6 @@ import {Book, reduceToSortString} from '../app/book.js';
 console.log(Book);
 
 var should = Chai.should();
-var expect = Chai.expect();
 
 
 
