@@ -1,7 +1,10 @@
 'use strict';
 
-import NConf from 'nconf';
-import Path from 'path';
+
+/* istanbul ignore next */
+var NConf = require('nconf');
+/* istanbul ignore next */
+var Path = require('path');
 
 /**
  * @module config
@@ -43,6 +46,4 @@ import Path from 'path';
  * @returns {Object|string}
  */
 /* istanbul ignore next */
-export default function(key) {
-  return NConf.get(key);
-}
+module.exports = NConf.get.bind(NConf);

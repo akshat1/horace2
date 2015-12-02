@@ -19,62 +19,12 @@ export function getHash(path) {
 
 
 /**
- * @param {array} Array of Promises
- * @param {function} A function that accepts the result of each promise, and returns a boolean value.
- * @param {boolean} whether or not to break on error. default false (i.e. exceptions will be eaten)
- * @return {promise}
- * @resolve with the first value that satisfies the test condition, or null if no valid values are found
- * @reject rejects with the first error encountered iff breakOnError is true
- */
-export function conditionalRace(promises, condition, breakOnError) {
-  var pending, primary;
-  if (!condition) {
-    condition = function(x) {
-      return x;
-    };
-  }
-  pending = promises.length;
-  primary = new Promise(function(resolve, reject) {
-    var checkCompletion, index, j, len, p, results;
-    checkCompletion = function() {
-      if (pending === 0) {
-        return resolve();
-      }
-    };
-    results = [];
-    for (index = j = 0, len = promises.length; j < len; index = ++j) {
-      p = promises[index];
-      p.catch(function(err) {
-        console.trace(err);
-        pending--;
-        if (breakOnError) {
-          return reject(err);
-        } else {
-          return checkCompletion();
-        }
-      });
-      results.push(p.then(function(result) {
-        pending--;
-        if (condition(result)) {
-          return resolve(result);
-        } else {
-          return checkCompletion();
-        }
-      }));
-    }
-    return results;
-  });
-  return primary;
-}
-
-
-/**
  * @param {Array} arr - Array of the objets to be processed
- * @param {function} fnGetter - function which returns a Promise which resolves, hopefully 
+ * @param {function} fnGetter - function which returns a Promise which resolves, hopefully
                     in a value that satisifes fnCondition. Of the form (arr[i], i) ->
- * @param {function} fnCondition - function which returns a boolean, or a promise which 
+ * @param {function} fnCondition - function which returns a boolean, or a promise which
                     resolves in a boolean about the fitness of the result of fnGetter
- * @param {boolean} breakOnError - whether any errors will break all execution and cause 
+ * @param {boolean} breakOnError - whether any errors will break all execution and cause
                    the returned promise to fail
  * @returns {Promise} - A promise which resolves in the value which satisfied fnCondition
  */
@@ -123,7 +73,7 @@ export function findPromise(arr, fnGetter, fnCondition, breakOnError) {
 
 
 /**
- * Execute fn on each item of arr in sequence. Expect promise from fn. Move to 
+ * Execute fn on each item of arr in sequence. Expect promise from fn. Move to
  * i + 1 only when promise for i has resolved.
  * @param {Array} arr - Array of objects to be processed
  * @param {function} fn - A function of the form function(obj, index) which returns a promise
@@ -159,20 +109,4 @@ export function forEachPromise(arr, fn, breakOnError) {
     };
     return tick();
   });
-}
-
-
-export function testSequential() {
-  var arr, fn;
-  arr = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
-  fn = function(x) {
-    return new Promise(function(resolve) {
-      var inner;
-      inner = function() {
-        return resolve(x);
-      };
-      return setTimeout(inner, 1000);
-    });
-  };
-  return forEachPromise(arr, fn);
 }
