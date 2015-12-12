@@ -23,7 +23,7 @@ class BookList extends React.Component {
         cssClassName : 'h-title',
         displayName  : 'Title',
         isSortable   : true,
-        rowComponent : this.getCustomTitleRowComponent
+        rowComponent : this.renderCustomTitleRowComponent
         //isFiltered   : true
       }, {
         columnName     : 'authors',
@@ -52,7 +52,7 @@ class BookList extends React.Component {
 
 
   @autobind
-  getCustomTitleRowComponent(book) {
+  renderCustomTitleRowComponent(book) {
     var downloadBook = function() {
       PubSub.broadcast(ClientEvents.DOWNLOAD_BOOK, book);
     };
@@ -68,7 +68,36 @@ class BookList extends React.Component {
   }
 
 
-  getBlockingWaitComponent() {
+  renderPager() {
+    return (
+      <HPager
+        pubSubKey   = 'bookPager'
+        currentPage = {this.props.currentPage}
+        maxPages    = {this.props.maxPages}
+      />
+    );
+  }
+
+
+  renderBooks() {
+    let props = this.props;
+    return (
+      <div className='h-table-wrapper'>
+        <HTable
+          pubSubKey      = 'bookTable'
+          rows           = {props.books}
+          sortColumnName = {props.sortColumn}
+          sortAscending  = {props.sortAscending}
+          columns        = {props.displayColumns}
+          columnMetadata = {this.columnMetadata}
+          selectedDistinctValues = {props.filter}
+        />
+      </div>
+    );
+  }
+
+
+  renderBlockingWaitComponent() {
     var className = `h-blocking-ui-wait ${this.props.isPerformingBlockingAction ? 'visible' : ''}`;
     return (
       <div className={className}>
@@ -83,23 +112,9 @@ class BookList extends React.Component {
     let props = this.props;
     return (
       <div className='h-book-list'>
-        <HPager
-          pubSubKey   = 'bookPager'
-          currentPage = {props.currentPage}
-          maxPages    = {props.maxPages}
-        />
-        <div className='h-table-wrapper'>
-          <HTable
-            pubSubKey      = 'bookTable'
-            rows           = {props.books}
-            sortColumnName = {props.sortColumn}
-            sortAscending  = {props.sortAscending}
-            columns        = {props.displayColumns}
-            columnMetadata = {this.columnMetadata}
-            selectedDistinctValues = {props.filter}
-          />
-        </div>
-        {this.getBlockingWaitComponent()}
+        {this.renderPager()}
+        {this.renderBooks()}
+        {this.renderBlockingWaitComponent()}
       </div>
     );
   }

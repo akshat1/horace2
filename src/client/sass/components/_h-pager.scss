@@ -8,8 +8,11 @@
 .h-pager {
   @include flex-box(row, $justify-content: space-between, $align-items: center);
   padding: $space-M $space-L;
-  background: $background-darker;
+  background: $background-dark;
   color: $text-light;
+  border-style: solid;
+  border-color: $border-color;
+  border-width: 1px 0;
 }
 
 .h-pager-previous {

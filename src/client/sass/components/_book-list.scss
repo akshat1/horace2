@@ -19,21 +19,24 @@
     background: $background-dark;
   }
 
-  th {
-    @include user-select(none);
-    color: $text-light;
-    font-size: 1.2em;
-    color: $text-lighter;
-    padding: 0;
-  }
-
   td, th {
-    border: solid $border-color;
+    @include text-overflow;
+    height: 2em;
+    border: solid $border-color-light;
     border-width: 0 1px 1px 0;
 
     &:last-child {
       border-width: 0 0 1px 0;
     }
+  }
+
+  th {
+    @include user-select(none);
+    color: $text-light;
+    font-size: 1.2em;
+    color: $text-light;
+    padding: 0;
+    border-color: $border-color;
   }
 
   tr:hover {
@@ -54,13 +57,7 @@
       padding: 0 0 0 $space-M;
 
       &.sortable {
-        &:hover {
-          background: lighten($background-dark, 10%);
-        }
-
-        &:active {
-          background: lighten($background-dark, 20%);
-        }
+        cursor: pointer;
       }
     }
 

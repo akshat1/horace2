@@ -37,7 +37,7 @@ $_toolbar-padding: $space-S;
   @include flex-item();
   @include flex-box(row);
   padding: 0 $space-S;
-  background: $background-darkest;
+  background: $background-light;
 
   // Individual tool-bar items
   .h-logo {
