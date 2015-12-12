@@ -109,7 +109,6 @@ class BookList extends React.Component {
 
 
   render() {
-    let props = this.props;
     return (
       <div className='h-book-list'>
         {this.renderPager()}
