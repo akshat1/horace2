@@ -11,8 +11,15 @@ body{
   margin: 0;
 }
 
-button[disabled] {
-  opacity: 0.6;
+select {
+  border-radius: 2px;
+}
+
+.button, button, input[type="submit"], input[type="reset"], input[type="button"] {
+  border-radius: 2px;
+  &[disabled] {
+    opacity: 0.6;
+  }
 }
 
 th {

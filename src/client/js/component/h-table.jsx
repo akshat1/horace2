@@ -91,7 +91,7 @@ class HTable extends React.Component {
    * Get the markup for any sorting related icons
    */
   @autobind
-  getColumnSortComponent(columnName, columnMetadata) {
+  renderColumnSortComponent(columnName, columnMetadata) {
     var isSorted = (this.props.sortColumnName === columnName) || (this.props.sortColumnName === columnMetadata.sortColumnName);
     var isAscending = this.props.sortAscending;
     if(isSorted)
@@ -109,7 +109,7 @@ class HTable extends React.Component {
 
 
   @autobind
-  getColumnFilterComponent(columnName, columnMetadata) {
+  renderColumnFilterComponent(columnName, columnMetadata) {
     var isFiltered = columnMetadata.isFiltered;
     var showfilterPopup = function () {
       PubSub.broadcast(ClientEvents.BOOKS_SHOW_FILTER, columnName);
@@ -127,7 +127,7 @@ class HTable extends React.Component {
    * All the TH elements
    */
   @autobind
-  getTableHeadContent() {
+  renderTableHeadContent() {
     var headerContents = [];
     var columns = this.props.columns;
     for (let i = 0, _len = columns.length; i < _len; i++){
@@ -137,10 +137,10 @@ class HTable extends React.Component {
         headerContents.push(<th key={`TH_${i}`} className={metadata.cssClassName}>
           <div className='h-column-header-wrapper'>
             <div className={`h-column-name ${metadata.isSortable ? 'sortable' : ''}`} onClick={this.makeColumnClickHandler(columnName, metadata)}>
-              {this.getColumnSortComponent(columnName, metadata)}
+              {this.renderColumnSortComponent(columnName, metadata)}
               {metadata.displayName}
             </div>
-            {this.getColumnFilterComponent(columnName, metadata)}
+            {this.renderColumnFilterComponent(columnName, metadata)}
           </div>
         </th>);
       } else {
@@ -160,7 +160,7 @@ class HTable extends React.Component {
    * this rowData object.
    */
   @autobind
-  getTableBodyRow(rowData, rowIndex) {
+  renderTableBodyRow(rowData, rowIndex) {
     var columns = this.props.columns;
     var rowContent = [];
     for (let i = 0, _len = columns.length; i < _len; i++) {
@@ -180,8 +180,8 @@ class HTable extends React.Component {
    * Get a list of TR elements.
    */
   @autobind
-  getTableBodyContent() {
-    return this.props.rows.map(this.getTableBodyRow);
+  renderTableBodyContent() {
+    return this.props.rows.map(this.renderTableBodyRow);
   }
 
 
@@ -193,10 +193,10 @@ class HTable extends React.Component {
     return (
       <table className={this.getTableClassName()}>
         <thead>
-          {this.getTableHeadContent()}
+          {this.renderTableHeadContent()}
         </thead>
         <tbody>
-          {this.getTableBodyContent()}
+          {this.renderTableBodyContent()}
         </tbody>
       </table>
     );

@@ -1,7 +1,7 @@
 'use strict';
 
 /* istanbul ignore next */
-const DEFAULT_PAGER_PAGE_SIZE = 22;
+const DEFAULT_PAGER_PAGE_SIZE = 21;
 
 /* istanbul ignore next Nothing significant to test */
 class PagerModel {
