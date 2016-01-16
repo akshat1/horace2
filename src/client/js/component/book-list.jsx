@@ -109,9 +109,9 @@ class BookList extends React.Component {
 
 
   render() {
+    // {this.renderPager()}
     return (
       <div className='h-book-list'>
-        {this.renderPager()}
         {this.renderBooks()}
         {this.renderBlockingWaitComponent()}
       </div>

@@ -113,15 +113,15 @@ export function getBooks(params) {
           logger.error('Error converting to array', curErr);
           return reject(curErr);
         } else {
-          var currentPage = pager.currentPage;
-          var pageSize = pager.pageSize;
-          var from = currentPage * pageSize;
-          var to = from + pageSize;
-          var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
+          //var currentPage = pager.currentPage;
+          //var pageSize = pager.pageSize;
+          var from = pager.from;
+          var to = pager.to;
+          //var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
           resolve({
             books  : books,
-            pager  : new PagerModel(currentPage, pageSize, maxPages),
+            pager  : new PagerModel(from, to),
             sort   : sort,
             filter : params.filter || {}
           });

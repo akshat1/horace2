@@ -18,7 +18,7 @@ import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
 import * as Net from './../util/net.js';
-import { PagerModel, SortModel } from './../../../app/model/library-model.js';
+import { PagerModel, SortModel, DEFAULT_PAGER_PAGE_SIZE } from './../../../app/model/library-model.js';
 
 
 window.Net = Net;
@@ -76,6 +76,7 @@ class Library extends React.Component {
   @autobind
   wirePubSub() {
     PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
+    PubSub.subscribe(ClientEvents.LOAD_MORE_BOOKS, this.loadMoreBooks);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
     PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
     PubSub.subscribe(ClientEvents.BOOKS_SHOW_FILTER, this.showFilterPopup);
@@ -100,6 +101,8 @@ class Library extends React.Component {
   handleBooksResponse(res) {
     let newState = res;
     newState.isPerformingBlockingAction = false;
+    var books = this.state.books.concat(newState.books);
+    newState.books = books;
     this.setState(newState);
   }
 
@@ -162,6 +165,7 @@ class Library extends React.Component {
   }
 
 
+  /*
   @autobind
   setPage(index) {
     if(this.state.isPerformingBlockingAction)
@@ -176,6 +180,16 @@ class Library extends React.Component {
       bookPager: new PagerModel(index, pager.pageSize, pager.maxPages)
     });
   }//setPage
+  */
+  @autobind
+  loadMoreBooks() {
+    if(this.state.isPerformingBlockingAction)
+      return;
+
+    this.fetchBooks({
+      bookPager: new PagerModel(this.state.books.length, this.state.books.length + DEFAULT_PAGER_PAGE_SIZE)
+    });
+  }
 
 
   @autobind
