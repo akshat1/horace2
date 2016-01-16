@@ -60,11 +60,11 @@ FSExtra.ensureDir(serverTmpPath);
 FSExtra.ensureDir(webroot);
 
 
-//Set up websockets
 const server = app.listen(listenPort, function() {
-  return logger.info(`Listening on ${this.address()}`);
+  return logger.info(`Listening on :`, this.address());
 });
 
+//Set up websockets
 const io = SocketIO.listen(server, {
   path: socketIOURL
 });
