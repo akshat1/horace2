@@ -83,7 +83,9 @@ var Paths = {
   jsonlint_conf       : Path.join(__dirname, 'build-config', 'coffeelint.json'),
   coverage            : 'coverage',
   jsdoc_app           : 'documentation/app',
-  jsdoc_client        : 'documentation/client'
+  jsdoc_client        : 'documentation/client',
+  coverage            : 'coverage',
+  plato               : 'plato'
 };
 
 
@@ -96,7 +98,7 @@ require('./gulpfile-quality.js')(nconf, Paths, BabelOptions);
 
 /* ************************************ Setup ************************************ */
 gulp.task('clean', function() {
-  del([Paths.dist, Paths.tmp]);
+  del([Paths.dist, Paths.tmp, Paths.coverage, Paths.test_dest, Paths.plato, Paths.client_js_for_test, Paths.app_js]);
 });
 /* *********************************** /Setup ************************************ */
 
