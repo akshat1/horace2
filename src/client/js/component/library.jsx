@@ -22,14 +22,12 @@ import { PagerModel, SortModel, DEFAULT_PAGER_PAGE_SIZE } from './../../../app/m
 
 
 window.Net = Net;
-window._ = _;
 
 
 class Library extends React.Component {
   constructor(props) {
     super(props);
     window._Library = this;
-    window.lodash = _;
 
     this.state = {
       isScanning: false,
@@ -101,11 +99,8 @@ class Library extends React.Component {
   handleBooksResponse(res) {
     let newState = res;
     if (!this.isBooksFlushRequired(this.state, newState)) {
-      console.debug('No Flush Required');
       var books = this.state.books.concat(newState.books);
       newState.books = books;
-    } else {
-      console.debug('Flush Required');
     }
     newState.isPerformingBlockingAction = false;
     this.setState(newState);
@@ -211,7 +206,7 @@ class Library extends React.Component {
 
   @autobind
   handleFilterChange(filter) {
-    var newFilter = _.extend(this.state.filter, filter);
+    var newFilter = _.extend(_.clone(this.state.filter), filter);
     this.fetchBooks({
       bookPager: new PagerModel(0, DEFAULT_PAGER_PAGE_SIZE),
       filter: newFilter
