@@ -56,6 +56,8 @@
     .h-column-name {
       @include flex-item($grow: 1, $shrink: 0);
       padding: 0 0 0 $space-M;
+      width: 100%;
+      max-width: 100%;
 
       &.sortable {
         cursor: pointer;

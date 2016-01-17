@@ -1,13 +1,14 @@
 'use strict';
 
 /* istanbul ignore next */
-const DEFAULT_PAGER_PAGE_SIZE = 21;
+const DEFAULT_PAGER_PAGE_SIZE = 100;
 
 /* istanbul ignore next Nothing significant to test */
 class PagerModel {
-  constructor(from, to) {
+  constructor(from, to, totalBooksInSystem) {
     this.from = from = from || 0;
     this.to = to || (from + DEFAULT_PAGER_PAGE_SIZE);
+    this.totalBooksInSystem = totalBooksInSystem || -1;
   }
 }
 

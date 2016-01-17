@@ -75,7 +75,7 @@ class Library extends React.Component {
 
   @autobind
   wirePubSub() {
-    PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
+    //PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
     PubSub.subscribe(ClientEvents.LOAD_MORE_BOOKS, this.loadMoreBooks);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
     PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
@@ -187,7 +187,7 @@ class Library extends React.Component {
       return;
 
     this.fetchBooks({
-      bookPager: new PagerModel(this.state.books.length, this.state.books.length + DEFAULT_PAGER_PAGE_SIZE)
+      bookPager: new PagerModel(this.state.books.length, this.state.books.length + (DEFAULT_PAGER_PAGE_SIZE / 3))
     });
   }
 
@@ -303,14 +303,12 @@ class Library extends React.Component {
     let state     = this.state;
     let bookPager = state.bookPager;
     let bookSort  = state.bookSort;
-
     return (
       <BookList
         filter                     = {state.filter}
         isPerformingBlockingAction = {state.isPerformingBlockingAction}
         selectedValues             = {this.props.filter}
-        currentPage                = {bookPager.currentPage}
-        maxPages                   = {bookPager.maxPages}
+        pager                      = {bookPager}
         books                      = {state.books}
         sortColumn                 = {bookSort.columnName}
         sortAscending              = {bookSort.isAscending}

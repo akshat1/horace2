@@ -119,12 +119,16 @@ export function getBooks(params) {
           var to = pager.to;
           //var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
           books = books.slice(from, to);
-          resolve({
-            books  : books,
-            pager  : new PagerModel(from, to),
-            sort   : sort,
-            filter : params.filter || {}
-          });
+          resolve(collectionBooks.count()
+            .then(function(totalBooksInSystem) {
+              console.log('totalBooksInSystem >> ', totalBooksInSystem);
+              return {
+                books  : books,
+                pager  : new PagerModel(from, to, totalBooksInSystem),
+                sort   : sort,
+                filter : params.filter || {}
+              };
+            }));
         }
       });//cur.toArray
     });

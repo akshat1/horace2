@@ -51,6 +51,23 @@ class BookList extends React.Component {
   }//constructor
 
 
+  askForMoreBooks() {
+    PubSub.broadcast(ClientEvents.LOAD_MORE_BOOKS, {});
+  }
+
+
+  @autobind
+  handleWrapperScroll() {
+    var wrapper = this.refs['wrapper'];
+    window.wrapper = wrapper;
+    if(!wrapper)
+      throw new Error('There aint no wrappa!');
+    var delta = wrapper.scrollTop - wrapper.scrollHeight;
+    if(delta < 300)
+      this.askForMoreBooks();
+  }
+
+
   @autobind
   renderCustomTitleRowComponent(book) {
     var downloadBook = function() {
@@ -81,8 +98,10 @@ class BookList extends React.Component {
 
   renderBooks() {
     let props = this.props;
+    //console.debug('I got props. The pager is: ', props.pager);
+    //console.debug('pager: ', props.pager.totalBooksInSystem);
     return (
-      <div className='h-table-wrapper'>
+      <div className='h-table-wrapper' ref='wrapper' onScroll={this.handleWrapperScroll}>
         <HTable
           pubSubKey      = 'bookTable'
           rows           = {props.books}
