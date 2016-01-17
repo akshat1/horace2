@@ -75,11 +75,11 @@ class BookList extends React.Component {
     };
 
     return (
-      <span className='h-book-title'>
-        {book.title}
+      <span className='h-title-content'>
         <span className='h-book-actions'>
           <span className='fa fa-cloud-download' onClick={downloadBook}/>
         </span>
+        <span className='h-title-text'>{book.title}</span>
       </span>
     );
   }

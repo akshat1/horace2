@@ -22,12 +22,14 @@ import { PagerModel, SortModel, DEFAULT_PAGER_PAGE_SIZE } from './../../../app/m
 
 
 window.Net = Net;
+window._ = _;
 
 
 class Library extends React.Component {
   constructor(props) {
     super(props);
     window._Library = this;
+    window.lodash = _;
 
     this.state = {
       isScanning: false,
@@ -75,7 +77,6 @@ class Library extends React.Component {
 
   @autobind
   wirePubSub() {
-    //PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
     PubSub.subscribe(ClientEvents.LOAD_MORE_BOOKS, this.loadMoreBooks);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
     PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
@@ -85,24 +86,28 @@ class Library extends React.Component {
 
 
   @autobind
-  handlePageSetEvent(payload) {
-    if (payload.key === 'bookPager')
-      this.setPage(payload.pageNumber);
-  }
-
-  @autobind
   handleSortEvent(payload) {
     if (payload.key === 'bookTable')
       this.sortData(payload.sortModel);
   }
 
 
+  isBooksFlushRequired(oldState, newState) {
+    return !(_.isEqual(oldState.filter, newState.filter) && _.isEqual(oldState.bookSort, newState.bookSort));
+  }
+
+
   @autobind
   handleBooksResponse(res) {
     let newState = res;
+    if (!this.isBooksFlushRequired(this.state, newState)) {
+      console.debug('No Flush Required');
+      var books = this.state.books.concat(newState.books);
+      newState.books = books;
+    } else {
+      console.debug('Flush Required');
+    }
     newState.isPerformingBlockingAction = false;
-    var books = this.state.books.concat(newState.books);
-    newState.books = books;
     this.setState(newState);
   }
 
@@ -198,6 +203,7 @@ class Library extends React.Component {
       return;
 
     this.fetchBooks({
+      bookPager: new PagerModel(0, DEFAULT_PAGER_PAGE_SIZE),
       bookSort: sortModel
     });
   }//sortData
@@ -207,6 +213,7 @@ class Library extends React.Component {
   handleFilterChange(filter) {
     var newFilter = _.extend(this.state.filter, filter);
     this.fetchBooks({
+      bookPager: new PagerModel(0, DEFAULT_PAGER_PAGE_SIZE),
       filter: newFilter
     });
   }

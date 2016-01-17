@@ -6,12 +6,8 @@
   position: relative;
   overflow: auto;
 
-  .h-pager {
-    @include flex-item();
-  }
-
   .h-table-wrapper {
-    @include flex-item(1, 1);
+    @include position(absolute, 0, 0, 0, 0);
     overflow: auto;
   }
 
@@ -21,6 +17,8 @@
 
   td, th {
     @include text-overflow;
+    box-sizing: border-box;
+    max-width: 0;
     height: 2em;
     border: solid $border-color-light;
     border-width: 0 1px 1px 0;
@@ -40,6 +38,40 @@
     border-color: $border-color;
   }
 
+
+  td {
+    &.h-adapterId {
+      max-width: 120px;
+      min-width: 120px;
+      width: 120px;
+    }
+
+    &.h-title {
+      max-width: none;
+      min-width: 400px;
+      position: relative;
+    }
+
+    &.h-authors {
+      max-width: 200px;
+      min-width: 200px;
+      width: 200px;
+    }
+
+    &.h-subjects {
+      max-width: 200px;
+      min-width: 200px;
+      width: 200px;
+    }
+
+    &.h-year {
+      max-width: 100px;
+      min-width: 100px;
+      width: 100px;
+    }
+  }
+
+
   tr:hover {
     td {
       background-color: $background-light;
@@ -56,8 +88,6 @@
     .h-column-name {
       @include flex-item($grow: 1, $shrink: 0);
       padding: 0 0 0 $space-M;
-      width: 100%;
-      max-width: 100%;
 
       &.sortable {
         cursor: pointer;
@@ -77,28 +107,6 @@
     }
   }
 
-  .h-adapterId {
-    @include text-overflow;
-    width: toRem(110px);
-    max-width: toRem(110px);
-  }
-
-  .h-authors {
-    width: toRem(150px);
-    max-width: toRem(150px);
-    word-wrap: break-word;
-  }
-
-  .h-subjects {
-    width: toRem(150px);
-    max-width: toRem(150px);
-    word-wrap: break-word;
-  }
-
-  .h-year {
-    width: toRem(80px);
-    max-width: toRem(80px);
-  }
 
   .h-blocking-ui-wait {
     @include position(absolute, $top: 15px, $left: -100px);
@@ -120,12 +128,21 @@
     }
   }
 
+  .h-title-content {
+    @include position(absolute, 0, 0, 0, 0);
+  }
+
   .h-book-actions {
-    visibility: hidden;
-    float: right;
+    @include position(absolute, 0, auto, 0, 1em);
     > span {
       cursor: pointer;
     }
+  }
+
+  .h-title-text {
+    @include position(absolute, 0, 0, 0, 26px);
+    @include text-overflow();
+    padding: 0 1em;
   }
 
   .h-column-filter-trigger {
@@ -135,6 +152,6 @@
   }
 }
 
-.h-list-table {
+table.h-list-table {
   width: 100%;
 }
