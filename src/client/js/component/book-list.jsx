@@ -1,7 +1,6 @@
 'use strict';
 import React from 'react';
 import HTable from './h-table.jsx';
-import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
 import PubSub from './../util/pubsub.js';
 import {Client as ClientEvents} from './../../../app/events.js';
@@ -95,17 +94,6 @@ class BookList extends React.Component {
   }
 
 
-  renderPager() {
-    return (
-      <HPager
-        pubSubKey   = 'bookPager'
-        currentPage = {this.props.currentPage}
-        maxPages    = {this.props.maxPages}
-      />
-    );
-  }
-
-
   renderBooks() {
     let props = this.props;
     //this is where we figure out which books to show
@@ -150,7 +138,6 @@ class BookList extends React.Component {
 
 
   render() {
-    // {this.renderPager()}
     return (
       <div className='h-book-list'>
         {this.renderBooks()}
