@@ -1,16 +1,17 @@
 'use strict';
 import React from 'react';
 import HTable from './h-table.jsx';
-import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
 import PubSub from './../util/pubsub.js';
 import {Client as ClientEvents} from './../../../app/events.js';
+import _ from 'lodash';
 
 
 class BookList extends React.Component {
   constructor(props) {
     super(props);
     window._BookList = this;
+    this.handleWrapperScroll = _.debounce(this.handleWrapperScroll, 150);
     this.columnMetadata = [
       {
         columnName     : 'adapterId',
@@ -48,7 +49,32 @@ class BookList extends React.Component {
         isFiltered     : true
       }
     ];
+    this.state = {
+      fillerStyle: {}
+    };
   }//constructor
+
+
+  askForMoreBooks() {
+    PubSub.broadcast(ClientEvents.LOAD_MORE_BOOKS, {});
+  }
+
+
+  @autobind
+  handleWrapperScroll() {
+    var wrapper = this.refs['wrapper'];
+    window.wrapper = wrapper;
+    if(!wrapper)
+      throw new Error('There aint no wrappa!');
+    var delta = wrapper.scrollHeight - wrapper.scrollTop - wrapper.offsetHeight;
+    if(delta < 300)
+      this.askForMoreBooks();
+    this.setState({
+      fillerStyle: {
+        paddingTop: wrapper.scrollTop
+      }
+    });
+  }
 
 
   @autobind
@@ -58,34 +84,37 @@ class BookList extends React.Component {
     };
 
     return (
-      <span className='h-book-title'>
-        {book.title}
+      <span className='h-title-content'>
         <span className='h-book-actions'>
           <span className='fa fa-cloud-download' onClick={downloadBook}/>
         </span>
+        <span className='h-title-text'>{book.title}</span>
       </span>
-    );
-  }
-
-
-  renderPager() {
-    return (
-      <HPager
-        pubSubKey   = 'bookPager'
-        currentPage = {this.props.currentPage}
-        maxPages    = {this.props.maxPages}
-      />
     );
   }
 
 
   renderBooks() {
     let props = this.props;
+    //this is where we figure out which books to show
+    var wrapper = window.wrapper = this.refs.wrapper;
+    var books = props.books;
+    if (wrapper) {
+      var scrollHeight = wrapper.querySelector('table').scrollHeight;
+      var totalNumberOfRows = wrapper.querySelectorAll('tr').length;
+      var averageRowHeight = scrollHeight / totalNumberOfRows;
+      var numberOfRowsToRemove = Math.ceil(wrapper.scrollTop / averageRowHeight);
+      numberOfRowsToRemove = numberOfRowsToRemove;
+      books = books.slice(numberOfRowsToRemove);
+    }
+
     return (
-      <div className='h-table-wrapper'>
+      <div className='h-table-wrapper' ref='wrapper' onScroll={this.handleWrapperScroll}>
+        <div style={this.state.fillerStyle}>
+        </div>
         <HTable
           pubSubKey      = 'bookTable'
-          rows           = {props.books}
+          rows           = {books}
           sortColumnName = {props.sortColumn}
           sortAscending  = {props.sortAscending}
           columns        = {props.displayColumns}
@@ -111,7 +140,6 @@ class BookList extends React.Component {
   render() {
     return (
       <div className='h-book-list'>
-        {this.renderPager()}
         {this.renderBooks()}
         {this.renderBlockingWaitComponent()}
       </div>

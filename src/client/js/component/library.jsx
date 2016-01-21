@@ -18,7 +18,7 @@ import ScanningStatus from './scanning-status.jsx';
 import NotificationList from './notification-list.jsx';
 import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
 import * as Net from './../util/net.js';
-import { PagerModel, SortModel } from './../../../app/model/library-model.js';
+import { PagerModel, SortModel, DEFAULT_PAGER_PAGE_SIZE } from './../../../app/model/library-model.js';
 
 
 window.Net = Net;
@@ -75,7 +75,7 @@ class Library extends React.Component {
 
   @autobind
   wirePubSub() {
-    PubSub.subscribe(ClientEvents.PAGER_SET_PAGE, this.handlePageSetEvent);
+    PubSub.subscribe(ClientEvents.LOAD_MORE_BOOKS, this.loadMoreBooks);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
     PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
     PubSub.subscribe(ClientEvents.BOOKS_SHOW_FILTER, this.showFilterPopup);
@@ -84,21 +84,24 @@ class Library extends React.Component {
 
 
   @autobind
-  handlePageSetEvent(payload) {
-    if (payload.key === 'bookPager')
-      this.setPage(payload.pageNumber);
-  }
-
-  @autobind
   handleSortEvent(payload) {
     if (payload.key === 'bookTable')
       this.sortData(payload.sortModel);
   }
 
 
+  isBooksFlushRequired(oldState, newState) {
+    return !(_.isEqual(oldState.filter, newState.filter) && _.isEqual(oldState.bookSort, newState.bookSort));
+  }
+
+
   @autobind
   handleBooksResponse(res) {
     let newState = res;
+    if (!this.isBooksFlushRequired(this.state, newState)) {
+      var books = this.state.books.concat(newState.books);
+      newState.books = books;
+    }
     newState.isPerformingBlockingAction = false;
     this.setState(newState);
   }
@@ -162,6 +165,7 @@ class Library extends React.Component {
   }
 
 
+  /*
   @autobind
   setPage(index) {
     if(this.state.isPerformingBlockingAction)
@@ -176,6 +180,16 @@ class Library extends React.Component {
       bookPager: new PagerModel(index, pager.pageSize, pager.maxPages)
     });
   }//setPage
+  */
+  @autobind
+  loadMoreBooks() {
+    if(this.state.isPerformingBlockingAction)
+      return;
+
+    this.fetchBooks({
+      bookPager: new PagerModel(this.state.books.length, this.state.books.length + (DEFAULT_PAGER_PAGE_SIZE / 3))
+    });
+  }
 
 
   @autobind
@@ -184,6 +198,7 @@ class Library extends React.Component {
       return;
 
     this.fetchBooks({
+      bookPager: new PagerModel(0, DEFAULT_PAGER_PAGE_SIZE),
       bookSort: sortModel
     });
   }//sortData
@@ -191,8 +206,9 @@ class Library extends React.Component {
 
   @autobind
   handleFilterChange(filter) {
-    var newFilter = _.extend(this.state.filter, filter);
+    var newFilter = _.extend(_.clone(this.state.filter), filter);
     this.fetchBooks({
+      bookPager: new PagerModel(0, DEFAULT_PAGER_PAGE_SIZE),
       filter: newFilter
     });
   }
@@ -289,14 +305,12 @@ class Library extends React.Component {
     let state     = this.state;
     let bookPager = state.bookPager;
     let bookSort  = state.bookSort;
-
     return (
       <BookList
         filter                     = {state.filter}
         isPerformingBlockingAction = {state.isPerformingBlockingAction}
         selectedValues             = {this.props.filter}
-        currentPage                = {bookPager.currentPage}
-        maxPages                   = {bookPager.maxPages}
+        pager                      = {bookPager}
         books                      = {state.books}
         sortColumn                 = {bookSort.columnName}
         sortAscending              = {bookSort.isAscending}

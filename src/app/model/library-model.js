@@ -1,14 +1,14 @@
 'use strict';
 
 /* istanbul ignore next */
-const DEFAULT_PAGER_PAGE_SIZE = 21;
+const DEFAULT_PAGER_PAGE_SIZE = 200;
 
 /* istanbul ignore next Nothing significant to test */
 class PagerModel {
-  constructor(currentPage, pageSize, maxPages) {
-    this.currentPage = currentPage || 0;
-    this.pageSize    = pageSize || DEFAULT_PAGER_PAGE_SIZE;
-    this.maxPages    = maxPages || 0;
+  constructor(from, to, totalBooksInSystem) {
+    this.from = from = from || 0;
+    this.to = to || (from + DEFAULT_PAGER_PAGE_SIZE);
+    this.totalBooksInSystem = totalBooksInSystem || -1;
   }
 }
 
@@ -24,5 +24,6 @@ class SortModel {
 /* istanbul ignore next */
 module.exports = {
   PagerModel : PagerModel,
-  SortModel  : SortModel
+  SortModel  : SortModel,
+  DEFAULT_PAGER_PAGE_SIZE : DEFAULT_PAGER_PAGE_SIZE
 };
