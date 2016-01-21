@@ -5,12 +5,14 @@ import HPager from './h-pager.jsx';
 import autobind from 'autobind-decorator';
 import PubSub from './../util/pubsub.js';
 import {Client as ClientEvents} from './../../../app/events.js';
+import _ from 'lodash';
 
 
 class BookList extends React.Component {
   constructor(props) {
     super(props);
     window._BookList = this;
+    this.handleWrapperScroll = _.debounce(this.handleWrapperScroll, 150);
     this.columnMetadata = [
       {
         columnName     : 'adapterId',
@@ -48,6 +50,9 @@ class BookList extends React.Component {
         isFiltered     : true
       }
     ];
+    this.state = {
+      fillerStyle: {}
+    };
   }//constructor
 
 
@@ -62,9 +67,14 @@ class BookList extends React.Component {
     window.wrapper = wrapper;
     if(!wrapper)
       throw new Error('There aint no wrappa!');
-    var delta = wrapper.scrollTop - wrapper.scrollHeight;
+    var delta = wrapper.scrollHeight - wrapper.scrollTop - wrapper.offsetHeight;
     if(delta < 300)
       this.askForMoreBooks();
+    this.setState({
+      fillerStyle: {
+        paddingTop: wrapper.scrollTop
+      }
+    });
   }
 
 
@@ -98,13 +108,25 @@ class BookList extends React.Component {
 
   renderBooks() {
     let props = this.props;
-    //console.debug('I got props. The pager is: ', props.pager);
-    //console.debug('pager: ', props.pager.totalBooksInSystem);
+    //this is where we figure out which books to show
+    var wrapper = window.wrapper = this.refs.wrapper;
+    var books = props.books;
+    if (wrapper) {
+      var scrollHeight = wrapper.querySelector('table').scrollHeight;
+      var totalNumberOfRows = wrapper.querySelectorAll('tr').length;
+      var averageRowHeight = scrollHeight / totalNumberOfRows;
+      var numberOfRowsToRemove = Math.ceil(wrapper.scrollTop / averageRowHeight);
+      numberOfRowsToRemove = numberOfRowsToRemove;
+      books = books.slice(numberOfRowsToRemove);
+    }
+
     return (
       <div className='h-table-wrapper' ref='wrapper' onScroll={this.handleWrapperScroll}>
+        <div style={this.state.fillerStyle}>
+        </div>
         <HTable
           pubSubKey      = 'bookTable'
-          rows           = {props.books}
+          rows           = {books}
           sortColumnName = {props.sortColumn}
           sortAscending  = {props.sortAscending}
           columns        = {props.displayColumns}
