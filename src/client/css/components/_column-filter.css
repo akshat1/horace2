@@ -1,9 +1,7 @@
-@charset 'UTF-8';
-
 .h-column-filter {
   .h-column-filter-root {
-    @include flex-box($direction: column);
-    //TODO: Reponsive?
+    @mixin flexBox column;
+    /*TODO: Reponsive?*/
     height: 400px;
     width: 600px;
 
@@ -18,19 +16,19 @@
 
 
     .h-column-filter-filter {
-      @include flex-item($grow: 0, $shrink: 1);
-      @include flex-box($direction: row);
+      @mixin flexItem 0, 1;
+      @mixin flexBox row;
       padding: $space-L;
 
       input[type=text] {
-        @include flex-item($grow: 1);
+        @mixin flexItem 1;
         padding: $space-M;
       }
     }
 
 
     .h-column-filter-options {
-      @include flex-item($grow: 1, $shrink: 1);
+      @mixin flexItem 1, 1;
       padding: 0 $space-L $space-L $space-L;
       overflow: auto;
     }

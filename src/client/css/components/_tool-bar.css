@@ -1,0 +1,49 @@
+$_toolbar-padding: $space-S;
+
+.h-toolbar-section-left {
+  @mixin flexItem;
+  @mixin flexBox row, '', flex-start, center;
+  padding: $_toolbar-padding;
+}
+
+
+.h-toolbar-section-center {
+  @mixin flexItem 1, 0;
+  @mixin flexBox row, '', flex-center, center;
+  padding: $_toolbar-padding 0;
+}
+
+
+.h-toolbar-section-right {
+  @mixin flexItem;
+  @mixin flexBox row, '', flex-end, center;
+  padding: $_toolbar-padding;
+}
+
+
+.h-toolbar-item {
+  @mixin flexItem;
+}
+
+
+.h-toolbar-item + .h-toolbar-item{
+  margin-left: $space-M;
+}
+
+
+.h-tool-bar {
+  @mixin flexItem;
+  @mixin flexBox row;
+  font-size: 22px;
+  padding: 0 $space-S;
+  background: $background-light;
+
+  .h-logo {
+    color: $text-base;
+    text-transform: uppercase;
+  }
+
+  .fa {
+    color: $text-base;
+  }
+}

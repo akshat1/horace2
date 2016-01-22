@@ -1,6 +1,4 @@
-@charset 'UTF-8';
-
-$dismisser-width: toRem(25.86px);
+$dismisser-width: 25px;
 
 .h-notification-list-trigger {
   position: relative;
@@ -34,7 +32,7 @@ $dismisser-width: toRem(25.86px);
 
 
 .h-notification-dismisser {
-  @include position(absolute, $top: 0, $right: 0);
+  @mixin position absolute, 0, 0;
   box-sizing: border-box;
   width: $dismisser-width;
   padding: $space-S;

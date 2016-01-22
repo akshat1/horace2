@@ -1,19 +1,7 @@
-"use strict";
-
-/*
-Notes:
-- CSS libs come from 3 routes
-  - bower (for files which should be collapsed into a single lib.css). We don't always use this, as not everyeone has a
-    correct bower.json, or some packages need to be built or whatever.
-  - direct download into src/client/lib (for files which should be collapsed into a single lib.css)
-  - direct download into src/client/resources (for files which should be loaded separately, like normalize.css)
-
-- We might do this for JS later on, but for now lib js only comes through bower (or npm and browserify)
-*/
+'use strict';
 
 var gulp       = require('gulp');
 var changed    = require('gulp-changed');
-var sass       = require('gulp-sass');
 var del        = require('del');
 var FS         = require('fs');
 var Path       = require('path');
@@ -28,7 +16,6 @@ var gulpFilter = require('gulp-filter');
 var nconf      = require('nconf');
 var sourcemaps = require('gulp-sourcemaps');
 var esdoc      = require("gulp-esdoc");
-
 
 // MISC
 var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
@@ -60,7 +47,6 @@ var Paths = {
   app_js_src          : 'src/app/**/*.js',
   app_js              : 'app',
   bower               : 'bower_components',
-  sass                : clientDir('sass', '**', '*.scss'),
   client_js           : clientDir('js', '**', '*.js'),
   client_jsx          : clientDir('js', '**', '*.jsx'),
   client_js_entry     : clientDir('js', 'index.js'),
@@ -70,12 +56,8 @@ var Paths = {
   dist                : distDir(),
   html_src            : clientDir('html', '**/*.html'),
   html                : distDir(),
-  css                 : distDir('css'),
   js                  : distDir('js'),
   resources           : distDir('resources'),
-  csslib_tmp          : tmpDir('csslib'),
-  csslib_src          : clientDir('lib', '**', '*.css'),
-  csslib              : distDir('lib'),
   jslib               : distDir('lib'),
   test_src            : 'test-src/**/*.js',
   test_dest           : 'test',
@@ -94,6 +76,7 @@ var BabelOptions = {
 }
 
 require('./gulpfile-quality.js')(nconf, Paths, BabelOptions);
+require('./gulpfile-css.js');
 
 
 /* ************************************ Setup ************************************ */
@@ -123,29 +106,6 @@ gulp.task('js', function() {
     .bundle()
     .pipe(source('horace.js'))
     .pipe(gulp.dest(Paths.js));
-});
-
-
-gulp.task('sass', function() {
-  return gulp.src(Paths.sass)
-    .pipe(sourcemaps.init())
-    .pipe(sass())
-    .pipe(concat('horace.css'))
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(Paths.css));
-});
-
-gulp.task('gather-lib-css', function(){
-  return gulp.src('./bower.json')
-    .pipe(bower())
-    .pipe(gulpFilter(['**/*.css']))
-    .pipe(gulp.dest(Paths.csslib_tmp));
-});
-
-gulp.task('css-lib', ['gather-lib-css'], function() {
-  return gulp.src([Path.join(Paths.csslib_tmp, '**', '*.css'), Paths.csslib_src])
-    .pipe(concat('lib.css', {newLine: File_Separator}))
-    .pipe(gulp.dest(Paths.csslib));
 });
 
 
@@ -185,8 +145,8 @@ gulp.task('esdoc', function() {
 
 
 /* ********************************* Top Level *********************************** */
-gulp.task('build', ['js', 'sass', 'html', 'resources', 'css-lib', 'js-lib']);
-gulp.task('micro', ['js', 'sass']);
+gulp.task('build', ['js', 'style', 'html', 'resources', 'css-lib', 'js-lib']);
+gulp.task('micro', ['js', 'style']);
 gulp.task('default', ['micro']);
 /* ******************************** /Top Level *********************************** */
 
