@@ -1,16 +1,14 @@
-@charset 'utf8';
-
 $border-radius: 2px;
 
 .h-popup {
-  @include position(absolute, 0, 0, 0, 0);
+  @mixin position absolute, 0, 0, 0, 0;
   background: rgba(0, 0, 0, 0.2);
 }
 
 
 .h-popup-contents {
-  @include flex-box($direction: column);
-  @include position(absolute, 50%, auto, auto, 50%);
+  @mixin flexBox column;
+  @mixin position absolute, 50%, auto, auto, 50%;
   border-radius: $border-radius;
   transform: translate(-50%, -50%);
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.5);
@@ -19,8 +17,8 @@ $border-radius: 2px;
 
 
 .h-popup-title {
-  @include flex-item($grow: 0, $shrink: 0);
-  @include flex-box($direction: row);
+  @mixin flexItem 0, 0;
+  @mixin flexBox row;
   border-radius: $border-radius $border-radius 0 0;
   background: gray;
   color: #FFF;
@@ -29,20 +27,20 @@ $border-radius: 2px;
 
 
 .h-popup-title-contents {
-  @include flex-item($grow: 1, $shrink: 0);
+  @mixin flexItem 1, 0;
 }
 
 
 .h-popup-title-controls {
-  @include flex-item($grow: 0, $shrink: 0);
+  @mixin flexItem;
 }
 
 
 .h-popup-close {
-  @include flex-item($grow: 0, $shrink: 0);
+  @mixin flexItem;
 }
 
 
 .h-popup-body {
-  @include flex-item($grow: 1, $shrink: 1);
+  @mixin flexItem 1, 1;
 }

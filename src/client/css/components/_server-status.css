@@ -1,7 +1,5 @@
-@charset 'UTF-8';
-
-@mixin _server-scan-item() {
-  @include flex-item();
+@define-mixin _server-scan-item {
+  @mixin flexItem;
 
   .fa {
     opacity: 0.1;
@@ -20,10 +18,10 @@
 }
 
 .h-tool-bar-server-status-container {
-  @include flex-box($direction: row, $align-items: center);
+  @mixin flexBox row, '', '', center;
 }
 
 
 .h-server-scanning-status {
-  @include _server-scan-item();
+  @mixin _server-scan-item;
 }

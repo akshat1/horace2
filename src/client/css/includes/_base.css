@@ -1,5 +1,3 @@
-@charset 'UTF-8';
-
 /* ******************* Native ******************* */
 html {
   height: 100%;
@@ -33,12 +31,12 @@ a {
 /* ******************* /Native ******************* */
 
 #libraryRoot {
-  @include position(absolute, 0, 0, 0, 0);
+  @mixin position absolute, 0, 0, 0, 0;
 }
 
 
 .h-library {
-  @include flex-box($justify-content: flex-start);
+  @mixin flexBox '', '','flex-start';
   font-size: 0.9em;
   height: 100%;
 }

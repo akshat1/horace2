@@ -1,0 +1,22 @@
+/*
+@function toRem($size) {
+  $remSize: $size / $base-font-size;
+  @return #{$remSize}rem;
+}
+*/
+
+
+@define-mixin position $position: static, $top: auto, $right: auto, $bottom: auto, $left: auto {
+  position: $position;
+  top: $top;
+  right: $right;
+  bottom: $bottom;
+  left: $left;
+}
+
+
+@define-mixin text-overflow $text-overflow: ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: $text-overflow;
+}
