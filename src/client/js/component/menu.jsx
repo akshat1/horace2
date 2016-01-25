@@ -49,7 +49,7 @@ class Menu extends React.Component {
 
 
   getRootStyleClass() {
-    return `h-menu-trigger ${this.props.disabled ? 'disabled' : 'enabled'} ${this.props.className || ''}`;
+    return `h-trigger h-menu-trigger ${this.props.disabled ? 'disabled' : 'enabled'} ${this.props.className || ''}`;
   }
 
 

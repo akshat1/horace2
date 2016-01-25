@@ -12,7 +12,7 @@ $border-radius: 2px;
   border-radius: $border-radius;
   transform: translate(-50%, -50%);
   box-shadow: 5px 5px 10px 0px rgba(0, 0, 0, 0.5);
-  background: #FFF;
+  background: $text-lightest;
 }
 
 
@@ -20,9 +20,21 @@ $border-radius: 2px;
   @mixin flexItem 0, 0;
   @mixin flexBox row;
   border-radius: $border-radius $border-radius 0 0;
-  background: gray;
-  color: #FFF;
+  background: $background-darkest;
+  color: $text-lightest;
   padding: $space-S $space-M;
+  font-size: 1.2em;
+
+  button {
+    background: $background-light;
+    color: #555;
+    border: 1px solid #bbb;
+
+    &:hover {
+      color: #222;
+      border-color: #888;
+    };
+  }
 }
 
 

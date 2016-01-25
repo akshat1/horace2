@@ -3,6 +3,8 @@
 import React from 'react';
 import autobind from 'autobind-decorator';
 import Menu from './menu.jsx';
+import PubSub from './../util/pubsub.js';
+import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
 
 
 class NotificationWrapper extends React.Component {
@@ -18,7 +20,7 @@ class NotificationWrapper extends React.Component {
 
   @autobind
   dismiss() {
-    this.props.dismiss(this);
+    PubSub.broadcast(ClientEvents.NOTIFICATION_DISMISS, this.props.notificationContent);
   }
 
 
@@ -78,10 +80,7 @@ class NotificationList extends React.Component {
   getNotifications() {
     var _self = this;
     return this.props.notifications.map(function(n) {
-      var dismiss = function() {
-        _self.props.dismiss(n);
-      };
-      return <NotificationWrapper notificationContent={n} dismiss={dismiss}/>;
+      return <NotificationWrapper notificationContent={n}/>;
     });
   }
 

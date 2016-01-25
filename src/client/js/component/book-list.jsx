@@ -61,6 +61,14 @@ class BookList extends React.Component {
 
 
   @autobind
+  isBookSelected(book) {
+    return !!this.props.selectedBooks.find(function(b){
+      return b.id === book.id;
+    });
+  }
+
+
+  @autobind
   handleWrapperScroll() {
     var wrapper = this.refs['wrapper'];
     window.wrapper = wrapper;
@@ -79,16 +87,9 @@ class BookList extends React.Component {
 
   @autobind
   renderCustomTitleRowComponent(book) {
-    var downloadBook = function() {
-      PubSub.broadcast(ClientEvents.DOWNLOAD_BOOK, book);
-    };
-
     return (
       <span className='h-title-content'>
-        <span className='h-book-actions'>
-          <span className='fa fa-cloud-download' onClick={downloadBook}/>
-        </span>
-        <span className='h-title-text'>{book.title}</span>
+        {book.title}
       </span>
     );
   }
@@ -113,12 +114,14 @@ class BookList extends React.Component {
         <div style={this.state.fillerStyle}>
         </div>
         <HTable
-          pubSubKey      = 'bookTable'
-          rows           = {books}
-          sortColumnName = {props.sortColumn}
-          sortAscending  = {props.sortAscending}
-          columns        = {props.displayColumns}
-          columnMetadata = {this.columnMetadata}
+          canSelect              = {true}
+          isSelected             = {this.isBookSelected}
+          pubSubKey              = 'bookTable'
+          rows                   = {books}
+          sortColumnName         = {props.sortColumn}
+          sortAscending          = {props.sortAscending}
+          columns                = {props.displayColumns}
+          columnMetadata         = {this.columnMetadata}
           selectedDistinctValues = {props.filter}
         />
       </div>

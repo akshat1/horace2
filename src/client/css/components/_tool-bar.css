@@ -35,15 +35,34 @@ $_toolbar-padding: $space-S;
   @mixin flexItem;
   @mixin flexBox row;
   font-size: 22px;
-  padding: 0 $space-S;
-  background: $background-light;
+  padding: 0 $space-L;
+  background: $text-base;
 
   .h-logo {
-    color: $text-base;
+    color: $background-light;
     text-transform: uppercase;
   }
 
   .fa {
-    color: $text-base;
+    color: $background-light;
   }
 }
+
+
+.h-action-bar {
+  @mixin flexBox row, '', space-between;
+  @mixin flexItem;
+  padding: $space-M $space-L;
+
+  > div {
+    @mixin flexItem 0, 0;
+  }
+}
+
+
+.h-book-actions {
+  button + button {
+    margin-left: $space-L;
+  }
+}
+
