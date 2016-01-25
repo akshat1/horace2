@@ -17,6 +17,69 @@ const StyleClass = {
   Sortable   : 'h-sortable'
 };
 */
+class HTableRow extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+
+  @autobind
+  handleSelectionChange(evt) {
+    PubSub.broadcast(ClientEvents.BOOK_SELECTION_CHANGED, {
+      book       : this.props.data,
+      isSelected : evt.currentTarget.checked
+    });
+  }
+
+
+  @autobind
+  renderSelectorBodyCell() {
+    let checked = false;
+    checked = this.props.isSelected(this.props.data);
+    return (
+      <td key={`selectorCell`} className='h-selector'>
+        <input type='checkbox' checked={checked} onChange={this.handleSelectionChange}/>
+      </td>
+    );
+  }
+
+
+  @autobind
+  getColumnMetadata(columnName) {
+    if(this.props.columnMetadata)
+      return this.props.columnMetadata.find(function(metadata){
+        return metadata.columnName === columnName;
+      });
+  }
+
+
+  @autobind
+  renderCells() {
+    let props = this.props;
+    let rowContents = [];
+    let columns = props.columns;
+    let rowData = props.data;
+    if (props.canSelect)
+      rowContents.push(this.renderSelectorBodyCell());
+    for (let i = 0, _len = columns.length; i < _len; i++) {
+      let columnName = columns[i];
+      let cellData = rowData[columnName];
+      let metadata = this.getColumnMetadata(columnName);
+      let className = metadata ? metadata.cssClassName : '';
+      rowContents.push(
+        <td key={`cell_${i}`} className={className}>{metadata.rowComponent? metadata.rowComponent(rowData) : cellData}</td>
+      );
+    }
+    return (rowContents);
+  }
+
+
+  render() {
+    return (<tr>
+        {this.renderCells()}
+      </tr>);
+  }
+}
 
 
 /**
@@ -128,13 +191,16 @@ class HTable extends React.Component {
    */
   @autobind
   renderTableHeadContent() {
-    var headerContents = [];
-    var columns = this.props.columns;
+    let headerContents = [];
+    let props = this.props;
+    let columns = props.columns;
+    if (props.canSelect)
+      headerContents.push(this.renderSelectorHeaderCell());
     for (let i = 0, _len = columns.length; i < _len; i++){
       let columnName = columns[i];
       let metadata = this.getColumnMetadata(columnName);
       if(metadata){
-        headerContents.push(<th key={`TH_${i}`} className={metadata.cssClassName}>
+        headerContents.push(<th key={`header_cell_${i}`} className={metadata.cssClassName}>
           <div className='h-column-header-wrapper'>
             <div className={`h-column-name ${metadata.isSortable ? 'sortable' : ''}`} onClick={this.makeColumnClickHandler(columnName, metadata)}>
               {this.renderColumnSortComponent(columnName, metadata)}
@@ -144,7 +210,7 @@ class HTable extends React.Component {
           </div>
         </th>);
       } else {
-        headerContents.push(<th onClick={this.makeColumnClickHandler(columnName, metadata)}>{columnName}</th>);
+        headerContents.push(<th key={`header_cell_${i}`} onClick={this.makeColumnClickHandler(columnName, metadata)}>{columnName}</th>);
       }
     }
     return (
@@ -155,24 +221,10 @@ class HTable extends React.Component {
   }
 
 
-  /**
-   * Get a single TR element, containing all the TD elements for
-   * this rowData object.
-   */
   @autobind
-  renderTableBodyRow(rowData, rowIndex) {
-    var columns = this.props.columns;
-    var rowContent = [];
-    for (let i = 0, _len = columns.length; i < _len; i++) {
-      let columnName = columns[i];
-      let cellData = rowData[columnName];
-      let metadata = this.getColumnMetadata(columnName);
-      let className = metadata ? metadata.cssClassName : '';
-      rowContent.push(
-        <td key={`${rowIndex}_${i}`} className={className}>{metadata.rowComponent? metadata.rowComponent(rowData) : cellData}</td>
-      );
-    }
-    return (<tr key={rowIndex}>{rowContent}</tr>);
+  renderSelectorHeaderCell() {
+    if (this.props.canSelect)
+      return (<th key={'selectorCell'}>&nbsp;</th>);
   }
 
 
@@ -181,7 +233,13 @@ class HTable extends React.Component {
    */
   @autobind
   renderTableBodyContent() {
-    return this.props.rows.map(this.renderTableBodyRow);
+    let props = this.props;
+    let columns = props.columns;
+    let columnMetadata = props.columnMetadata;
+    let isSelected = props.isSelected || function() { return true;}
+    return props.rows.map(function(rowData, rowIndex) {
+      return (<HTableRow data={rowData} columns={columns} columnMetadata={columnMetadata} key={rowData.path} canSelect={props.canSelect} onSelect={props.onSelect} isSelected={isSelected}/>);
+    });
   }
 
 

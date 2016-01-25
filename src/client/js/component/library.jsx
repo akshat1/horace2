@@ -15,7 +15,8 @@ import BookList from './book-list.jsx';
 import MenuRenderer from './menu-renderer.jsx';
 import ColumnFilter from './column-filter.jsx';
 import ScanningStatus from './scanning-status.jsx';
-import NotificationList from './notification-list.jsx';
+import Toolbar from './tool-bar.jsx';
+import BookListActionBar from './book-list-action-bar.jsx';
 import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
 import * as Net from './../util/net.js';
 import { PagerModel, SortModel, DEFAULT_PAGER_PAGE_SIZE } from './../../../app/model/library-model.js';
@@ -37,6 +38,7 @@ class Library extends React.Component {
       filter                     : {},
       isPerformingBlockingAction : false,
       books                      : [],
+      selectedBooks              : [],
       bookPager                  : new PagerModel(),
       bookSort                   : new SortModel('title', true),
       displayColumns             : ['adapterId', 'title', 'authors', 'subjects', 'displayYear'],
@@ -75,11 +77,54 @@ class Library extends React.Component {
 
   @autobind
   wirePubSub() {
+    PubSub.subscribe(ClientEvents.NOTIFICATION_DISMISS, this.dismissNotification);
     PubSub.subscribe(ClientEvents.LOAD_MORE_BOOKS, this.loadMoreBooks);
     PubSub.subscribe(ClientEvents.TABLE_SET_SORT, this.handleSortEvent);
     PubSub.subscribe(ClientEvents.BOOKS_SET_FILTER, this.handleFilterChange);
+    PubSub.subscribe(ClientEvents.SELECTION_CLEAR, this.clearCurrentSelection);
     PubSub.subscribe(ClientEvents.BOOKS_SHOW_FILTER, this.showFilterPopup);
-    PubSub.subscribe(ClientEvents.DOWNLOAD_BOOK, this.handleBookDownloadRequested);
+    PubSub.subscribe(ClientEvents.BOOK_DOWNLOAD, this.handleBookDownloadRequested);
+    PubSub.subscribe(ClientEvents.BOOK_SELECTION_CHANGED, this.handleBookSelectionChange);
+    PubSub.subscribe(ClientEvents.BOOK_EDIT, this.handleBookEdit);
+    PubSub.subscribe(ClientEvents.BOOK_HIDE, this.handleBookHide);
+  }
+
+
+  @autobind
+  handleBookEdit() {
+    alert('Edit all these books');
+  }
+
+
+  @autobind
+  handleBookHide() {
+    alert('Hide all these books');
+  }
+
+
+  @autobind
+  clearCurrentSelection() {
+    console.debug('library:clearCurrentSelection');
+    this.setState({
+      selectedBooks: []
+    });
+    console.log('Done');
+  }
+
+
+  @autobind
+  handleBookSelectionChange(payload) {
+    if (payload.isSelected) {
+      this.setState({
+        selectedBooks: this.state.selectedBooks.concat([payload.book])
+      });
+    } else {
+      this.setState({
+        selectedBooks: this.state.selectedBooks.filter(function(b) {
+          return b !== payload.book;
+        })
+      });
+    }
   }
 
 
@@ -214,8 +259,9 @@ class Library extends React.Component {
   }
 
 
-  handleBookDownloadRequested(book) {
-    Net.requestDownload(book);
+  @autobind
+  handleBookDownloadRequested() {
+    this.state.selectedBooks.forEach(Net.requestDownload);
   }
 
 
@@ -284,20 +330,15 @@ class Library extends React.Component {
 
   renderToolbar() {
     let state = this.state;
-    return (
-      <div className='h-tool-bar'>
-        <div className='h-toolbar-section-left'>
-          <NotificationList notifications={state.notifications} dismiss={this.dismissNotification}/>
-        </div>
-        <div className='h-toolbar-section-center'/>
-        <div className='h-toolbar-section-right'>
-          {this.getServerStatusIndicators()}
-          <div className='h-toolbar-item h-logo'>
-            Horace
-          </div>
-        </div>
-      </div>
-    );
+    return (<Toolbar
+      notifications={state.notifications}
+      serverStatusIndicators={this.getServerStatusIndicators()}
+    />);
+  }
+
+
+  renderSelectionSummary() {
+    return (<BookListActionBar selectedBooks={this.state.selectedBooks}/>);
   }
 
 
@@ -312,6 +353,7 @@ class Library extends React.Component {
         selectedValues             = {this.props.filter}
         pager                      = {bookPager}
         books                      = {state.books}
+        selectedBooks              = {state.selectedBooks}
         sortColumn                 = {bookSort.columnName}
         sortAscending              = {bookSort.isAscending}
         displayColumns             = {state.displayColumns}
@@ -351,6 +393,7 @@ class Library extends React.Component {
     return (
       <div className='h-library'>
         {this.renderToolbar()}
+        {this.renderSelectionSummary()}
         {this.renderBookList()}
         {this.renderMenuRenderer()}
         {this.renderFilterPopups()}

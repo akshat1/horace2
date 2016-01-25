@@ -29,7 +29,10 @@
 
     .h-column-filter-options {
       @mixin flexItem 1, 1;
-      padding: 0 $space-L $space-L $space-L;
+      padding: $space-M;
+      margin: 0 $space-L $space-L $space-L;
+      border: 1px solid $border-color;
+      border-radius: 2px;
       overflow: auto;
     }
   }

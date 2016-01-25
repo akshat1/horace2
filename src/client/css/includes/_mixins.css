@@ -20,3 +20,10 @@
   overflow: hidden;
   text-overflow: $text-overflow;
 }
+
+
+@define-mixin cell-width $width {
+  min-width: $width;
+  max-width: $width;
+  width: $width;
+}

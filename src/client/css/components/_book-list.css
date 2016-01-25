@@ -1,11 +1,11 @@
 .h-book-list {
-  @mixin flexItem 1, 1
+  @mixin flexItem 1, 1;
   @mixin flexBox '', '', flex-start;
   position: relative;
   overflow: hidden;
 
   .h-table-wrapper {
-    @mixin position absolute, 20px, 20px, 20px, 20px;
+    @mixin position absolute, 0px, 20px, 20px, 20px;
     border: 1px solid $border-color;
     overflow: auto;
   }
@@ -41,34 +41,30 @@
   td {
     border-color: $border-color-light;
 
+    &.h-selector {
+      @mixin cell-width 44px;
+    }
+
     &.h-adapterId {
-      max-width: 120px;
-      min-width: 120px;
-      width: 120px;
+      @mixin cell-width 120px;
     }
 
     &.h-title {
-      max-width: none;
-      min-width: 400px;
+      @mixin cell-width 400px;
+      width: auto;
       position: relative;
     }
 
     &.h-authors {
-      max-width: 200px;
-      min-width: 200px;
-      width: 200px;
+      @mixin cell-width 200px;
     }
 
     &.h-subjects {
-      max-width: 200px;
-      min-width: 200px;
-      width: 200px;
+      @mixin cell-width 200px;
     }
 
     &.h-year {
-      max-width: 100px;
-      min-width: 100px;
-      width: 100px;
+      @mixin cell-width 100px;
     }
   }
 
@@ -131,6 +127,7 @@
 
   .h-title-content {
     @mixin position absolute, 0, 0, 0, 0;
+    padding: 0 $space-M;
   }
 
   .h-book-actions {
@@ -149,7 +146,7 @@
   .h-column-filter-trigger {
     background: none;
     border: none;
-    color: #FFF;
+    color: $text-base;
   }
 }
 
@@ -158,5 +155,9 @@ table.h-list-table {
 
   thead {
     border-bottom: 1px solid $border-color;
+  }
+
+  tr:hover td {
+    background: #BFBFBF;
   }
 }
