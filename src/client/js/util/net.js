@@ -76,6 +76,15 @@ export function getBooks(pager, sort, filter) {
 }
 
 
+export function hideBooks(books) {
+  console.log(ClientURLMap);
+  return Http.get({
+    url : ClientURLMap['Book.Hide'](books.map(function(b) {return b.id;}).join(',')),
+    data: {}
+  });
+}
+
+
 var _distinctValues = {};
 export function getDistinctBookAttribute(columnName) {
   if (_distinctValues[columnName])

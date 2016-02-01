@@ -98,7 +98,11 @@ class Library extends React.Component {
 
   @autobind
   handleBookHide() {
-    alert('Hide all these books');
+    // TODO: Batch this?
+    //this.state.selectedBooks.forEach(Net.hideBook);
+    Net.hideBooks(this.state.selectedBooks).then(function() {
+      this.
+    });
   }
 
 
@@ -227,12 +231,14 @@ class Library extends React.Component {
   }//setPage
   */
   @autobind
-  loadMoreBooks() {
+  loadMoreBooks(isReload) {
     if(this.state.isPerformingBlockingAction)
       return;
 
+    let numMoreBooks = isReload ? 0 : DEFAULT_PAGER_PAGE_SIZE / 3;
+
     this.fetchBooks({
-      bookPager: new PagerModel(this.state.books.length, this.state.books.length + (DEFAULT_PAGER_PAGE_SIZE / 3))
+      bookPager: new PagerModel(this.state.books.length, this.state.books.length + numMoreBooks)
     });
   }
 

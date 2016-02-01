@@ -120,6 +120,16 @@ function getDistinctBookAttribute(columnName, query) {
 }
 
 
+function hideBooks(bookId) {
+  return DB.hideBook(parseInt(bookId));
+}
+
+
+function unHideAllBooks() {
+  return DB.unHideAllBooks();
+}
+
+
 var Horace = new Events.EventEmitter();
 _.extend(Horace, {
   startScan                : startScan,
@@ -127,7 +137,9 @@ _.extend(Horace, {
   getBook                  : getBook,
   requestDownload          : requestDownload,
   isScanningForBooks       : isScanningForBooks,
-  getDistinctBookAttribute : getDistinctBookAttribute
+  getDistinctBookAttribute : getDistinctBookAttribute,
+  hideBooks                : hideBooks,
+  unHideAllBooks           : unHideAllBooks
 });
 export default Horace;
 

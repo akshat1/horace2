@@ -36,6 +36,8 @@ export function doRegistrations(api, serverMap, clientMap) {
   register('Books', '/books', api, serverMap, clientMap);
   register('Books.Distinct', '/books/distinct/:columnName', api, serverMap, clientMap);
   register('fileDownload', getClientFunction('', '/download/:fileName'), '', serverMap, clientMap);
+  register('Book.Hide', '/hide/:bookId', api, serverMap, clientMap);
+  register('Books.Unhide', '/unhide', api, serverMap, clientMap);
 }
 
 

@@ -74,9 +74,12 @@ export class Book {
   }
 
 
-  static mongoFilter(opts) {
+  static mongoFilter(opts, includeHidden) {
     opts = opts || {};
     var filter = {};
+    if(!includeHidden)
+      filter['isHidden'] = {'$ne': true};
+
     if (opts.adapterId && (opts.adapterId.length > 0)) {
       console.log(0);
       filter['adapterId'] = {

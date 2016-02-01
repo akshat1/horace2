@@ -104,7 +104,8 @@ export function getBooks(params) {
       //var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
       var pager    = params.pager;
       var sort     = params.sort;
-      var filter   = params.filter ? Book.mongoFilter(params.filter) : {};
+      var includeHidden = true;//!!params.includeHidden;
+      var filter   = params.filter ? Book.mongoFilter(params.filter, includeHidden) : {};
       var sortOpts = {};
       sortOpts[sort.columnName] = sort.isAscending ? 1 : -1;
       var cur = collectionBooks.find(filter).sort(sortOpts);
@@ -121,7 +122,6 @@ export function getBooks(params) {
           books = books.slice(from, to);
           resolve(collectionBooks.count()
             .then(function(totalBooksInSystem) {
-              console.log('totalBooksInSystem >> ', totalBooksInSystem);
               return {
                 books  : books,
                 pager  : new PagerModel(from, to, totalBooksInSystem),
@@ -161,14 +161,17 @@ export function getBook(id) {
     p = new Promise(function(resolve, reject) {
       var cur, err;
       try {
-        cur = collectionBooks.find({
+        var qre = {
           id: id
-        });
+        };
+        console.log('query is: ', qre);
+        cur = collectionBooks.find(qre);
         return cur.toArray(function(curErr, books) {
           if (curErr) {
             return reject(curErr);
           } else {
             logger.info('(from db) resolve');
+            console.log('got result: ', books);
             return resolve(books[0]);
           }
         });
@@ -179,5 +182,38 @@ export function getBook(id) {
       }
     });
     return p;
+  });
+}
+
+
+export function hideBook(id) {
+  return ConnectPromise.then(function() {
+    return getBook(id)
+      .then(function(book) {
+        if(book) {
+          console.log('got book for id: ', id);
+          book.isHidden = true;
+          return saveBook(book);
+        } //else -- ignore requests to hide unknown books
+        else {
+          console.log('Book not found for id: ', id);
+        }
+      });
+  });
+}
+
+
+export function unHideAllBooks() {
+  return ConnectPromise.then(function() {
+    collectionBooks.find({
+      'isHidden': {
+        'eq': true
+      }
+    }).toArray(function(err, books) {
+      books.forEach(function(book) {
+        delete book.isHidden;
+        saveBook(book);
+      });
+    });
   });
 }

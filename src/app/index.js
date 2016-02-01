@@ -169,10 +169,35 @@ apiRouter.get(ServerUrlMap['Books.Distinct'], function(request, response) {
     })
     .catch(function(err){
       logger.error(`Error fetching distinct value for book['${columnName}']`, err);
-      response.sattus(500).send(err);
+      response.status(500).send(err);
       return;
     });
   return;
 });
+
+
+apiRouter.get(ServerUrlMap['Book.Hide'], function(request, response) {
+  logger.debug(`get[${ServerUrlMap['BookHide']}]`);
+  console.log('bookIds: ', request.params.bookIds);
+  let bookIds = request.params.bookIds.split(',');
+  Promise.all(bookIds.forEach(Horace.hideBook))
+    .then(function() {
+      logger.debug(`book ${bookId} hidden`);
+      return response.status(200).send('OK');
+    })
+    .catch(function(err) {
+      logger.error(`Error hiding book ${bookId}`, err);
+      response.status(500).send(err);
+      return;
+    });
+});
+
+
+apiRouter.get(ServerUrlMap['Books.Unhide'], function(request, response) {
+  logger.debug(`get[${ServerUrlMap['Books.']}]`);
+  return Horace.unHideAllBooks();
+});
+
+
 
 app.use(ServerUrlMap.API, apiRouter);

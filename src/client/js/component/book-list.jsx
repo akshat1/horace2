@@ -71,7 +71,6 @@ class BookList extends React.Component {
   @autobind
   handleWrapperScroll() {
     var wrapper = this.refs['wrapper'];
-    window.wrapper = wrapper;
     if(!wrapper)
       throw new Error('There aint no wrappa!');
     var delta = wrapper.scrollHeight - wrapper.scrollTop - wrapper.offsetHeight;
@@ -98,7 +97,7 @@ class BookList extends React.Component {
   renderBooks() {
     let props = this.props;
     //this is where we figure out which books to show
-    var wrapper = window.wrapper = this.refs.wrapper;
+    var wrapper = this.refs.wrapper;
     var books = props.books;
     if (wrapper) {
       var scrollHeight = wrapper.querySelector('table').scrollHeight;
