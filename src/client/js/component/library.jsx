@@ -156,6 +156,8 @@ class Library extends React.Component {
       newState.books = books;
     }
     newState.isPerformingBlockingAction = false;
+    if(this.wasReloading)
+      newState.selectedBooks = [];
     this.wasReloading = false;
     this.setState(newState);
   }
