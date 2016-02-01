@@ -101,8 +101,8 @@ class Library extends React.Component {
     // TODO: Batch this?
     //this.state.selectedBooks.forEach(Net.hideBook);
     Net.hideBooks(this.state.selectedBooks).then(function() {
-      this.
-    });
+      this.loadMoreBooks(true);
+    }.bind(this));
   }
 
 
@@ -148,10 +148,15 @@ class Library extends React.Component {
   handleBooksResponse(res) {
     let newState = res;
     if (!this.isBooksFlushRequired(this.state, newState)) {
-      var books = this.state.books.concat(newState.books);
+      let books;
+      if (this.wasReloading)
+        books = newState.books;
+      else
+        books = this.state.books.concat(newState.books);
       newState.books = books;
     }
     newState.isPerformingBlockingAction = false;
+    this.wasReloading = false;
     this.setState(newState);
   }
 
@@ -235,10 +240,13 @@ class Library extends React.Component {
     if(this.state.isPerformingBlockingAction)
       return;
 
+    let from = isReload ? (this.lastLoadedFrom || 0) : this.state.books.length;
     let numMoreBooks = isReload ? 0 : DEFAULT_PAGER_PAGE_SIZE / 3;
+    this.lastLoadedFrom = from;
+    this.wasReloading = true;
 
     this.fetchBooks({
-      bookPager: new PagerModel(this.state.books.length, this.state.books.length + numMoreBooks)
+      bookPager: new PagerModel(from, from + numMoreBooks)
     });
   }
 

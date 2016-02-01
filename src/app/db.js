@@ -104,7 +104,7 @@ export function getBooks(params) {
       //var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
       var pager    = params.pager;
       var sort     = params.sort;
-      var includeHidden = true;//!!params.includeHidden;
+      var includeHidden = !!params.includeHidden;
       var filter   = params.filter ? Book.mongoFilter(params.filter, includeHidden) : {};
       var sortOpts = {};
       sortOpts[sort.columnName] = sort.isAscending ? 1 : -1;

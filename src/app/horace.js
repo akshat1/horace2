@@ -120,7 +120,7 @@ function getDistinctBookAttribute(columnName, query) {
 }
 
 
-function hideBooks(bookId) {
+function hideBook(bookId) {
   return DB.hideBook(parseInt(bookId));
 }
 
@@ -138,7 +138,7 @@ _.extend(Horace, {
   requestDownload          : requestDownload,
   isScanningForBooks       : isScanningForBooks,
   getDistinctBookAttribute : getDistinctBookAttribute,
-  hideBooks                : hideBooks,
+  hideBook                 : hideBook,
   unHideAllBooks           : unHideAllBooks
 });
 export default Horace;

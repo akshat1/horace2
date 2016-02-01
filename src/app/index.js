@@ -178,11 +178,16 @@ apiRouter.get(ServerUrlMap['Books.Distinct'], function(request, response) {
 
 apiRouter.get(ServerUrlMap['Book.Hide'], function(request, response) {
   logger.debug(`get[${ServerUrlMap['BookHide']}]`);
-  console.log('bookIds: ', request.params.bookIds);
-  let bookIds = request.params.bookIds.split(',');
-  Promise.all(bookIds.forEach(Horace.hideBook))
+  let bookIds = request.params.bookIds;
+  console.log('hide bookIds: ', bookIds);
+  console.log(typeof bookIds);
+  bookIds = bookIds.split(',');
+  console.log(typeof bookIds);
+  Promise.all(bookIds.map(function(bookId){
+    return Horace.hideBook(bookId);
+  }))
     .then(function() {
-      logger.debug(`book ${bookId} hidden`);
+      console.log('ALL BOOKS HIDDEN');
       return response.status(200).send('OK');
     })
     .catch(function(err) {
