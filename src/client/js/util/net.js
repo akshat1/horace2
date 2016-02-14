@@ -12,9 +12,16 @@ Provides both HTTP as well as Websocket related utils.
 import Http from './http.js';
 import {Server as ServerEvents} from './../../../app/events.js';
 import UrlMap from './../../../app/urls.js';
+import Path from 'path';
 
 const ClientURLMap = UrlMap.Client;
 window.ClientURLMap = ClientURLMap;
+
+
+function getUrl(url) {
+  return Path.join('.', url);
+}
+
 
 // -------------- Websockets stuff --------------
 var socket = null;
@@ -58,7 +65,7 @@ export function downloadFile(url) {
 
 export function getBooks(pager, sort, filter) {
   return Http.post({
-    url          : ClientURLMap['Books'](),
+    url          : getUrl(ClientURLMap['Books']()),
     responseType : Http.ResponseType.JSON,
     data         : {
       pager  : pager,
@@ -77,9 +84,8 @@ export function getBooks(pager, sort, filter) {
 
 
 export function hideBooks(books) {
-  console.log(ClientURLMap);
   return Http.get({
-    url : ClientURLMap['Book.Hide'](books.map(function(b) {return b.id;}).join(',')),
+    url : getUrl(ClientURLMap['Book.Hide'](books.map(function(b) {return b.id;}).join(','))),
     data: {}
   });
 }
@@ -91,7 +97,7 @@ export function getDistinctBookAttribute(columnName) {
     return Promise.resolve(_distinctValues[columnName]);
   else
     return Http.get({
-      url          : ClientURLMap['Books.Distinct'](columnName),
+      url          : getUrl(ClientURLMap['Books.Distinct'](columnName)),
       responseType : Http.ResponseType.JSON
     }).then(function(values) {
       _distinctValues[columnName] = values;
@@ -109,7 +115,7 @@ export function requestDownload(book) {
 
 export function isServerScanningForBooks() {
   return Http.get({
-    url: ClientURLMap['Status.IsScanning'](),
+    url: getUrl(ClientURLMap['Status.IsScanning']()),
     responseType: Http.ResponseType.JSON
   });
 }
@@ -117,7 +123,7 @@ export function isServerScanningForBooks() {
 
 export function doStartScanning() {
   Http.get({
-    url: ClientURLMap['Command.StartScan']()
+    url: getUrl(ClientURLMap['Command.StartScan']())
   });
 }
 // ---------------- /End Point ------------------
