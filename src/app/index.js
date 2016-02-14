@@ -63,7 +63,6 @@ FSExtra.ensureDir(webroot);
 
 function appUse(url, o) {
   let url2 = Path.join('/', urlRoot, url);
-  console.log(url, ' to ', url2);
   app.use(url2, o);
 }
 
