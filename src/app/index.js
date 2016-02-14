@@ -45,19 +45,27 @@ const serverTmpPath  = Path.join(__dirname, '..', Config('horace.tmpDirPath'));
 const serverSubDir   = Config('horace.urlSubDir').replace(/\/$/, '') || '/';
 const webroot        = Path.join(__dirname, '..', Config('horace.webroot'));
 const listenPort     = new Number(Config('horace.port')).valueOf();
-const webrootURL     = Path.join(serverSubDir, serverSubDir).replace(/\./, '/');
-const socketIOURL    = Path.join(serverSubDir, 'socket.io');
+const urlRoot        = serverSubDir;
+const socketIOURL    = Path.join('/', serverSubDir, 'socket.io');
 const app = Express();
 app.use(BodyParser.json());
 const apiRouter = Express.Router();
 
-logger.info('listenPort     : ', listenPort);
-logger.info('serverTmpPath  : ', serverTmpPath);
-logger.info('webroot        : ', webroot);
-logger.info('webrootURL     : ', webrootURL);
+logger.info('listenPort    : ', listenPort);
+logger.info('serverTmpPath : ', serverTmpPath);
+logger.info('webroot       : ', webroot);
+logger.info('socketIOURL   : ', socketIOURL);
+logger.info('urlRoot       : ', urlRoot);
 
 FSExtra.ensureDir(serverTmpPath);
 FSExtra.ensureDir(webroot);
+
+
+function appUse(url, o) {
+  let url2 = Path.join('/', urlRoot, url);
+  console.log(url, ' to ', url2);
+  app.use(url2, o);
+}
 
 
 const server = app.listen(listenPort, function() {
@@ -105,7 +113,7 @@ io.on('connection', function(socket) {
 
 
 // Set up routes
-app.use(ServerUrlMap.fileDownload(), function (request, response) {
+appUse(ServerUrlMap.fileDownload(), function (request, response) {
   logger.info('download file');
   var fileName = request.params.fileName;
   logger.info(`download: ${fileName}`);
@@ -119,11 +127,12 @@ app.use(ServerUrlMap.fileDownload(), function (request, response) {
   fileReadStream.pipe(response);
 });
 
-app.use(webrootURL, ServeStatic(webroot));
-app.use(ServerUrlMap.Config, function(req, res) {
+console.log('serving >', webroot, '<');
+appUse('/', ServeStatic(webroot));
+appUse(ServerUrlMap.Config, function(req, res) {
   var config = Config('web.client.config');
   _.extend(config, {
-    webrootURL: webrootURL,
+    urlRoot: urlRoot,
     socketIOURL: socketIOURL
   });
   var str = `window.HoraceConf = ${JSON.stringify(config, null, 4)}`;
@@ -205,4 +214,4 @@ apiRouter.get(ServerUrlMap['Books.Unhide'], function(request, response) {
 
 
 
-app.use(ServerUrlMap.API, apiRouter);
+appUse(ServerUrlMap.API, apiRouter);
