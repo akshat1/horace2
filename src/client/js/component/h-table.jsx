@@ -1,11 +1,11 @@
 'use strict';
-import React from 'react';
-import autobind from 'autobind-decorator';
-import _ from 'lodash';
+var React = require('react');
+var autobind = require('autobind-decorator');
+var _ = require('lodash');
 
-import { SortModel } from './../../../app/model/library-model.js';
-import PubSub from './../util/pubsub.js';
-import {Client as ClientEvents} from './../../../app/events.js';
+var SortModel = require('./../../../app/model/library-model.js').SortModel;
+var PubSub = require('./../util/pubsub.js');
+var ClientEvents = require('./../../../app/events.js').Client;
 
 
 /*
@@ -261,4 +261,4 @@ class HTable extends React.Component {
   }
 }
 
-export default HTable;
+module.exports = HTable;

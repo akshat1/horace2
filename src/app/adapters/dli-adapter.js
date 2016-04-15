@@ -1,9 +1,9 @@
 'use strict';
 
-import * as Path from 'path';
-import * as FS from 'fs';
-import * as Winston from 'winston';
-import Book from './../book.js';
+var Path = require('path');
+var FS = require('fs');
+var Winston = require('winston');
+var Book = require('./../book.js');
 
 const DLI_MANIFEST_FILE = 'metadata.json';
 const DLI_MANIFEST_FILE_OPTIONS = {
@@ -71,7 +71,7 @@ function getYear(metadata) {
 }
 
 
-export function getBook(path) {
+function getBook(path) {
   var p = new Promise(function(resolve, reject){
     let handleDLIManifest = function(manifestFileReadError, manifestFileContent) {
       if (manifestFileReadError) {
@@ -118,6 +118,12 @@ export function getBook(path) {
 }//function getBook(path) {
 
 
-export function getAdapterId() {
+function getAdapterId() {
   return ADAPTER_ID;
 }
+
+
+module.exports = {
+  getBook: getBook,
+  getAdapterId: getAdapterId
+};

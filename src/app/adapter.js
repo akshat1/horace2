@@ -6,11 +6,11 @@
  */
 
 
-import Winston from 'winston';
-import _ from 'lodash';
+var Winston = require('winston');
+var _ = require('lodash');
 
-import Config from './config.js';
-import * as Utils from './utils.js';
+var Config = require('./config.js');
+var Utils = require('./utils.js');
 
 const logger = new Winston.Logger({
   transports: [
@@ -47,17 +47,17 @@ function loadAdapters() {
 
 loadAdapters();
 
-export function toArray() {
+function toArray() {
   return adapters;
 }
 
 
-export function getAdapterForBook(book) {
+function getAdapterForBook(book) {
   return adapterMap[book.adapterId];
 }
 
 
-export function getBook(path) {
+function getBook(path) {
   logger.info(`adapter.getBook(${path})`);
   var adapters = toArray();
   if(adapters.length < 1) {
@@ -83,7 +83,7 @@ export function getBook(path) {
  * @resolves {Stream} Stream with the data for the book and format. May be simply piped to the http response
  * @rejects {Error}
  */
-export function getBookForDownload(book, targetFormat) {
+function getBookForDownload(book, targetFormat) {
   return new Promise(function(resolve, reject) {
     var adapter = getAdapterForBook(book);
     if (!adapter) {
@@ -93,4 +93,12 @@ export function getBookForDownload(book, targetFormat) {
     }
     return resolve(adapter.getBookForDownload(book, targetFormat));
   });
+}
+
+
+module.exports = {
+  toArray: toArray,
+  getAdapterForBook: getAdapterForBook,
+  getBook: getBook,
+  getBookForDownload: getBookForDownload
 }

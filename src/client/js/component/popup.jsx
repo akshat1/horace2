@@ -1,7 +1,7 @@
 'use strict';
 
-import React from 'react';
-import autobind from 'autobind-decorator';
+var React = require('react');
+var autobind = require('autobind-decorator');
 
 
 class Popup extends React.Component {
@@ -60,4 +60,4 @@ class Popup extends React.Component {
   }
 }
 
-export default Popup;
+module.exports = Popup;

@@ -9,10 +9,10 @@ Provides both HTTP as well as Websocket related utils.
 </p>
 */
 
-import Http from './http.js';
-import {Server as ServerEvents} from './../../../app/events.js';
-import UrlMap from './../../../app/urls.js';
-import Path from 'path';
+var Http = require('./http.js');
+var ServerEvents = require('./../../../app/events.js').Server;
+var UrlMap = require('./../../../app/urls.js').UrlMap;
+var Path = require('path');
 
 const ClientURLMap = UrlMap.Client;
 window.ClientURLMap = ClientURLMap;
@@ -25,7 +25,7 @@ function getUrl(url) {
 
 // -------------- Websockets stuff --------------
 var socket = null;
-export function getSocket() {
+function getSocket() {
   if(!socket) {
     socket = window.io.connect(window.location.origin, {
       path: window.HoraceConf.socketIOURL
@@ -35,17 +35,17 @@ export function getSocket() {
 }
 
 
-export function emitWebSocket(eventName, args) {
+function emitWebSocket(eventName, args) {
   getSocket().emit(eventName, args);
 }
 
 
-export function onWebSocket(eventName, callback) {
+function onWebSocket(eventName, callback) {
   getSocket().on(eventName, callback);
 }
 
 
-export function offWebSocket(eventName, callback) {
+function offWebSocket(eventName, callback) {
   getSocket().off(eventName, callback);
 }
 
@@ -53,7 +53,7 @@ export function offWebSocket(eventName, callback) {
 
 
 // ----------------- End Point ------------------
-export function downloadFile(url) {
+function downloadFile(url) {
   var frame = document.createElement('iframe');
   frame.className = 'h-download-frame';
   frame.height = '100px';
@@ -63,7 +63,7 @@ export function downloadFile(url) {
 }
 
 
-export function getBooks(pager, sort, filter) {
+function getBooks(pager, sort, filter) {
   return Http.post({
     url          : getUrl(ClientURLMap['Books']()),
     responseType : Http.ResponseType.JSON,
@@ -83,7 +83,7 @@ export function getBooks(pager, sort, filter) {
 }
 
 
-export function hideBooks(books) {
+function hideBooks(books) {
   return Http.get({
     url : getUrl(ClientURLMap['Book.Hide'](books.map(function(b) {return b.id;}).join(','))),
     data: {}
@@ -92,7 +92,7 @@ export function hideBooks(books) {
 
 
 var _distinctValues = {};
-export function getDistinctBookAttribute(columnName) {
+function getDistinctBookAttribute(columnName) {
   if (_distinctValues[columnName])
     return Promise.resolve(_distinctValues[columnName]);
   else
@@ -106,14 +106,14 @@ export function getDistinctBookAttribute(columnName) {
 }
 
 
-export function requestDownload(book) {
+function requestDownload(book) {
   emitWebSocket(ServerEvents.REQUEST_BOOK_DOWNLOAD, {
     bookId: book.id
   });
 }
 
 
-export function isServerScanningForBooks() {
+function isServerScanningForBooks() {
   return Http.get({
     url: getUrl(ClientURLMap['Status.IsScanning']()),
     responseType: Http.ResponseType.JSON
@@ -121,9 +121,24 @@ export function isServerScanningForBooks() {
 }
 
 
-export function doStartScanning() {
+function doStartScanning() {
   Http.get({
     url: getUrl(ClientURLMap['Command.StartScan']())
   });
 }
 // ---------------- /End Point ------------------
+
+
+module.exports = {
+  getSocket: getSocket,
+  emitWebSocket: emitWebSocket,
+  onWebSocket: onWebSocket,
+  offWebSocket: offWebSocket,
+  downloadFile: downloadFile,
+  getBooks: getBooks,
+  hideBooks: hideBooks,
+  getDistinctBookAttribute: getDistinctBookAttribute,
+  requestDownload: requestDownload,
+  isServerScanningForBooks: isServerScanningForBooks,
+  doStartScanning: doStartScanning
+};

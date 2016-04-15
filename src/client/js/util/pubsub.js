@@ -47,4 +47,4 @@ const PubSub = {
   broadcast        : broadcast
 };
 
-export default PubSub;
+module.exports = PubSub;

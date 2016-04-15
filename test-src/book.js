@@ -1,9 +1,8 @@
 'use strict';
 
-import Chai from 'chai';
-import {Book, reduceToSortString} from '../app/book.js';
-
-console.log(Book);
+var Chai = require('chai');
+var Book = require('../app/book.js');
+var reduceToSortString = Book.reduceToSortString;
 
 var should = Chai.should();
 

@@ -7,7 +7,7 @@
  * @params {String} path
  * @returns {function}
  */
-export function getClientFunction(prefix, path){
+function getClientFunction(prefix, path){
   return function () {
     let params = path.match(/(:[^:\/]+)/g) || [];
     let finalPath = path;
@@ -23,13 +23,13 @@ export function getClientFunction(prefix, path){
 // Path will be prefixed by api for client
 // Should be use for end-points which are registered
 // into ApiRouter in index.js
-export function register(key, path, api, serverMap, clientMap) {
+function register(key, path, api, serverMap, clientMap) {
   clientMap[key] = typeof path === 'string' ? getClientFunction(api, path) : path;
   serverMap[key] = path;
 }
 
 
-export function doRegistrations(api, serverMap, clientMap) {
+function doRegistrations(api, serverMap, clientMap) {
   register('Command.StartScan', '/command/StartScan', api, serverMap, clientMap);
   register('Status.IsScanning', '/status/isScanning', api, serverMap, clientMap);
   register('Config', '/config', '', serverMap, clientMap);
@@ -50,4 +50,10 @@ var UrlMap = {
 };
 doRegistrations(UrlMap.Server.API, UrlMap.Server, UrlMap.Client);
 
-export default UrlMap;
+
+module.exports = {
+  UrlMap: UrlMap,
+  getClientFunction: getClientFunction,
+  register: register,
+  doRegistrations: doRegistrations
+};

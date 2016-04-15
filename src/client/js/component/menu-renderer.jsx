@@ -1,9 +1,9 @@
 'use strict';
 
-import React from 'react';
-import autobind from 'autobind-decorator';
+var React = require('react');
+var autobind = require('autobind-decorator');
 
-import PubSub from './../util/pubsub.js';
+var PubSub = require('./../util/pubsub.js');
 
 
 /**
@@ -191,4 +191,4 @@ class MenuRenderer extends React.Component {
   }
 }
 
-export default MenuRenderer;
+module.exports = MenuRenderer;

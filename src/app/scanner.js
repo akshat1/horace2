@@ -2,19 +2,16 @@
 /**
  * @module scanner
  */
-import IPC from 'node-ipc';
-import Path from 'path';
-import FS from 'graceful-fs';
-import Winston from 'winston';
-
-import {IPC as IPCEvents} from './events.js';
-import * as IPCUtils from './ipc.js';
-import Config from './config.js';
-import * as Adapters from './adapter.js';
-import * as DB from './db.js';
-import * as Utils from './utils.js';
-
-
+var IPC = require('node-ipc');
+var Path = require('path');
+var FS = require('graceful-fs');
+var Winston = require('winston');
+var IPCEvents = require('./events.js').IPC;
+var IPCUtils = require('./ipc.js');
+var Config = require('./config.js');
+var Adapters = require('./adapter.js');
+var DB = require('./db.js');
+var Utils = require('./utils.js');
 const logLevel = Config('horace.scanner.logLevel');
 const logger   = new Winston.Logger({
   transports: [

@@ -1,8 +1,8 @@
 'use strict';
-import React from 'react';
-import autobind from 'autobind-decorator';
-import PubSub from './../util/pubsub.js';
-import {Client as ClientEvents} from './../../../app/events.js';
+var React = require('react');
+var autobind = require('autobind-decorator');
+var PubSub = require('./../util/pubsub.js');
+var ClientEvents = require('./../../../app/events.js').Client;
 
 class BookListActionBar extends React.Component {
   constructor(props) {
@@ -97,4 +97,4 @@ class BookListActionBar extends React.Component {
   }
 }
 
-export default BookListActionBar;
+module.exports = BookListActionBar;

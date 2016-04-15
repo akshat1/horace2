@@ -3,19 +3,21 @@
  * @module horace
  */
 
-import Path from 'path';
-import Events from 'events';
-import FS from 'fs';
-import IPC from 'node-ipc';
-import ChildProcess from 'child_process';
-import _ from 'lodash';
-import Winston from 'winston';
+var Path = require('path');
+var Events = require('events');
+var FS = require('fs');
+var IPC = require('node-ipc');
+var ChildProcess = require('child_process');
+var _ = require('lodash');
+var Winston = require('winston');
 
-import Config from './config.js';
-import * as IPCUtils from './ipc.js';
-import * as DB from './db.js';
-import * as Adapter from './adapter.js';
-import {IPC as IPCEvents, Server as ServerEvents} from './events.js';
+var Config = require('./config.js');
+var IPCUtils = require('./ipc.js');
+var DB = require('./db.js');
+var Adapter = require('./adapter.js');
+var HoraceEvents = require('./events');
+var IPCEvents = HoraceEvents.IPC;
+var ServerEvents = HoraceEvents.Server;
 
 const logger = new Winston.Logger({
   transports: [
@@ -141,8 +143,6 @@ _.extend(Horace, {
   hideBook                 : hideBook,
   unHideAllBooks           : unHideAllBooks
 });
-export default Horace;
-
 
 
 // ------------------------------- IPC
@@ -185,3 +185,6 @@ IPC.server.define.listen[IPCEvents.SCANNER_SCANSTARTED] = 'The scanner has start
 IPC.server.define.listen[IPCEvents.SCANNER_SCANSTOPPED] = 'The scanner has stopped scanning';
 IPC.server.start();
 ChildProcess.fork('./app/scanner.js');
+
+
+module.exports = Horace;

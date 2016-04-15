@@ -1,12 +1,12 @@
 'use strict';
 
-import React from 'react';
-import autobind from 'autobind-decorator';
-import Popup from './popup.jsx';
-import _ from 'lodash';
-import PubSub from './../util/pubsub.js';
-import * as Net from './../util/net.js';
-import {Client as ClientEvents} from './../../../app/events.js';
+var React = require('react');
+var autobind = require('autobind-decorator');
+var Popup = require('./popup.jsx');
+var _ = require('lodash');
+var PubSub = require('./../util/pubsub.js');
+var Net = require('./../util/net.js');
+var ClientEvents = require('./../../../app/events.js').Client;
 
 
 const FILTER_DEBOUNCE_INTERVAL = 750;
@@ -152,4 +152,4 @@ class ColumnFilter extends React.Component {
   }
 }
 
-export default ColumnFilter;
+module.exports = ColumnFilter;

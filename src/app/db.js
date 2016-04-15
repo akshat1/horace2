@@ -4,12 +4,12 @@
  * @module db
  */
 
-import MongoDB from 'mongodb';
-import Winston from 'winston';
+var MongoDB = require('mongodb');
+var Winston = require('winston');
 
-import { PagerModel } from './model/library-model.js';
-import Config from './config.js';
-import Book from './book.js';
+var PagerModel = require('./model/library-model.js').PagerModel;
+var Config = require('./config.js');
+var Book = require('./book.js');
 
 const Collection = {
   Books: 'books'
@@ -58,7 +58,7 @@ var ConnectPromise = new Promise(function(resolve, reject) {
 });
 
 
-export function saveBook(book) {
+function saveBook(book) {
   logger.info('saveBook(%o)', book.id);
   return ConnectPromise.then(function() {
     var p;
@@ -98,7 +98,7 @@ function _transformBooksQuery(pager, sort, filter) {
 */
 
 
-export function getBooks(params) {
+function getBooks(params) {
   return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
       //var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
@@ -142,7 +142,7 @@ export function getBooks(params) {
  * @returns {Promise}
  * @resolves {Array}
  */
-export function getDistinctBookAttribute(columnName, query) {
+function getDistinctBookAttribute(columnName, query) {
   return collectionBooks.distinct(columnName, query).then(function(values) {
     return Book.distinguish(columnName, values);
   });
@@ -155,7 +155,7 @@ export function getDistinctBookAttribute(columnName, query) {
  * @resolves {Book}
  * @rejects {Error}
  */
-export function getBook(id) {
+function getBook(id) {
   return ConnectPromise.then(function() {
     var p;
     p = new Promise(function(resolve, reject) {
@@ -186,7 +186,7 @@ export function getBook(id) {
 }
 
 
-export function hideBook(id) {
+function hideBook(id) {
   return ConnectPromise.then(function() {
     return getBook(id)
       .then(function(book) {
@@ -203,7 +203,7 @@ export function hideBook(id) {
 }
 
 
-export function unHideAllBooks() {
+function unHideAllBooks() {
   return ConnectPromise.then(function() {
     collectionBooks.find({
       'isHidden': {
@@ -216,4 +216,14 @@ export function unHideAllBooks() {
       });
     });
   });
+}
+
+
+module.exports = {
+  saveBook: saveBook,
+  getBooks: getBooks,
+  getDistinctBookAttribute: getDistinctBookAttribute,
+  getBook: getBook,
+  hideBook: hideBook,
+  unHideAllBooks: unHideAllBooks
 }

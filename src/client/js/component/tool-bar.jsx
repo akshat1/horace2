@@ -1,9 +1,9 @@
 'use strict';
-import React from 'react';
-import autobind from 'autobind-decorator';
-import PubSub from './../util/pubsub.js';
-import {Client as ClientEvents} from './../../../app/events.js';
-import NotificationList from './notification-list.jsx';
+var React = require('react');
+var autobind = require('autobind-decorator');
+var PubSub = require('./../util/pubsub.js');
+var ClientEvents = require('./../../../app/events.js').Client;
+var NotificationList = require('./notification-list.jsx');
 
 
 class Toolbar extends React.Component {
@@ -32,4 +32,4 @@ class Toolbar extends React.Component {
   }
 }
 
-export default Toolbar;
+module.exports = Toolbar;
