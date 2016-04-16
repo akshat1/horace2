@@ -17,9 +17,11 @@ const Config       = require('./config.js');
 const Horace       = require('./horace.js');
 const websockets   = require('./server/websockets.js');
 const apiRouter    = require('./server/apiRouter.js');
+const graphql      = require('./server/graphql.js');
 
 
 FSExtra.ensureDir('log');
+const logLevel = Config('horace.server.logLevel');
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
@@ -39,7 +41,6 @@ if (Config('horace.rebuildClientAtStartup')) {
 
 
 // Start Server
-const logLevel      = Config('horace.server.logLevel');
 const serverTmpPath = Path.join(__dirname, '..', Config('horace.tmpDirPath'));
 const serverSubDir  = Config('horace.urlSubDir').replace(/\/$/, '') || '/';
 const webroot       = Path.join(__dirname, '..', Config('horace.webroot'));
@@ -103,3 +104,5 @@ appUse(ServerUrlMap.Config, function(req, res) {
 
 
 appUse(ServerUrlMap.API, apiRouter.getRouter(Horace));
+appUse('graphql', graphql.getGraphQLHTTP());
+

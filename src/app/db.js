@@ -136,6 +136,26 @@ function getBooks(params) {
 }//getBooks
 
 
+function getBooksSimple(from, numItems) {
+  return ConnectPromise
+    .then(function() {
+      return new Promise(function(resolve, reject) {
+        from = from || 0;
+        numItems = numItems || 100;
+        var cur = collectionBooks.find({});
+        cur.toArray(function(curErr, books) {
+          if(curErr){
+            logger.error('Error converting to array', curErr);
+            return reject(curErr);
+          } else {
+            resolve(books.slice(from, from + numItems));
+          }
+        });
+      });
+    });
+}
+
+
 /**
  * @param {String} columnName
  * @param {object} query
@@ -225,5 +245,6 @@ module.exports = {
   getDistinctBookAttribute: getDistinctBookAttribute,
   getBook: getBook,
   hideBook: hideBook,
-  unHideAllBooks: unHideAllBooks
+  unHideAllBooks: unHideAllBooks,
+  getBooksSimple: getBooksSimple
 }

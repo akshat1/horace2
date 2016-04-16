@@ -4,8 +4,10 @@ const Express      = require('express');
 const UrlMap       = require('../urls.js').UrlMap;
 const ServerUrlMap = UrlMap.Server;
 const apiRouter    = Express.Router();
+const Winston      = require('winston');
 
 
+const logLevel = 'debug'; //Config('horace.server.logLevel');
 const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
