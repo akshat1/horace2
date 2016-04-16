@@ -2,9 +2,9 @@
 * Tests for app/adapter.js
 */
 
-import Chai from 'chai';
-import Mockery from 'mockery';
-import Sinon from 'sinon';
+var Chai = require('chai');
+var Mockery = require('mockery');
+var Sinon = require('sinon');
 
 var should = Chai.should();
 var expect = Chai.expect;

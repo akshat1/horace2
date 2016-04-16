@@ -1,7 +1,7 @@
 'use strict';
 
-import Chai from 'chai';
-import * as HUrls from '../app/urls.js';
+var Chai = require('chai');
+var HUrls = require('../app/urls.js');
 
 var should = Chai.should();
 var expect = Chai.expect();

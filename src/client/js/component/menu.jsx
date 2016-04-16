@@ -1,10 +1,10 @@
 'use strict';
 
-import React from 'react';
-import autobind from 'autobind-decorator';
-import _ from 'lodash';
+var React = require('react');
+var autobind = require('autobind-decorator');
+var _ = require('lodash');
 
-import PubSub from './../util/pubsub.js';
+var PubSub = require('./../util/pubsub.js');
 
 
 /**
@@ -67,4 +67,4 @@ class Menu extends React.Component {
   }
 }
 
-export default Menu;
+module.exports = Menu;

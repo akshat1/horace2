@@ -5,25 +5,26 @@ TODO: Make server getBooks accept pager, sort and model as individual items
 TODO: Make server getBooks return these properties in response
 */
 
-import React from 'react';
-import Path from 'path';
-import autobind from 'autobind-decorator';
-import _ from 'lodash';
+var React = require('react');
+var Path = require('path');
+var autobind = require('autobind-decorator');
+var _ = require('lodash');
 
-import PubSub from './../util/pubsub.js';
-import BookList from './book-list.jsx';
-import MenuRenderer from './menu-renderer.jsx';
-import ColumnFilter from './column-filter.jsx';
-import ScanningStatus from './scanning-status.jsx';
-import Toolbar from './tool-bar.jsx';
-import BookListActionBar from './book-list-action-bar.jsx';
-import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
-import * as Net from './../util/net.js';
-import { PagerModel, SortModel, DEFAULT_PAGER_PAGE_SIZE } from './../../../app/model/library-model.js';
-
-
-window.Net = Net;
-
+var PubSub = require('./../util/pubsub.js');
+var BookList = require('./book-list.jsx')
+var MenuRenderer = require('./menu-renderer.jsx')
+var ColumnFilter = require('./column-filter.jsx')
+var ScanningStatus = require('./scanning-status.jsx')
+var Toolbar = require('./tool-bar.jsx')
+var BookListActionBar = require('./book-list-action-bar.jsx')
+var HEvents = require('./../../../app/events.js');
+var ClientEvents = HEvents.Client;
+var ServerEvents = HEvents.Server;
+var Net = require('./../util/net.js');
+var HModel = require('./../../../app/model/library-model.js');
+var PagerModel = HModel.PagerModel;
+var SortModel = HModel.SortModel;
+var DEFAULT_PAGER_PAGE_SIZE = HModel.DEFAULT_PAGER_PAGE_SIZE;
 
 class Library extends React.Component {
   constructor(props) {
@@ -418,4 +419,4 @@ class Library extends React.Component {
   }//render
 }//Library
 
-export default Library;
+module.exports = Library;

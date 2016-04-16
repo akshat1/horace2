@@ -1,31 +1,8 @@
-import * as Utils from './utils.js';
-import _ from 'lodash';
+var Utils = require('./utils.js');
+var _ = require('lodash');
 
 
-function mapToLowerCase(a) {
-  return (a||'').toLowerCase();
-}
-
-//function reduceToSortString(previousValue, currentValue, index, array) {
-export function reduceToSortString(previousValue, currentValue) {
-  if(previousValue)
-    return (previousValue || '') + '_' + (currentValue || '');
-  else
-    return currentValue;
-}
-
-
-export function yearToDisplayYear(year) {
-  return year === -1 ? 'Unknown' : year;
-}
-
-
-export function displayYearToYear(displayYear) {
-  return displayYear === 'Unknown' ? -1 : parseInt(displayYear);
-}
-
-
-export class Book {
+class Book {
   /**
    * Adapters may extend this class in order to add custom data
    * @constructor Book
@@ -52,10 +29,10 @@ export class Book {
     this.id          = Utils.getHash(path);
     this.path        = path;
     this.title       = title;
-    this.authors     = authors.map(mapToLowerCase).sort();
+    this.authors     = authors.map(Book.mapToLowerCase).sort();
     this.sizeInBytes = isNaN(sizeInBytes) ? -1 : parseInt(sizeInBytes);
     this.year        = isNaN(year) ? -1 : parseInt(year);
-    this.subjects    = subjects.map(mapToLowerCase).sort();
+    this.subjects    = subjects.map(Book.mapToLowerCase).sort();
     this.publisher   = publisher.toLowerCase();
     this.adapterId   = adapterId;
 
@@ -64,13 +41,13 @@ export class Book {
   }
 
   setUpDisplayProperties() {
-    this.displayYear = yearToDisplayYear(this.year);
+    this.displayYear = Book.yearToDisplayYear(this.year);
   }
 
 
   setUpSortProperties() {
-    this.sortStringAuthors = this.authors.reduce(reduceToSortString, '');
-    this.sortStringSubjects = this.subjects.reduce(reduceToSortString, '');
+    this.sortStringAuthors = this.authors.reduce(Book.reduceToSortString, '');
+    this.sortStringSubjects = this.subjects.reduce(Book.reduceToSortString, '');
   }
 
 
@@ -90,7 +67,7 @@ export class Book {
     if (opts.displayYear && (opts.displayYear.length > 0)) {
       console.log(1);
       filter['year'] = {
-        '$in': opts.displayYear.map(displayYearToYear)
+        '$in': opts.displayYear.map(Book.displayYearToYear)
       };
     }
 
@@ -112,7 +89,30 @@ export class Book {
       default: return values;
     }
   }
+
+
+  static mapToLowerCase(a) {
+    return (a||'').toLowerCase();
+  }
+
+
+  static reduceToSortString(previousValue, currentValue) {
+    if(previousValue)
+      return (previousValue || '') + '_' + (currentValue || '');
+    else
+      return currentValue;
+  }
+
+
+  static yearToDisplayYear(year) {
+    return year === -1 ? 'Unknown' : year;
+  }
+
+
+  static displayYearToYear(displayYear) {
+    return displayYear === 'Unknown' ? -1 : parseInt(displayYear);
+  }
 }
 
 
-export default Book;
+module.exports = Book;

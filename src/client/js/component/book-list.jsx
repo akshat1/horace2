@@ -1,10 +1,10 @@
 'use strict';
-import React from 'react';
-import HTable from './h-table.jsx';
-import autobind from 'autobind-decorator';
-import PubSub from './../util/pubsub.js';
-import {Client as ClientEvents} from './../../../app/events.js';
-import _ from 'lodash';
+var React = require('react');
+var HTable = require('./h-table.jsx');
+var autobind = require('autobind-decorator');
+var PubSub = require('./../util/pubsub.js');
+var ClientEvents = require('./../../../app/events.js').Client;
+var _ = require('lodash');
 
 
 class BookList extends React.Component {
@@ -149,4 +149,4 @@ class BookList extends React.Component {
   }
 }
 
-export default BookList;
+module.exports = BookList;

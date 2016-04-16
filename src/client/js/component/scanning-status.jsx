@@ -1,6 +1,6 @@
 'use strict';
-import React from 'react';
-import autobind from 'autobind-decorator';
+var React = require('react');
+var autobind = require('autobind-decorator');
 
 
 const Style = {
@@ -51,4 +51,4 @@ class ScanningStatus extends React.Component {
 
 }
 
-export default ScanningStatus;
+module.exports = ScanningStatus;

@@ -1,10 +1,12 @@
 'use strict';
 
-import React from 'react';
-import autobind from 'autobind-decorator';
-import Menu from './menu.jsx';
-import PubSub from './../util/pubsub.js';
-import {Client as ClientEvents, Server as ServerEvents} from './../../../app/events.js';
+var React = require('react');
+var autobind = require('autobind-decorator');
+var Menu = require('./menu.jsx')
+var PubSub = require('./../util/pubsub.js');
+var HEvents = require('./../../../app/events.js');
+var ClientEvents = HEvents.Client;
+var ServerEvents = HEvents.Server;
 
 
 class NotificationWrapper extends React.Component {
@@ -106,4 +108,4 @@ class NotificationList extends React.Component {
   }
 }
 
-export default NotificationList;
+module.exports = NotificationList;

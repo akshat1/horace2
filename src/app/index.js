@@ -4,20 +4,20 @@
  * @module index
  */
 
-import Path from 'path';
-import Winston from 'winston';
-import Express from 'express';
-import BodyParser from 'body-parser';
-import ServeStatic from 'serve-static';
-import SocketIO from 'socket.io';
-import FSExtra from 'fs-extra';
-import _ from 'lodash';
-import Mime from 'mime';
+var Path = require('path');
+var Winston = require('winston');
+var Express = require('express');
+var BodyParser = require('body-parser');
+var ServeStatic = require('serve-static');
+var SocketIO = require('socket.io');
+var FSExtra = require('fs-extra');
+var _ = require('lodash');
+var Mime = require('mime');
 
-import {Server as ServerEvents} from './events.js';
-import UrlMap from './urls.js';
-import Config from './config.js';
-import Horace from './horace.js';
+var ServerEvents = require('./events.js').Server;
+var UrlMap = require('./urls.js').UrlMap;
+var Config = require('./config.js');
+var Horace = require('./horace.js');
 
 const ServerUrlMap = UrlMap.Server;
 

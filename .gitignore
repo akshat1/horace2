@@ -12,7 +12,7 @@ coverage
 documentation
 tmpjs
 build-tmp
-app
+/app
 compiled-fe
 plato
 test

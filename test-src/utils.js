@@ -1,7 +1,10 @@
 'use strict';
 
-import Chai from 'chai';
-import {getHash, findPromise, forEachPromise} from '../app/utils.js';
+var Chai = require('chai');
+var HoraceUtils = require('../app/utils.js');
+var getHash = HoraceUtils.getHash;
+var findPromise = HoraceUtils.findPromise;
+var forEachPromise = HoraceUtils.forEachPromise;
 
 
 var should = Chai.should();

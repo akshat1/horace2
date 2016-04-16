@@ -4,13 +4,13 @@
  * @module pdf adapter
  */
 
-import Path from 'path';
-import FS from 'fs';
-import ChildProcess from 'child_process';
-import Winston from 'winston';
+var Path = require('path');
+var FS = require('fs');
+var ChildProcess = require('child_process');
+var Winston = require('winston');
 
-import Book from '../book.js';
-import Formats from '../formats.js';
+var Book = require('../book.js');
+var Formats = require('../formats.js');
 
 const Exec = ChildProcess.exec;
 const ADAPTER_ID = 'horace.pdf';
@@ -83,12 +83,12 @@ function getYear() {
 }
 
 
-export function getAdapterId() {
+function getAdapterId() {
   return ADAPTER_ID;
 }
 
 
-export function getBookForDownload(book, targetFormat) {
+function getBookForDownload(book, targetFormat) {
   targetFormat = targetFormat || Formats.PDF;
   logger.info('getBookForDownload(%o)', book);
   return new Promise(function(resolve, reject) {
@@ -105,7 +105,7 @@ export function getBookForDownload(book, targetFormat) {
 }
 
 
-export function getBook(path) {
+function getBook(path) {
   logger.info(`getBook(${path})`);
   var fileName = Path.basename(path);
   return new Promise(function(resolve, reject) {
@@ -134,3 +134,11 @@ export function getBook(path) {
     }
   });
 }
+
+
+module.exports = {
+  getAdapterId: getAdapterId,
+  getBook: getBook,
+  getBookForDownload: getBookForDownload
+};
+

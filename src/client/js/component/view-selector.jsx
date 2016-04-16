@@ -1,6 +1,6 @@
 'use strict';
 
-import React from 'react';
+var React = require('react');
 
 
 class ViewSelector extends React.Component {
@@ -20,4 +20,4 @@ class ViewSelector extends React.Component {
   }
 }
 
-export default ViewSelector;
+module.exports = ViewSelector;

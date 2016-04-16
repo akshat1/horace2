@@ -4,7 +4,7 @@
  * General utilities
  * @module utils
  */
-export function getHash(path) {
+function getHash(path) {
   var ch, hash, i, j, ref;
   if (!(path != null ? path.length : void 0)) {
     throw new Error('Missing argument to generate hash from');
@@ -28,7 +28,7 @@ export function getHash(path) {
                    the returned promise to fail
  * @returns {Promise} - A promise which resolves in the value which satisfied fnCondition
  */
-export function findPromise(arr, fnGetter, fnCondition, breakOnError) {
+function findPromise(arr, fnGetter, fnCondition, breakOnError) {
   return new Promise(function(resolve, reject) {
     var index, next, tick;
     index = 0;
@@ -79,7 +79,7 @@ export function findPromise(arr, fnGetter, fnCondition, breakOnError) {
  * @param {function} fn - A function of the form function(obj, index) which returns a promise
  * @param {boolean} breakOnError - Whether or not execution should stop when any promise rejects
  */
-export function forEachPromise(arr, fn, breakOnError) {
+function forEachPromise(arr, fn, breakOnError) {
   return new Promise(function(resolve, reject) {
     var index, next, result, tick;
     index = 0;
@@ -109,4 +109,11 @@ export function forEachPromise(arr, fn, breakOnError) {
     };
     return tick();
   });
+}
+
+
+module.exports = {
+  getHash: getHash,
+  findPromise: findPromise,
+  forEachPromise: forEachPromise
 }

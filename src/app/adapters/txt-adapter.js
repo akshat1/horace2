@@ -1,11 +1,11 @@
 'use strict';
 /*eslint-disable no-unused-vars*/
 
-import Path from 'path';
-import FS from 'fs';
-import Winston from 'winston';
-import Book from '../book.js';
-import Formats from '../formats.js';
+var Path = require('path');
+var FS = require('fs');
+var Winston = require('winston');
+var Book = require('../book.js');
+var Formats = require('../formats.js');
 
 
 const ADAPTER_ID = 'horace.txt';
@@ -36,7 +36,7 @@ const logger = new Winston.Logger({
 });
 
 
-export function getAdapterId() {
+function getAdapterId() {
   return ADAPTER_ID;
 }
 
@@ -220,7 +220,7 @@ function getUnidentifiedBookInfo(path, text) {
  * @returns {Promise}
  * @resolves {Book}
  */
-export function getBook(path) {
+function getBook(path) {
   logger.info(`TxtAdapter.getBook(${path})`);
   return new Promise(function(resolve, reject) {
     isTextFile(path)
@@ -261,7 +261,7 @@ export function getBook(path) {
  * @returns {Promise}
  * @resolves {ReadStream}
  */
-export function getBookForDownload(book, format) {
+function getBookForDownload(book, format) {
   if (format == null) {
     format = Formats.TXT;
   }
@@ -279,3 +279,10 @@ export function getBookForDownload(book, format) {
     return resolve(rStream);
   });
 }
+
+
+module.exports = {
+  getAdapterId: getAdapterId,
+  getBook: getBook,
+  getBookForDownload: getBookForDownload
+};
