@@ -63,6 +63,7 @@
     "postcss-mixins": "^3.0.2",
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^1.2.0",
+    "react-tap-event-plugin": "^1.0.0",
     "sinon": "^1.15.4",
     "underscore": "^1.8.3",
     "vinyl-source-stream": "^1.1.0"
