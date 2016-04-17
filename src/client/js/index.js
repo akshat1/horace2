@@ -5,6 +5,7 @@ const ReactDOM = require('react-dom');
 // See http://www.material-ui.com/#/get-started/installation
 require('react-tap-event-plugin')();
 const { Router, Route, hashHistory } = require('react-router');
+const {RelayRouter} = require('react-router-relay');
 const Relay = require('react-relay');
 const MuiThemeProvider = require('material-ui/lib/MuiThemeProvider');
 const getMuiTheme = require('material-ui/lib/styles/getMuiTheme');
@@ -19,7 +20,7 @@ const muiTheme = getMuiTheme({
   },
 });
 
-
+/*
 function onDOMContentLoaded() {
   ReactDOM.render(
     <MuiThemeProvider muiTheme={muiTheme}>
@@ -31,6 +32,23 @@ function onDOMContentLoaded() {
     document.getElementById('root')
   );
 }
+*/
+
+
+const BookListQueries = {};
+
+function onDOMContentLoaded() {
+  ReactDOM.render(
+    <MuiThemeProvider muiTheme={muiTheme}>
+      <RelayRouter history={hashHistory}>
+        <Route path='/' component={App}/>
+        <Route path='/about' component={About}/>
+      </RelayRouter>
+    </MuiThemeProvider>,
+    document.getElementById('root')
+  );
+}
+
 
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
