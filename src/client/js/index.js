@@ -12,28 +12,20 @@ const App = require('./component/app.jsx');
 const About = require('./component/about.jsx');
 
 
+function getRootElement() {
+  let d = document.createElement('div');
+  d.id = 'hAppContainer';
+  document.body.appendChild(d);
+  return d;
+}
+
+
 const muiTheme = getMuiTheme({
   palette: {
     accent1Color: deepOrange500,
   },
 });
 
-/*
-function onDOMContentLoaded() {
-  ReactDOM.render(
-    <MuiThemeProvider muiTheme={muiTheme}>
-      <Router history={hashHistory}>
-        <Route path='/' component={App}/>
-        <Route path='/about' component={About}/>
-      </Router>
-    </MuiThemeProvider>,
-    document.getElementById('root')
-  );
-}
-*/
-
-
-const BookListQueries = {};
 
 function onDOMContentLoaded() {
   ReactDOM.render(
@@ -43,10 +35,9 @@ function onDOMContentLoaded() {
         <Route path='/about' component={About}/>
       </Router>
     </MuiThemeProvider>,
-    document.getElementById('root')
+    getRootElement()
   );
 }
-
 
 
 document.addEventListener('DOMContentLoaded', onDOMContentLoaded);

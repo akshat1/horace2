@@ -98,7 +98,7 @@ function _transformBooksQuery(pager, sort, filter) {
 */
 
 
-function getBooks(params) {
+/*function getBooks(params) {
   return ConnectPromise.then(function(){
     return new Promise(function(resolve, reject){
       //var opts     = _transformBooksQuery(params.pager, params.sort, params.filter);
@@ -134,9 +134,30 @@ function getBooks(params) {
     });
   });
 }//getBooks
+*/
+
+function getBooks(params) {
+  let from = params.from || 0;
+  let numItems = params.numItems || 100;
+  return new Promise(function(resolve, reject) {
+    let cur = collectionBooks.find({});
+    cur.toArray(function(curErr, books) {
+      if(curErr) {
+        logger.error('Error converting cursor to array', curErr);
+        reject(curErr);
+      } else {
+        resolve({
+          books: books.slice(from, from + numItems),
+          numTotalBooks: books.length
+        });
+      }
+    })
+  });
+}
 
 
-function getBooksSimple(from, numItems) {
+function getBooksSimple(params) {
+  let {from, numItems} = params;
   return ConnectPromise
     .then(function() {
       return new Promise(function(resolve, reject) {
@@ -246,5 +267,5 @@ module.exports = {
   getBook: getBook,
   hideBook: hideBook,
   unHideAllBooks: unHideAllBooks,
-  getBooksSimple: getBooksSimple
+  getBooksSimple: getBooks
 }

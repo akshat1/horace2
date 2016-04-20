@@ -1,6 +1,9 @@
 'use strict';
 
-const React = require('react');
+const React    = require('react');
+const AppBar   = require('material-ui/lib/app-bar');
+const BookList = require('./book-list.jsx');
+
 
 class App extends React.Component {
   constructor(props) {
@@ -9,7 +12,15 @@ class App extends React.Component {
 
 
   render() {
-    return (<h1>Hello</h1>);
+    return (
+      <div id='hAppRoot'>
+        <AppBar
+          className='h-app-bar'
+          title='Library'
+        />
+        <BookList />
+      </div>
+    );
   }
 }
 
