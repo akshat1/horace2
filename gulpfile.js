@@ -71,11 +71,7 @@ var Paths = {
 };
 
 
-var BabelOptions = {
-  optional: ['es7.decorators']
-}
-
-require('./gulpfile-quality.js')(nconf, Paths, BabelOptions);
+require('./gulpfile-quality.js')(nconf, Paths);
 require('./gulpfile-css.js');
 
 
@@ -102,7 +98,7 @@ gulp.task('js', function() {
   return browserify(Paths.client_js_entry, {
       debug: true
     })
-    .transform(babelify.configure(BabelOptions))
+    .transform(babelify.configure())
     .bundle()
     .pipe(source('horace.js'))
     .pipe(gulp.dest(Paths.js));

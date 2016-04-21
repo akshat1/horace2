@@ -13,7 +13,5 @@
     "test",
     "tests"
   ],
-  "dependencies": {
-    "compute": "~0.0.7"
-  }
+  "dependencies": {}
 }

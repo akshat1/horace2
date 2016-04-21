@@ -1,70 +1,32 @@
 /* ******************* Native ******************* */
+
 html {
   height: 100%;
 }
 
-body{
+
+body {
   height: 100%;
   padding: 0;
   margin: 0;
 }
 
-select {
-  border-radius: 2px;
-}
 
-.button, button, input[type="submit"], input[type="reset"], input[type="button"] {
-  border-radius: 2px;
-  &[disabled] {
-    opacity: 0.6;
-  }
+/* ******************* Base Layout ******************* */
 
-  &.fa:before {
-    margin-left: 2px;
-  }
-}
-
-input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"], textarea, select {
-  border-radius: 0px;
-  border: 1px solid $border-color;
-  box-shadow: none;
-  outline: none;
-}
-
-th {
-  font-weight: normal;
-}
-
-a {
-  color: $link-color;
-}
-
-/* ******************* /Native ******************* */
-
-#libraryRoot {
-  @mixin position absolute, 0, 0, 0, 0;
+#hAppContainer {
+  height: 100vh;
+  width: 100vw;
 }
 
 
-.h-library {
-  @mixin flexBox '', '','flex-start';
-  font-size: 0.9em;
-  height: 100%;
+#hAppRoot {
+  @mixin flexBox;
+  height: 100vh;
+  width: 100vw;
 }
 
 
-button {
-  .h-icon {
-    margin-right: $space-M;
-  }
-}
-
-
-.h-trigger {
-  cursor: pointer;
-}
-
-
-.h-trigger + .h-trigger {
-  margin-left: $space-M;
+.h-app-bar {
+  @mixin flexItem 0, 0;
 }
