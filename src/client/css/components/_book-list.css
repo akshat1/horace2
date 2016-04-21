@@ -24,9 +24,9 @@
   }
 
   .h-book-list-book-authors {
-    width: 200px;
-    max-width: 200px;
-    min-width: 200px;
+    width: 300px;
+    max-width: 300px;
+    min-width: 300px;
   }
 
 
@@ -48,11 +48,15 @@
     width: 30px;
     max-width: 30px;
   }
+
+
+  .h-book-list-book-authors-wrapper {
+    @mixin text-overflow;
+  }
 }
 
 
-@media only screen and (min-device-width : 320px) and (max-device-width : 480px) {
-  /* Styles */
+@media only screen and (max-width : 480px) {
   .h-book-list-select {
     display: none;
   }
@@ -63,3 +67,9 @@
   }
 }
 
+
+@media only screen and (min-width : 480px) and (max-width : 800px) {
+  .h-book-list-book-authors {
+    display: none;
+  }
+}

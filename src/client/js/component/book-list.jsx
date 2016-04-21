@@ -28,12 +28,43 @@ const CheckboxStyle = {
 }
 
 
+const greater = (a, b) => a > b ? a : b;
+
+
 function bookToRow(book) {
   return [
     <input type='checkbox' />,
     <BookTitleComponent title={book.title}/>,
-    book.authors.join(', ')
+    <BookAuthorComponent authors={book.authors}/>
   ];
+}
+
+
+class BookAuthorComponent extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+
+  render() {
+    let authors = this.props.authors.filter(_.identity);
+    let numMoreAuthors = greater(0, authors.length - 1);
+    let more = null;
+    if (numMoreAuthors){
+      console.log(authors);
+      more = (<a className='h-book-list-authors-more' href='#'>
+          {`${numMoreAuthors}+`}
+        </a>);
+    }
+
+    return (
+      <div className='h-book-list-book-authors-wrapper'>
+        {more}
+        {' '}
+        <span>{authors[0]}</span>
+      </div>
+    );
+  }
 }
 
 
