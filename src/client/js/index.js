@@ -1,43 +1,16 @@
 'use strict';
 
-const React = require('react');
-const ReactDOM = require('react-dom');
-// See http://www.material-ui.com/#/get-started/installation
-require('react-tap-event-plugin')();
-const { Router, Route, hashHistory } = require('react-router');
-const MuiThemeProvider = require('material-ui/lib/MuiThemeProvider');
-const getMuiTheme = require('material-ui/lib/styles/getMuiTheme');
-const {deepOrange500} = require('material-ui/lib/styles/colors');
-const App = require('./component/app.jsx');
-const About = require('./component/about.jsx');
+/* eslint-disable no-unused-vars */
+/* istanbul ignore next having to ignore imports is getting old */
+var React = require('react');
+/* istanbul ignore next having to ignore imports is getting old */
+var ReactDOM = require('react-dom');
+/* istanbul ignore next having to ignore imports is getting old */
+var Library = require('./component/library.jsx');
 
-
-function getRootElement() {
-  let d = document.createElement('div');
-  d.id = 'hAppContainer';
-  document.body.appendChild(d);
-  return d;
-}
-
-
-const muiTheme = getMuiTheme({
-  palette: {
-    accent1Color: deepOrange500,
-  },
-});
-
-
-function onDOMContentLoaded() {
+document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
-    <MuiThemeProvider muiTheme={muiTheme}>
-      <Router history={hashHistory}>
-        <Route path='/' component={App}/>
-        <Route path='/about' component={About}/>
-      </Router>
-    </MuiThemeProvider>,
-    getRootElement()
+    <Library />,
+    document.getElementById('libraryRoot')
   );
-}
-
-
-document.addEventListener('DOMContentLoaded', onDOMContentLoaded);
+});
