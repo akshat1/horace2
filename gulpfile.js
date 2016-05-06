@@ -1,24 +1,16 @@
 'use strict';
 
 var gulp       = require('gulp');
-var changed    = require('gulp-changed');
 var del        = require('del');
-var FS         = require('fs');
 var Path       = require('path');
-var concat     = require('gulp-concat');
-var browserify = require('browserify');
-var babel      = require('gulp-babel');
-var babelify   = require('babelify');
-var source     = require('vinyl-source-stream');
-var rename     = require('gulp-rename');
-var bower      = require('gulp-main-bower-files');
-var gulpFilter = require('gulp-filter');
+
+//var rename     = require('gulp-rename');
+
+
 var nconf      = require('nconf');
-var sourcemaps = require('gulp-sourcemaps');
+
 var esdoc      = require("gulp-esdoc");
 
-// MISC
-var File_Separator = '\n\n/* **** **** **** **** **** **** **** **** **** **** **** **** **** */\n\n';
 
 // Initialise config
 nconf.argv()
@@ -71,64 +63,16 @@ var Paths = {
 };
 
 
-require('./gulpfile-quality.js')(nconf, Paths);
-require('./gulpfile-css.js');
+require('./gfiles/quality.js')(nconf, Paths);
+require('./gfiles/css.js')();
+require('./gfiles/client.js')(nconf, Paths);
+require('./gfiles/server.js')(nconf, Paths);
 
 
-/* ************************************ Setup ************************************ */
 gulp.task('clean', function() {
   del([Paths.dist, Paths.tmp, Paths.coverage, Paths.test_dest, Paths.plato, Paths.client_js_for_test, Paths.app_js]);
 });
-/* *********************************** /Setup ************************************ */
 
-
-/* ********************************** Build App ********************************** */
-gulp.task('build-app', function() {
-  return gulp.src(Paths.app_js_src)
-    .pipe(sourcemaps.init())
-    .pipe(babel())
-    .pipe(sourcemaps.write('.'))
-    .pipe(gulp.dest(Paths.app_js));
-});
-/* ********************************* /Build App ********************************** */
-
-
-/* ********************************* Build Client ******************************** */
-gulp.task('js', function() {
-  return browserify(Paths.client_js_entry, {
-      debug: true
-    })
-    .transform(babelify.configure())
-    .bundle()
-    .pipe(source('horace.js'))
-    .pipe(gulp.dest(Paths.js));
-});
-
-
-gulp.task('js-lib', function() {
-  return gulp.src('./bower.json')
-    .pipe(bower())
-    .pipe(gulpFilter(['**/*.js']))
-    .pipe(concat('lib.js', {newLine: File_Separator}))
-    .pipe(gulp.dest(Paths.jslib));
-});
-
-
-gulp.task('resources', function() {
-  return gulp.src(Paths.resources_src)
-    .pipe(changed(Paths.resources))
-    .pipe(gulp.dest(Paths.resources));
-});
-
-gulp.task('html', function() {
-  return gulp.src(Paths.html_src)
-    .pipe(changed(Paths.html))
-    .pipe(gulp.dest(Paths.html));
-});
-/* ******************************** /Build Client ******************************** */
-
-
-/* ************************************* Doc ************************************ */
 
 gulp.task('esdoc', function() {
   return gulp.src('./src')
@@ -137,13 +81,10 @@ gulp.task('esdoc', function() {
     }));
 });
 
-/* ************************************ /Doc ************************************ */
-
 
 /* ********************************* Top Level *********************************** */
 gulp.task('build', ['js', 'style', 'html', 'resources', 'css-lib', 'js-lib']);
 gulp.task('micro', ['js', 'style']);
 gulp.task('default', ['micro']);
 /* ******************************** /Top Level *********************************** */
-
 
