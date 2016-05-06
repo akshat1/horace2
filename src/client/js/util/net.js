@@ -63,7 +63,7 @@ function downloadFile(url) {
 }
 
 
-function getBooks(pager, sort, filter) {
+/*function getBooks(pager, sort, filter) {
   return Http.post({
     url          : getUrl(ClientURLMap['Books']()),
     responseType : Http.ResponseType.JSON,
@@ -79,6 +79,16 @@ function getBooks(pager, sort, filter) {
       bookSort  : res.sort,
       filter    : res.filter
     };
+  });
+}*/
+function getBooks(from, numItems) {
+  return Http.post({
+    url: getUrl(ClientURLMap['Books']()),
+    responseType: Http.ResponseType.JSON,
+    data: {
+      from: from,
+      numItems: numItems
+    }
   });
 }
 
@@ -127,9 +137,7 @@ function doStartScanning() {
   });
 }
 // ---------------- /End Point ------------------
-
-
-module.exports = {
+const Net = {
   getSocket: getSocket,
   emitWebSocket: emitWebSocket,
   onWebSocket: onWebSocket,
@@ -142,3 +150,6 @@ module.exports = {
   isServerScanningForBooks: isServerScanningForBooks,
   doStartScanning: doStartScanning
 };
+
+module.exports = Net;
+window.Net = Net;
