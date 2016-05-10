@@ -1,163 +1,71 @@
+$_book-list-row-height: 40px;
+
 .h-book-list {
   @mixin flexItem 1, 1;
-  @mixin flexBox '', '', flex-start;
   position: relative;
-  overflow: hidden;
 
-  .h-table-wrapper {
-    @mixin position absolute, 0px, 20px, 20px, 20px;
-    border: 1px solid $border-color;
-    overflow: auto;
+
+  .h-book-list-inner-wrapper {
+    @mixin position absolute, 0, 0, 0, 0;
   }
 
-  thead {
-    background: $background-dark;
+
+  .header {
+    background: #6AB2FF;
   }
 
-  td, th {
+
+  .simian-grid-list-row {
+    &.odd {
+      background: #F2F2F2;
+    }
+  }
+
+
+  .h-book-list-cell {
     @mixin text-overflow;
-    box-sizing: border-box;
-    max-width: 0;
-    height: 2em;
-    border-style: solid;
-    border-width: 0 1px 0 0;
-    text-transform: capitalize;
+    border-right: 1px solid $border-color;
+    display: inline-block;
+    padding: 0 $space-M;
+    height: $_book-list-row-height;
+    line-height: $_book-list-row-height;
 
     &:last-child {
-      border-width: 0;
-    }
-  }
-
-  th {
-    user-select: none;
-    color: $text-light;
-    font-size: 1.2em;
-    color: $text-light;
-    padding: 0;
-    border-color: $border-color;
-  }
-
-
-  td {
-    border-color: $border-color-light;
-
-    &.h-selector {
-      @mixin cell-width 44px;
-    }
-
-    &.h-adapterId {
-      @mixin cell-width 120px;
-    }
-
-    &.h-title {
-      @mixin cell-width 400px;
-      width: auto;
-      position: relative;
-    }
-
-    &.h-authors {
-      @mixin cell-width 200px;
-    }
-
-    &.h-subjects {
-      @mixin cell-width 200px;
-    }
-
-    &.h-year {
-      @mixin cell-width 100px;
+      border: none;
     }
   }
 
 
-  tr:hover {
-    td {
-      background-color: $background-light;
-    }
-
-    .h-book-actions {
-      visibility: visible;
-    }
-  }
-
-  .h-column-header-wrapper {
-    @mixin flexBox row;
-
-    .h-column-name {
-      @mixin flexItem 1, 0;
-      padding: 0 0 0 $space-M;
-
-      &.sortable {
-        cursor: pointer;
-      }
-    }
-
-    .h-column-sort {
-      display: inline-block;
-      width: 20px;
-      text-align: center;
-    }
-
-    .h-column-filter {
-      @mixin flexItem 0, 0;
-      width: 20px;
-      text-align: center;
-    }
+  .h-book-list-selection-cell {
+    width: 20px;
   }
 
 
-  .h-blocking-ui-wait {
-    @mixin position absolute, 15px, '', '', -100px;
-    padding: $space-M;
-    font-size: 15px;
-    color: #FFF;
-    background: rgba(0, 0, 0, 0.7);
-    border-radius: 10px;
-    opacity: 0;
-    transition: opacity 2s, left 1s;
-
-    &.visible {
-      left: 15px;
-      opacity: 1;
-    }
-
-    .label {
-      margin: 0 0 0 $space-M;
-    }
+  .h-book-list-title-cell {
+    width: 840px;
   }
 
-  .h-title-content {
-    @mixin position absolute, 0, 0, 0, 0;
-    padding: 0 $space-M;
+
+  .h-book-authors-cell {
+    width: 200px;
   }
 
-  .h-book-actions {
-    @mixin position absolute, 0, auto, 0, 1em;
-    > span {
-      cursor: pointer;
-    }
+
+  .h-book-subjects-cell {
+    width: 150px;
   }
 
-  .h-title-text {
-    @mixin position absolute, 0, 0, 0, 26px;
-    @mixin text-overflow;
-    padding: 0 1em;
+
+  .h-book-list-year-cell {
+    width: 100px;
   }
 
-  .h-column-filter-trigger {
-    background: none;
-    border: none;
-    color: $text-base;
+
+  .h-book-list-more-badge {
+    background: red;
+    color: white;
+    border-radius: 30px;
   }
 }
 
-table.h-list-table {
-  width: 100%;
 
-  thead {
-    border-bottom: 1px solid $border-color;
-  }
-
-  tr:hover td {
-    background: #BFBFBF;
-  }
-}

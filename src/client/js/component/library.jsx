@@ -102,7 +102,9 @@ class Library extends React.Component {
     // TODO: Batch this?
     //this.state.selectedBooks.forEach(Net.hideBook);
     Net.hideBooks(this.state.selectedBooks).then(function() {
-      this.loadMoreBooks(true);
+      this.loadMoreBooks({
+        isReload: true
+      });
     }.bind(this));
   }
 
@@ -147,20 +149,18 @@ class Library extends React.Component {
 
   @autobind
   handleBooksResponse(res) {
-    let newState = res;
+    res.books = this.state.books.concat(res.books);
+    res.isPerformingBlockingAction = false;
+    /*
     if (!this.isBooksFlushRequired(this.state, newState)) {
       let books;
-      if (this.wasReloading)
-        books = newState.books;
-      else
-        books = this.state.books.concat(newState.books);
+      books = this.state.books.concat(newState.books);
       newState.books = books;
     }
     newState.isPerformingBlockingAction = false;
-    if(this.wasReloading)
-      newState.selectedBooks = [];
-    this.wasReloading = false;
-    this.setState(newState);
+    newState.selectedBooks = [];
+    */
+    this.setState(res);
   }
 
 
@@ -239,14 +239,13 @@ class Library extends React.Component {
   }//setPage
   */
   @autobind
-  loadMoreBooks(isReload) {
+  loadMoreBooks({isReload, from, numItems} = opts) {
     if(this.state.isPerformingBlockingAction)
       return;
 
-    let from = isReload ? (this.lastLoadedFrom || 0) : this.state.books.length;
-    let numMoreBooks = isReload ? 0 : DEFAULT_PAGER_PAGE_SIZE / 3;
+    //let from = isReload ? (this.lastLoadedFrom || 0) : this.state.books.length;
+    let numMoreBooks = isReload ? 0 : (numItems || DEFAULT_PAGER_PAGE_SIZE / 3);
     this.lastLoadedFrom = from;
-    this.wasReloading = true;
 
     this.fetchBooks({
       bookPager: new PagerModel(from, from + numMoreBooks)
