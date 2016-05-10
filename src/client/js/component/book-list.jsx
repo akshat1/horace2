@@ -22,6 +22,9 @@ class BookList extends React.Component {
     super(props);
     this.state = {};
     this.rows = [];
+    this.eventsMap = {
+      click: this.handleGridClick
+    };
   }
 
 
@@ -52,52 +55,57 @@ class BookList extends React.Component {
 
 
   handleCheckboxClick(evt) {
-    console.log(0);
+    let checkbox = evt.target;
+    let bookId = checkbox.getAttribute('book-id');
+    console.log('Book selection changed: ', {
+      id: bookId,
+      isSelected: checkbox.checked
+    });
   }
 
 
   handleSelectAllClick(evt) {
-    console.log(1);
+    console.log('Select All Books');
   }
 
 
   handleTitleClick(evt) {
-    console.log(2);
+    console.log('book clicked: ', evt.target.getAttribute('book-id'));
   }
 
 
   handleTitleHeaderClick(evt) {
-    console.log(3);
+    console.log('Book title header clicked');
   }
 
 
   handleAuthorsClick(evt) {
-    console.log(4);
+    console.log('authors clicked: ', evt.target.getAttribute('book-id'));
   }
 
 
   handleAuthorsHeaderClick(evt) {
-    console.log(5);
+    console.log('Book authors header clicked');
   }
 
 
   handleSubjectsClick(evt) {
-    console.log(6);
+    console.log('subjects clicked: ', evt.target.getAttribute('book-id'));
   }
 
 
   handleSubjectsHeaderClick(evt) {
-    console.log(7);
+    console.log('Book subjects header clicked');
   }
 
 
   handleYearClick(evt) {
-    console.log(8);
+    console.log('year clicked: ', evt.target.getAttribute('book-id'));
   }
 
 
   handleYearHeaderClick(evt) {
-    console.log(9);
+    console.log('Book year header clicked');
   }
 
 
@@ -105,16 +113,14 @@ class BookList extends React.Component {
   render() {
     let props = this.props;
     let rows  = props.books.map(BookHTML.getRowMarkup);
-    let eventsMap = {
-      click: this.handleGridClick
-    };
+    let headerRowMarkup = BookHTML.getHeaderRowMarkup(props.sortColumn, props.sortAscending);
     return (
       <div className = {StyleClass.ROOT}>
         <div className = {StyleClass.INNERWRAPPER}>
           <SimianGrid
-            events           = {eventsMap}
+            events           = {this.eventsMap}
             ref              = 'SIMIAN_GRID'
-            headerRow        = {HeaderRowDefinition}
+            headerRow        = {headerRowMarkup}
             rows             = {rows}
             onMoreRowsNeeded = {this.askForMoreBooks}
             numTotalRows     = {7190}

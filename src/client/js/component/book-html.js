@@ -1,28 +1,38 @@
 'use strict';
 
 const BookHTML = {
-  getSelectionControl: function(book, isChecked) {
+  getSelectionControl: function(isChecked, bookId) {
     return `
       <div class='h-book-list-selection-cell h-book-list-cell'>
-        <input type='checkbox' ${isChecked ? 'selected' : ''} click-marker='select'/>
+        <input type='checkbox' ${isChecked ? 'selected' : ''} click-marker='select' book-id='${bookId}'/>
       </div>
     `;
   },
 
 
   getSelectAllColumnHeader: function(isChecked) {
+    //We don't want a select-all yet.
+    //<input type='checkbox' ${isChecked ? 'selected' : ''} click-marker='select-all'/>
     return `
       <div class='h-book-list-selection-cell h-book-list-cell'>
-        <input type='checkbox' ${isChecked ? 'selected' : ''} click-marker='select-all'/>
       </div>
     `;
   },
 
 
-  getTitle: function(title, isHeader) {
-    let marker = isHeader ? 'title-header' : 'title';
+  getTitle: function(title, isHeader, bookId, sortClassName) {
+    let marker;
+    let bookIdAttr;
+    if (isHeader) {
+      marker = 'title-header';
+      bookIdAttr = '';
+    } else {
+      marker = 'title';
+      bookIdAttr = `book-id='${bookId}'`;
+    }
+
     return `
-      <div class='h-book-list-title-cell h-book-list-cell' title='${title}' click-marker='${marker}'>
+      <div class='h-book-list-title-cell h-book-list-cell ${sortClassName}' title='${title}' click-marker='${marker}' ${bookIdAttr}>
         ${title}
       </div>
     `;
@@ -54,10 +64,10 @@ const BookHTML = {
   },
 
 
-  getAuthors: function(authors) {
+  getAuthors: function(authors, bookId) {
     let {markup, tooltip} = BookHTML.getArray(authors);
     return `
-      <div class='h-book-authors-cell h-book-list-cell' title='${tooltip}' click-marker='authors'>
+      <div class='h-book-authors-cell h-book-list-cell' title='${tooltip}' click-marker='authors' book-id='${bookId}'>
         ${markup}
       </div>
     `;
@@ -73,10 +83,10 @@ const BookHTML = {
   },
 
 
-  getSubjects: function(subjects) {
+  getSubjects: function(subjects, bookId) {
     let {markup, tooltip} = BookHTML.getArray(subjects);
     return `
-      <div class='h-book-subjects-cell h-book-list-cell' title='${tooltip}' click-marker='subjects'>
+      <div class='h-book-subjects-cell h-book-list-cell' title='${tooltip}' click-marker='subjects' book-id='${bookId}'>
         ${markup}
       </div>
     `;
@@ -92,8 +102,16 @@ const BookHTML = {
   },
 
 
-  getYear: function(year, isHeader) {
-    let marker = isHeader ? 'year-header' : 'year';
+  getYear: function(year, isHeader, bookId) {
+    let marker, bookIdAttr;
+    if (isHeader) {
+      marker = 'year-header';
+      bookIdAttr = '';
+    } else {
+      marker = 'year';
+      bookIdAttr = `book-id='${bookId}'`;
+    };
+
     return `
       <div class='h-book-list-year-cell h-book-list-cell' click-marker='${marker}'>
         ${year}
@@ -108,25 +126,28 @@ const BookHTML = {
 
 
   getRowMarkupInner: function(book, isSelected) {
+    let bookId = book.id;
     return {
       __html: `
-          ${BookHTML.getSelectionControl(isSelected)}
-          ${BookHTML.getTitle(book.title)}
-          ${BookHTML.getAuthors(book.authors)}
-          ${BookHTML.getYear(book.year)}
-          ${BookHTML.getSubjects(book.subjects)}
+          ${BookHTML.getSelectionControl(isSelected, bookId)}
+          ${BookHTML.getTitle(book.title, false, bookId)}
+          ${BookHTML.getAuthors(book.authors, bookId)}
+          ${BookHTML.getYear(book.year, false, bookId)}
+          ${BookHTML.getSubjects(book.subjects, bookId)}
         `
     };
   },
 
 
-  getMemoCacheKey: function(book) {
-    return book.id;
+  getMemoCacheKey: function(book, isSelected) {
+    return `${book.id}-${isSelected}`;
   }
 }
 
 BookHTML.getRowMarkup = _.memoize(BookHTML.getRowMarkupInner, BookHTML.getMemoCacheKey);
-BookHTML.HeaderRowDefinition = {
+BookHTML.getHeaderRowMarkup = function(sortColumnName, isAscending) {
+  let sortClassName = '';
+  return {
     __html: `
         ${BookHTML.getSelectAllColumnHeader()}
         ${BookHTML.getTitleColumnHeader()}
@@ -135,6 +156,8 @@ BookHTML.HeaderRowDefinition = {
         ${BookHTML.getSubjectsColumnHeader()}
       `
   };
+}
+
 
 
 module.exports = BookHTML;
