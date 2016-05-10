@@ -1,12 +1,14 @@
 /* ******************* Native ******************* */
 html {
   height: 100%;
+  font-size: $base-font-size;
 }
 
 body{
   height: 100%;
   padding: 0;
   margin: 0;
+  font-size: $base-font-size;
 }
 
 select {
