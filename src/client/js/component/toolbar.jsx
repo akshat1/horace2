@@ -1,3 +1,4 @@
+'use strict';
 const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
@@ -33,7 +34,6 @@ class HToolbar extends React.Component {
   renderBookGroupControls() {
     let isNothingSelected = this.props.selectedBooks.length === 0;
     let isMultipleBookControlsDisabled = this.props.selectedBooks.length < 2;
-    console.log(this.props.selectedBooks.length, isNothingSelected, isMultipleBookControlsDisabled);
 
     return (
       <ToolbarGroup>

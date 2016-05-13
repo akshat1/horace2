@@ -1,5 +1,8 @@
 'use strict';
 
+const _ = require('lodash');
+
+
 const BookHTML = {
   getSelectionControl: function(isChecked, bookId) {
     return `

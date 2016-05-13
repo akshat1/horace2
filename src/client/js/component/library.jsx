@@ -2,7 +2,6 @@
 
 const React = require('react');
 const autobind = require('autobind-decorator');
-const _ = require('lodash');
 const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
 const Store = require('../model/store.js');
@@ -17,7 +16,7 @@ const StyleClass = {
 
 
 const RefName = {
-  ROOT     : 'h-library-root'
+  ROOT : 'h-library-root'
 }
 
 

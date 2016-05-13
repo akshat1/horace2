@@ -3,7 +3,6 @@ const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
 const ClientEvents = require('./../../../app/events.js').Client;
-const _ = require('lodash');
 const BookHTML = require('./book-html.js');
 const SimianGrid = require('simian-grid');
 
