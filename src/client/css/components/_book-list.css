@@ -65,6 +65,12 @@ $_book-list-row-height: 40px;
     background: red;
     color: white;
     border-radius: 30px;
+    height: 25px;
+    width: 25px;
+    line-height: 25px;
+    text-align: center;
+    float: right;
+    margin-top: 5px;
   }
 }
 
