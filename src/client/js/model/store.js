@@ -8,13 +8,7 @@ const Net      = require('../util/net.js');
 const autobind = require('autobind-decorator');
 const {PagerModel} = require('../../../app/model/library-model.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('../../../app/events.js');
-
-
-function transformBooks(books, selectedBookIdMap) {
-  return books.map((b) => Object.assign({}, b, {
-    isSelected: !!selectedBookIdMap[b.id]
-  }));
-}
+const {applySequence} = require('./transforms.js');
 
 
 class Store {
@@ -27,9 +21,7 @@ class Store {
 
 
   _setState(addendum) {
-    let newState = Object.assign({}, this._state, addendum);
-    newState.books = transformBooks(newState.books, newState.selectedBookIdMap);
-    this._state = newState;
+    this._state = applySequence(Object.assign(this._state, addendum));
     this._emitChange();
   }
 
@@ -49,6 +41,7 @@ class Store {
     Net.onWebSocket(ServerEvents.SCANNER_SCANSTOPPED, this._handleScannerStopped);
     Net.onWebSocket(ServerEvents.BOOK_READY_FOR_DOWNLOAD, this._handleBookReadyForDownload);
   }
+
 
   _wirePubSub() {
     PubSub.subscribe(ClientEvents.REQUEST_SERVER_STATUS, this._handleRequestServerStatus);
