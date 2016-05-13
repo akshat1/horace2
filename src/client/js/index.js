@@ -1,16 +1,20 @@
 'use strict';
 
 /* eslint-disable no-unused-vars */
-/* istanbul ignore next having to ignore imports is getting old */
-var React = require('react');
-/* istanbul ignore next having to ignore imports is getting old */
-var ReactDOM = require('react-dom');
-/* istanbul ignore next having to ignore imports is getting old */
-var Library = require('./component/library.jsx');
+const React = require('react');
+const ReactDOM = require('react-dom');
+const Library = require('./component/library.jsx');
+const {default: getMuiTheme} = require('material-ui/styles/getMuiTheme');
+const {default: MuiThemeProvider} = require('material-ui/styles/MuiThemeProvider');
+
 
 document.addEventListener('DOMContentLoaded', function() {
   ReactDOM.render(
-    <Library />,
+    (
+    <MuiThemeProvider muiTheme={getMuiTheme()}>
+      <Library />
+    </MuiThemeProvider>
+    ),
     document.getElementById('libraryRoot')
   );
 });

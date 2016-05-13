@@ -50,8 +50,7 @@ const BookHTML = {
     let tooltip = firstItem;
     if (items.length > 1) {
       badge = `<span class='h-book-list-more-badge'>+${items.length - 1}</span>`;
-      tooltip = `${firstItem} and ${items.length - 1} more.`
-      console.log('First item is ', firstItem);
+      tooltip = `${firstItem} and ${items.length - 1} more.`;
     }
 
 

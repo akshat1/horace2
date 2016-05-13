@@ -1,9 +1,7 @@
 /**
 A transform is somewhat similar to what reducers do in redux. The purpose of transforms
-is for 'massaging' data. Transforms are not always pur functions; They do cause mutations
-but we try to minimize that. Basically we know ideally they shouldn't be, but in some
-cases it doesn't matter if they do and if it is more efficient to mutate data then we
-do it.
+is for 'massaging' data, so they do mutate data. But we give them a clone of the state
+in applySequence.
 
 function(oldState) {
   ...
@@ -14,7 +12,13 @@ Store will call transforms one after. The order of transforms matters.
 */
 
 
-// This one does mutate each book.
+function listSelectedBooks(state) {
+  state.selectedBooks = Object.keys(state.selectedBookIdMap);
+  return state;
+}
+
+
+// This one mutates each book.
 function transformBooks(state) {
   let idMap = state.selectedBookIdMap;
   state.books.forEach(function(b) {
@@ -25,11 +29,13 @@ function transformBooks(state) {
 
 
 const sequence = [
+  listSelectedBooks,
   transformBooks
 ];
 
 
 function applySequence(state) {
+  state = Object.assign({}, state);
   return sequence.reduce(function(s, transform) {
     return transform(s);
   }, state);
@@ -37,7 +43,8 @@ function applySequence(state) {
 
 
 module.exports = {
-  transformBooks: transformBooks,
-  sequence: sequence,
-  applySequence: applySequence
+  listSelectedBooks : listSelectedBooks,
+  transformBooks    : transformBooks,
+  sequence          : sequence,
+  applySequence     : applySequence
 };

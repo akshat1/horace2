@@ -31,7 +31,8 @@ class Store {
       isScanning        : false,
       isBusy            : false,
       books             : [],
-      selectedBookIdMap : {}
+      selectedBookIdMap : {},
+      selectedBooks     : []
     };
   }
 
@@ -68,7 +69,7 @@ class Store {
 
   @autobind
   _handleBookReadyForDownload() {
-    console.log('Book ready for download');
+    //console.log('Book ready for download');
   }
 
 
@@ -96,7 +97,7 @@ class Store {
 
   @autobind
   _handleRequestServerStatus() {
-    console.log('Request server status');
+    //console.log('Request server status');
   }
 
 
@@ -122,7 +123,7 @@ class Store {
     if (payload.isSelected) {
       currentIdMap[payload.id] = true;
     } else {
-      currentIdMap[payload.id] = false;
+      delete currentIdMap[payload.id];
     }
     this._setState({
       selectedBookIdMap: currentIdMap

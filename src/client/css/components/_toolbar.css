@@ -1,0 +1,3 @@
+.h-toolbar {
+  @mixin flexItem 0, 0;
+}

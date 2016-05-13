@@ -4,18 +4,31 @@ const React = require('react');
 const autobind = require('autobind-decorator');
 const _ = require('lodash');
 const PubSub = require('./../util/pubsub.js');
-const BookList = require('./book-list.jsx')
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
-const Store = require('../model/store.js')
+const Store = require('../model/store.js');
+
+const BookList = require('./book-list.jsx')
+const Toolbar  = require('./toolbar.jsx');
+
+
+const StyleClass = {
+  ROOT: 'h-library'
+}
+
+
+const RefName = {
+  ROOT     : 'h-library-root'
+}
+
 
 class Library extends React.Component {
   constructor(props) {
     super(props);
     window._Library = this;
-    this._store = Store.getInstance();
-    this.state = this._store.getState();
+    this._store     = Store.getInstance();
+    this.state      = this._store.getState();
     this._store.subscribe(this._handleStoreChanged);
-  }//constructor
+  }
 
 
   @autobind
@@ -31,6 +44,13 @@ class Library extends React.Component {
   }
 
 
+  renderBookToolbar() {
+    return (
+      <Toolbar selectedBooks = {this.state.selectedBooks}/>
+    );
+  }
+
+
   renderBookList() {
     let state = this.state;
     return (
@@ -43,7 +63,8 @@ class Library extends React.Component {
 
   render() {
     return (
-      <div className='h-library'>
+      <div className = {StyleClass.ROOT} ref = {RefName.ROOT}>
+        {this.renderBookToolbar()}
         {this.renderBookList()}
       </div>
     );
