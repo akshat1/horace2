@@ -4,7 +4,7 @@ const BookHTML = {
   getSelectionControl: function(isChecked, bookId) {
     return `
       <div class='h-book-list-selection-cell h-book-list-cell'>
-        <input type='checkbox' ${isChecked ? 'selected' : ''} click-marker='select' book-id='${bookId}'/>
+        <input type='checkbox' ${isChecked ? 'checked' : ''} click-marker='select' book-id='${bookId}'/>
       </div>
     `;
   },
@@ -51,6 +51,7 @@ const BookHTML = {
     if (items.length > 1) {
       badge = `<span class='h-book-list-more-badge'>+${items.length - 1}</span>`;
       tooltip = `${firstItem} and ${items.length - 1} more.`
+      console.log('First item is ', firstItem);
     }
 
 
@@ -144,6 +145,7 @@ const BookHTML = {
   }
 }
 
+// We would want to keep an eye on memory usage by this guy.
 BookHTML.getRowMarkup = _.memoize(BookHTML.getRowMarkupInner, BookHTML.getMemoCacheKey);
 BookHTML.getHeaderRowMarkup = function(sortColumnName, isAscending) {
   let sortClassName = '';

@@ -29,7 +29,7 @@ class BookList extends React.Component {
 
 
   askForMoreBooks(from, numItems) {
-    PubSub.broadcast(ClientEvents.LOAD_MORE_BOOKS, {
+    PubSub.broadcast(ClientEvents.REQUEST_BOOKS, {
       from: from,
       numItems: numItems
     });
@@ -57,7 +57,7 @@ class BookList extends React.Component {
   handleCheckboxClick(evt) {
     let checkbox = evt.target;
     let bookId = checkbox.getAttribute('book-id');
-    console.log('Book selection changed: ', {
+    PubSub.broadcast(ClientEvents.BOOK_SELECTION_CHANGED, {
       id: bookId,
       isSelected: checkbox.checked
     });
@@ -112,8 +112,8 @@ class BookList extends React.Component {
   @autobind
   render() {
     let props = this.props;
-    let rows  = props.books.map(BookHTML.getRowMarkup);
-    let headerRowMarkup = BookHTML.getHeaderRowMarkup(props.sortColumn, props.sortAscending);
+    let rows  = props.books.map((b) => BookHTML.getRowMarkup(b, b.isSelected) );
+    let headerRowMarkup = BookHTML.getHeaderRowMarkup();
     return (
       <div className = {StyleClass.ROOT}>
         <div className = {StyleClass.INNERWRAPPER}>

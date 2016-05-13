@@ -63,7 +63,7 @@ function downloadFile(url) {
 }
 
 
-function getBooks(pager, sort, filter) {
+function getBooks(pager = {}, sort = {}, filter = {}) {
   return Http.post({
     url          : getUrl(ClientURLMap['Books']()),
     responseType : Http.ResponseType.JSON,
