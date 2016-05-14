@@ -8,7 +8,7 @@ const {default: getMuiTheme} = require('material-ui/styles/getMuiTheme');
 const {default: MuiThemeProvider} = require('material-ui/styles/MuiThemeProvider');
 
 
-document.addEventListener('DOMContentLoaded', function() {
+function onDomLoadedWithMUI() {
   ReactDOM.render(
     (
     <MuiThemeProvider muiTheme={getMuiTheme()}>
@@ -17,4 +17,16 @@ document.addEventListener('DOMContentLoaded', function() {
     ),
     document.getElementById('libraryRoot')
   );
-});
+}
+
+
+function onDomLoaded() {
+  ReactDOM.render(
+    (
+    <Library />
+    ),
+    document.getElementById('libraryRoot')
+  );
+}
+
+document.addEventListener('DOMContentLoaded', onDomLoaded);

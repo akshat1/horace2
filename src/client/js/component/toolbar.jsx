@@ -3,22 +3,9 @@ const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
-
-const {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-  ToolbarTitle
-} = require('material-ui/Toolbar');
-
-const TGroupFloat = {
-  LEFT: 'left',
-  RIGHT: 'right'
-};
-
-const {default: TextField} = require('material-ui/TextField');
-const {default: RaisedButton} = require('material-ui/RaisedButton');
-
+const {ToolbarGroupFloat, Toolbar, ToolbarGroup, ToolbarSeparator} = require('../widget/Toolbar.jsx');
+const {TextField} = require('../widget/TextInput.jsx');
+const {Button, ButtonType} = require('../widget/Button.jsx');
 
 const StyleClass = {
   ROOT : 'h-toolbar'
@@ -31,15 +18,24 @@ class HToolbar extends React.Component {
   }
 
 
+  renderIndicators() {
+    return [
+      <Button faIconName = 'bell' type = {ButtonType.Indicator}/>,
+      <ToolbarSeparator/>
+    ];
+  }
+
+
   renderBookGroupControls() {
     let isNothingSelected = this.props.selectedBooks.length === 0;
     let isMultipleBookControlsDisabled = this.props.selectedBooks.length < 2;
 
     return (
       <ToolbarGroup>
-        <RaisedButton label = 'Hide' disabled={isNothingSelected}/>
-        <RaisedButton label = 'Edit' disabled={isNothingSelected}/>
-        <RaisedButton label = 'Group' disabled={isMultipleBookControlsDisabled}/>
+        {this.renderIndicators()}
+        <Button label = 'Hide'  disabled = {isNothingSelected} faIconName = 'eye-slash'/>
+        <Button label = 'Edit'  disabled = {isNothingSelected} faIconName = 'edit'/>
+        <Button label = 'Group' disabled = {isMultipleBookControlsDisabled} faIconName = 'object-group'/>
       </ToolbarGroup>
     );
   }
@@ -49,7 +45,7 @@ class HToolbar extends React.Component {
     let isSingleBookControlsDisabled = this.props.selectedBooks.length !== 1;
     return (
       <ToolbarGroup>
-        <RaisedButton label = 'Download' primary = {true} disabled={isSingleBookControlsDisabled}/>
+        <Button label = 'Download' primary = {true} disabled={isSingleBookControlsDisabled} faIconName = 'download'/>
       </ToolbarGroup>
     );
   }
@@ -68,7 +64,7 @@ class HToolbar extends React.Component {
     return (
       <div className = {StyleClass.ROOT}>
         <Toolbar>
-          <ToolbarGroup float = {TGroupFloat.LEFT}>
+          <ToolbarGroup float = {ToolbarGroupFloat.LEFT}>
             {this.renderBookGroupControls()}
             <ToolbarSeparator/>
             {this.renderBookControls()}

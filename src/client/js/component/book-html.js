@@ -70,7 +70,7 @@ const BookHTML = {
   getAuthors: function(authors, bookId) {
     let {markup, tooltip} = BookHTML.getArray(authors);
     return `
-      <div class='h-book-authors-cell h-book-list-cell' title='${tooltip}' click-marker='authors' book-id='${bookId}'>
+      <div class='h-book-list-authors-cell h-book-list-cell' title='${tooltip}' click-marker='authors' book-id='${bookId}'>
         ${markup}
       </div>
     `;
@@ -79,7 +79,7 @@ const BookHTML = {
 
   getAuthorsColumnHeader: function() {
     return `
-      <div class='h-book-authors-cell h-book-list-cell' click-marker='authors-header'>
+      <div class='h-book-list-authors-cell h-book-list-cell' click-marker='authors-header'>
         Author
       </div>
     `;
@@ -89,7 +89,7 @@ const BookHTML = {
   getSubjects: function(subjects, bookId) {
     let {markup, tooltip} = BookHTML.getArray(subjects);
     return `
-      <div class='h-book-subjects-cell h-book-list-cell' title='${tooltip}' click-marker='subjects' book-id='${bookId}'>
+      <div class='h-book-list-subjects-cell h-book-list-cell' title='${tooltip}' click-marker='subjects' book-id='${bookId}'>
         ${markup}
       </div>
     `;
@@ -98,7 +98,7 @@ const BookHTML = {
 
   getSubjectsColumnHeader: function() {
     return `
-      <div class='h-book-subjects-cell h-book-list-cell' title='Subjects' click-marker='subjects-header'>
+      <div class='h-book-list-subjects-cell h-book-list-cell' title='Subjects' click-marker='subjects-header'>
         Subjects
       </div>
     `;

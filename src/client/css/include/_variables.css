@@ -1,0 +1,9 @@
+$base-font-size: 20px;
+
+$space-S: 5px;
+$space-M: 10px;
+$space-L: 20px;
+
+$box-shadow-base: 1px 1px 3px rgba(0, 0, 0, 0.4);
+$box-shadow-raised: 3px 4px 7px rgba(0, 0, 0, 0.4);
+$box-shadow-raised-halfway: 2px 2px 4px rgba(0, 0, 0, 0.6);

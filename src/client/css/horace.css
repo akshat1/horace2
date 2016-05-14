@@ -1,7 +1,10 @@
 
-@import 'includes/_variables.css';
-@import 'includes/_mixins.css';
-@import 'includes/_colors.css';
-@import 'includes/_base.css';
-@import 'components/_book-list.css';
-@import 'components/_toolbar.css';
+@import 'include/_variables.css';
+@import 'include/_mixins.css';
+@import 'include/_colors.css';
+@import 'include/_base.css';
+@import 'widget/_widget-base.css';
+@import 'widget/_button.css';
+@import 'widget/_toolbar.css';
+@import 'component/_book-list.css';
+@import 'component/_toolbar.css';

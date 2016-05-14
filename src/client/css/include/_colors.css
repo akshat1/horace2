@@ -8,6 +8,6 @@ $border-color: #A0A0A0;
 $border-color-light: #F0F0F0;
 
 $text-base: #000;
-$text-light: lighten($text-base, 30%);
+$text-light: lighten($text-base, 50%);
 $text-lighter: lighten($text-base, 60%);
 $text-lightest: #FFF;
