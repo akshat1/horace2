@@ -17,7 +17,7 @@ const ToolbarGroupFloat = {
 
 
 const Toolbar = (props) =>
-  <div className = {`${WidgetStyleClass.Widget} ${StyleClass.Toolbar}`}>
+  <div className = {`${WidgetStyleClass.Widget} ${StyleClass.Toolbar} ${props.className || ''}`}>
     {props.children}
   </div>
 
@@ -31,7 +31,7 @@ class ToolbarGroup extends React.Component {
   render() {
     let floatStyleClass = this.props.float === ToolbarGroupFloat.RIGHT ? WidgetStyleClass.Right : WidgetStyleClass.Left;
     return (
-      <div className = {`${WidgetStyleClass.Widget} ${floatStyleClass} ${StyleClass.ToolbarGroup}`}>
+      <div className = {`${WidgetStyleClass.Widget} ${floatStyleClass} ${StyleClass.ToolbarGroup} ${this.props.className || ''}`}>
         {this.props.children}
       </div>
     );
@@ -40,7 +40,7 @@ class ToolbarGroup extends React.Component {
 
 
 const ToolbarSeparator = (props) =>
-  <div className = {`${WidgetStyleClass.Widget} ${StyleClass.ToolbarSeparator}`}/>
+  <div className = {`${WidgetStyleClass.Widget} ${StyleClass.ToolbarSeparator} ${props.className || ''}`}/>
 
 
 module.exports = {

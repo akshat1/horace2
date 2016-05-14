@@ -1,3 +1,15 @@
 .h-toolbar {
   @mixin flexItem 0, 0;
 }
+
+
+@media screen and (max-width: 970px) {
+  .h-toolbar-group-seconday {
+    display: none;
+  }
+
+
+  .h-toolbar-group-primary {
+    display: none;
+  }
+}

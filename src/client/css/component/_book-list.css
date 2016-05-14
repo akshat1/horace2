@@ -1,10 +1,10 @@
 $_book-list-row-height: 40px;
-$_book-col-width-selection: 20px;
-$_book-col-width-title: 840px;
+$_book-col-width-selection: 40px;
+$_book-col-width-title: 930px;
 $_book-col-width-authors: 200px;
+$_book-col-width-year: 70px;
 $_book-col-width-subjects: 150px;
-$_book-col-width-year: 100px;
-$_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-title + $_book-col-width-authors + $_book-col-width-subjects + $_book-col-width-year);
+$_book-grid-total-width: 1430px;
 
 
 .h-book-list {
@@ -23,6 +23,7 @@ $_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-titl
 
 
   .simian-grid-list-row {
+    font-size: 0;
     &.odd {
       background: #F2F2F2;
     }
@@ -31,11 +32,13 @@ $_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-titl
 
   .h-book-list-cell {
     @mixin text-overflow;
+    font-size: $base-font-size;
     border-right: 1px solid $border-color;
     display: inline-block;
     padding: 0 $space-M;
     height: $_book-list-row-height;
     line-height: $_book-list-row-height;
+    box-sizing: border-box;
 
     &:last-child {
       border: none;
@@ -81,14 +84,8 @@ $_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-titl
   }
 }
 
-/*
-.h-book-authors-cell,
-  .h-book-list-subjects-cell,
-  .h-book-list-year-cell,
-  .h-book-list-selection-cell
-*/
 
-@media screen and ( calc($_book-grid-total-width - $_book-col-width-subjects) < width < $_book-grid-total-width) {
+@media screen and (min-width: 1240px) and (max-width: 1430px) {
   .h-book-list {
     .h-book-list-subjects-cell {
       display: none;
@@ -97,7 +94,7 @@ $_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-titl
 }
 
 
-@media screen and ( calc($_book-grid-total-width - $_book-col-width-subjects - $_book-col-width-year) < width < calc($_book-grid-total-width - $_book-col-width-subjects)) {
+@media screen and (min-width: 1170px) and (max-width: 1240px) {
   .h-book-list {
     .h-book-list-subjects-cell {
       display: none;
@@ -110,7 +107,7 @@ $_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-titl
 }
 
 
-@media screen and ( calc($_book-grid-total-width - $_book-col-width-subjects - $_book-col-width-year - $_book-col-width-authors) < width < calc($_book-grid-total-width - $_book-col-width-subjects - $_book-col-width-year)) {
+@media screen and (min-width: 970px) and (max-width: 1170px) {
   .h-book-list {
     .h-book-list-subjects-cell {
       display: none;
@@ -119,6 +116,38 @@ $_book-grid-total-width: calc($_book-col-width-selection + $_book-col-width-titl
     .h-book-list-year-cell {
       display: none;
     }
+
+    .h-book-list-authors-cell {
+      display: none;
+    }
   }
 }
 
+
+@media screen and (max-width: 970px) {
+  .h-book-list {
+    .simian-grid-list-container {
+      width: 100%;
+    }
+
+    .h-book-list-subjects-cell {
+      display: none;
+    }
+
+    .h-book-list-year-cell {
+      display: none;
+    }
+
+    .h-book-list-authors-cell {
+      display: none;
+    }
+
+    .h-book-list-selection-cell {
+      display: none;
+    }
+
+    .h-book-list-title-cell {
+      width: 100%;
+    }
+  }
+}

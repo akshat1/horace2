@@ -8,7 +8,10 @@ const {TextField} = require('../widget/TextInput.jsx');
 const {Button, ButtonType} = require('../widget/Button.jsx');
 
 const StyleClass = {
-  ROOT : 'h-toolbar'
+  ROOT      : 'h-toolbar',
+  TGSECONDARY : 'h-toolbar-group-seconday',
+  TGPRIMARY   : 'h-toolbar-group-primary',
+  TGSEARCH    : 'h-toolbar-group-search'
 };
 
 
@@ -31,11 +34,12 @@ class HToolbar extends React.Component {
     let isMultipleBookControlsDisabled = this.props.selectedBooks.length < 2;
 
     return (
-      <ToolbarGroup>
+      <ToolbarGroup className = {StyleClass.TGSECONDARY}>
         {this.renderIndicators()}
         <Button label = 'Hide'  disabled = {isNothingSelected} faIconName = 'eye-slash'/>
         <Button label = 'Edit'  disabled = {isNothingSelected} faIconName = 'edit'/>
         <Button label = 'Group' disabled = {isMultipleBookControlsDisabled} faIconName = 'object-group'/>
+        <ToolbarSeparator/>
       </ToolbarGroup>
     );
   }
@@ -44,7 +48,7 @@ class HToolbar extends React.Component {
   renderBookControls() {
     let isSingleBookControlsDisabled = this.props.selectedBooks.length !== 1;
     return (
-      <ToolbarGroup>
+      <ToolbarGroup className = {StyleClass.TGPRIMARY}>
         <Button label = 'Download' primary = {true} disabled={isSingleBookControlsDisabled} faIconName = 'download'/>
       </ToolbarGroup>
     );
@@ -53,7 +57,7 @@ class HToolbar extends React.Component {
 
   renderSearchControls() {
     return (
-      <ToolbarGroup>
+      <ToolbarGroup className = {StyleClass.TGSEARCH}>
         <TextField hintText = 'Search'/>
       </ToolbarGroup>
     );
@@ -66,7 +70,6 @@ class HToolbar extends React.Component {
         <Toolbar>
           <ToolbarGroup float = {ToolbarGroupFloat.LEFT}>
             {this.renderBookGroupControls()}
-            <ToolbarSeparator/>
             {this.renderBookControls()}
           </ToolbarGroup>
           {this.renderSearchControls()}

@@ -36,10 +36,6 @@ module.exports = function() {
       mixins: _.extend({}, flexBoxMixins)
     }),
     require('postcss-simple-vars'),
-    require('postcss-calc')({
-      mediaQueries: true
-    }),
-    require('postcss-media-minmax'),
     require('postcss-nested'),
     require('postcss-sass-colors')(),
     require('postcss-functions')(require('../postcss/functions.js'))
