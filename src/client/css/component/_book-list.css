@@ -68,6 +68,7 @@ $_book-grid-total-width: 1430px;
 
   .h-book-list-year-cell {
     width: $_book-col-width-year;
+    text-align: center;
   }
 
 

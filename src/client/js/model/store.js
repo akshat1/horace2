@@ -32,7 +32,8 @@ class Store {
       isBusy            : false,
       books             : [],
       selectedBookIdMap : {},
-      selectedBooks     : []
+      selectedBooks     : [],
+      notifications     : []
     };
   }
 

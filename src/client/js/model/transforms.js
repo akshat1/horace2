@@ -23,6 +23,10 @@ function transformBooks(state) {
   let idMap = state.selectedBookIdMap;
   state.books.forEach(function(b) {
     b.isSelected = !!idMap[b.id];
+    if (b.year === -1)
+      b.displayYear = '-';
+    b.authors  = b.authors.filter( (a) => a && a.trim())
+    b.subjects = b.subjects.filter( (s) => s && s.trim())
   });
   return state;
 }

@@ -44,8 +44,12 @@ class Library extends React.Component {
 
 
   renderBookToolbar() {
+    let state = this.state;
     return (
-      <Toolbar selectedBooks = {this.state.selectedBooks}/>
+      <Toolbar
+        selectedBooks = {state.selectedBooks}
+        notifications = {state.notifications}
+        />
     );
   }
 

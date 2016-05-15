@@ -3,12 +3,13 @@ const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
+const Notifications = require('./notifications.jsx');
 const {ToolbarGroupFloat, Toolbar, ToolbarGroup, ToolbarSeparator} = require('../widget/Toolbar.jsx');
 const {TextField} = require('../widget/TextInput.jsx');
-const {Button, ButtonType} = require('../widget/Button.jsx');
+const {Button} = require('../widget/Button.jsx');
 
 const StyleClass = {
-  ROOT      : 'h-toolbar',
+  ROOT        : 'h-toolbar',
   TGSECONDARY : 'h-toolbar-group-seconday',
   TGPRIMARY   : 'h-toolbar-group-primary',
   TGSEARCH    : 'h-toolbar-group-search'
@@ -21,10 +22,29 @@ class HToolbar extends React.Component {
   }
 
 
+  doHide() {
+    console.log('Hide');
+  }
+
+
+  doEdit() {
+    console.log('Edit');
+  }
+
+
+  doGroup() {
+    console.log('Group');
+  }
+
+
+  doDownload() {
+    console.log('Download');
+  }
+
+
   renderIndicators() {
     return [
-      <Button faIconName = 'bell' type = {ButtonType.Indicator}/>,
-      <ToolbarSeparator/>
+      <Notifications notifications = {this.props.notifications} key = 'h.toolbar.indicator.notifications'/>
     ];
   }
 
@@ -36,9 +56,24 @@ class HToolbar extends React.Component {
     return (
       <ToolbarGroup className = {StyleClass.TGSECONDARY}>
         {this.renderIndicators()}
-        <Button label = 'Hide'  disabled = {isNothingSelected} faIconName = 'eye-slash'/>
-        <Button label = 'Edit'  disabled = {isNothingSelected} faIconName = 'edit'/>
-        <Button label = 'Group' disabled = {isMultipleBookControlsDisabled} faIconName = 'object-group'/>
+        <Button
+          label      = 'Hide'
+          disabled   = {isNothingSelected}
+          faIconName = 'eye-slash'
+          onClick    = {this.doHide}
+          />
+        <Button
+          label      = 'Edit'
+          disabled   = {isNothingSelected}
+          faIconName = 'edit'
+          onClick    = {this.doEdit}
+          />
+        <Button
+          label      = 'Group'
+          disabled   = {isMultipleBookControlsDisabled}
+          faIconName = 'object-group'
+          onClick    = {this.doGroup}
+          />
         <ToolbarSeparator/>
       </ToolbarGroup>
     );
@@ -49,7 +84,13 @@ class HToolbar extends React.Component {
     let isSingleBookControlsDisabled = this.props.selectedBooks.length !== 1;
     return (
       <ToolbarGroup className = {StyleClass.TGPRIMARY}>
-        <Button label = 'Download' primary = {true} disabled={isSingleBookControlsDisabled} faIconName = 'download'/>
+        <Button
+          label      = 'Download'
+          primary    = {true}
+          disabled   = {isSingleBookControlsDisabled}
+          faIconName = 'download'
+          onClick    = {this.doDownload}
+          />
       </ToolbarGroup>
     );
   }

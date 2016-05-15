@@ -48,7 +48,7 @@ const BookHTML = {
 
 
   getArray: function(items) {
-    let firstItem = items[0];
+    let firstItem = items[0] || '';
     let badge = '';
     let tooltip = firstItem;
     if (items.length > 1) {
@@ -135,7 +135,7 @@ const BookHTML = {
           ${BookHTML.getSelectionControl(isSelected, bookId)}
           ${BookHTML.getTitle(book.title, false, bookId)}
           ${BookHTML.getAuthors(book.authors, bookId)}
-          ${BookHTML.getYear(book.year, false, bookId)}
+          ${BookHTML.getYear(book.displayYear, false, bookId)}
           ${BookHTML.getSubjects(book.subjects, bookId)}
         `
     };
