@@ -13,6 +13,7 @@ const {applySequence} = require('./transforms.js');
 
 class Store {
   constructor() {
+    window.store = this;
     this._listeners = [];
     this._state = this._getInitialState();
     this._wireWebSockets();
@@ -50,6 +51,7 @@ class Store {
     PubSub.subscribe(ClientEvents.REQUEST_SERVER_STATUS, this._handleRequestServerStatus);
     PubSub.subscribe(ClientEvents.REQUEST_BOOKS, this._handleRequestBooks);
     PubSub.subscribe(ClientEvents.BOOK_SELECTION_CHANGED, this._handleBookSelectionChanged);
+    PubSub.subscribe(ClientEvents.REQUEST_SORT, this._handleRequestSort);
   }
 
 
@@ -76,22 +78,46 @@ class Store {
 
 
   @autobind
-  _handleRequestBooks(opts = {}) {
-    let {from, numItems} = opts;
-    if (this._state.isBusy)
+  _handleRequestSort(payload) {
+    let oldSortModel = this._state.sortModel;
+    let sortModel;
+    if (payload.columnName === oldSortModel.columnName) {
+      sortModel = new SortModel(oldSortModel.columnName, !oldSortModel.isAscending);
+    } else {
+      sortModel = new SortModel(payload.columnName, true);
+    }
+    PubSub.broadcast(ClientEvents.REQUEST_BOOKS, {
+      sortModel: sortModel
+    });
+  }
+
+
+  @autobind
+  _handleRequestBooks({from, numItems, sortModel} = {}) {
+    let state = this._state;
+    if (state.isBusy)
       return;
 
     this.setBusy(true);
-    Net.getBooks(new PagerModel(from, from + numItems), this._state.sortModel)
+    sortModel = sortModel || state.sortModel;
+    if (!_.isEqual(sortModel, state.sortModel)) {
+      numItems = state.books.length + (numItems || 0);
+      from = 0;
+    }
+    Net.getBooks(new PagerModel(from, from + numItems), sortModel)
     .then(this._onGetBooksResponse)
     .catch(this._handleError);
   }
 
 
   @autobind
-  _onGetBooksResponse({books}) {
+  _onGetBooksResponse({books, bookSort: sortModel}) {
+    let state = this._state;
+    sortModel = sortModel || state.sortModel;
+    books = _.isEqual(sortModel, state.sortModel) ? state.books.concat(books) : books
     this._setState({
-      books: this._state.books.concat(books),
+      books: books,
+      sortModel: sortModel || state.sortModel,
       isBusy: false
     });
   }

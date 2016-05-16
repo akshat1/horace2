@@ -7,11 +7,11 @@ const ColumnName = {
 };
 
 
-function getSortIndicatorMarkup (sortColumnName, isAscending, targetColumnName) {
+function getSortIndicatorMarkup (sortColumnName, isAscending, targetColumnName, clickMarker) {
   if (sortColumnName === targetColumnName) {
     let styleClass = isAscending ? 'fa-sort-asc' : 'fa-sort-desc';
     return `
-      <div class='h-sort fa ${styleClass}'></div>
+      <div class = 'h-sort fa ${styleClass}' click-marker = '${clickMarker}'></div>
     `
   }
   else
@@ -51,10 +51,8 @@ const BookHTML = {
   getTitleColumnHeader: function(sortColumnName, isAscending) {
     return `
       <div class='h-book-list-title-cell h-book-list-cell' title='Title' click-marker='title-header'>
-        <div>
-          Title
-          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'title')}
-        </div>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'title', 'title-header')}
+        Title
       </div>
     `;
   },
@@ -93,10 +91,8 @@ const BookHTML = {
   getAuthorsColumnHeader: function(sortColumnName, isAscending) {
     return `
       <div class='h-book-list-authors-cell h-book-list-cell' click-marker='authors-header'>
-        <div>
-          Author
-          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'authors')}
-        </div>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'authors', 'authors-header')}
+        Author
       </div>
     `;
   },
@@ -115,10 +111,8 @@ const BookHTML = {
   getSubjectsColumnHeader: function(sortColumnName, isAscending) {
     return `
       <div class='h-book-list-subjects-cell h-book-list-cell' title='Subjects' click-marker='subjects-header'>
-        <div>
-          Subjects
-          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'subjects')}
-        </div>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'subjects', 'subjects-header')}
+        Subjects
       </div>
     `;
   },
@@ -136,10 +130,8 @@ const BookHTML = {
   getYearColumnHeader: function(sortColumnName, isAscending) {
     return `
       <div class='h-book-list-year-cell h-book-list-cell' click-marker='year-header'>
-        <div>
-          Year
-          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'year')}
-        </div>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'year', 'year-header')}
+        Year
       </div>
     `;
   },

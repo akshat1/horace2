@@ -2,7 +2,7 @@ $_book-list-row-height: 40px;
 $_book-col-width-selection: 40px;
 $_book-col-width-title: 930px;
 $_book-col-width-authors: 200px;
-$_book-col-width-year: 70px;
+$_book-col-width-year: 80px;
 $_book-col-width-subjects: 150px;
 $_book-grid-total-width: 1430px;
 
@@ -19,9 +19,7 @@ $_book-grid-total-width: 1430px;
 
   .header {
     background: #6AB2FF;
-    .h-book-list-cell > div {
-      cursor: pointer;
-    }
+    cursor: pointer;
   }
 
 
@@ -89,7 +87,7 @@ $_book-grid-total-width: 1430px;
 }
 
 
-@media screen and (min-width: 1240px) and (max-width: 1430px) {
+@media screen and (min-width: 1250px) and (max-width: 1436px) {
   .h-book-list {
     .h-book-list-subjects-cell {
       display: none;
@@ -98,7 +96,7 @@ $_book-grid-total-width: 1430px;
 }
 
 
-@media screen and (min-width: 1170px) and (max-width: 1240px) {
+@media screen and (min-width: 1170px) and (max-width: 1250px) {
   .h-book-list {
     .h-book-list-subjects-cell {
       display: none;
@@ -111,7 +109,7 @@ $_book-grid-total-width: 1430px;
 }
 
 
-@media screen and (min-width: 970px) and (max-width: 1170px) {
+@media screen and (min-width: 986px) and (max-width: 1170px) {
   .h-book-list {
     .h-book-list-subjects-cell {
       display: none;

@@ -41,15 +41,15 @@ class BookList extends React.Component {
       case 'select'          : return this.handleCheckboxClick(evt);
       case 'select-all'      : return this.handleSelectAllClick(evt);
       case 'title'           : return this.handleTitleClick(evt);
-      case 'title-header'    : return this.handleTitleHeaderClick(evt);
-      case 'authors'         : return this.handleAuthorsClick(evt);
-      case 'authors-header'  : return this.handleAuthorsHeaderClick(evt);
       case 'subjects'        : return this.handleSubjectsClick(evt);
-      case 'subjects-header' : return this.handleSubjectsHeaderClick(evt);
       case 'year'            : return this.handleYearClick(evt);
-      case 'year-header'     : return this.handleYearHeaderClick(evt);
+      case 'authors'         : return this.handleAuthorsClick(evt);
+      case 'title-header'    : return this.handleHeaderClicked('title');
+      case 'authors-header'  : return this.handleHeaderClicked('authors');
+      case 'subjects-header' : return this.handleHeaderClicked('subjects');
+      case 'year-header'     : return this.handleHeaderClicked('year');
     }
-    console.warn('Could not identify what was clicked');
+    console.warn('Could not identify what was clicked >', evt.target.getAttribute('click-marker'), '<');
   }
 
 
@@ -73,18 +73,8 @@ class BookList extends React.Component {
   }
 
 
-  handleTitleHeaderClick(evt) {
-    console.log('Book title header clicked');
-  }
-
-
   handleAuthorsClick(evt) {
     console.log('authors clicked: ', evt.target.getAttribute('book-id'));
-  }
-
-
-  handleAuthorsHeaderClick(evt) {
-    console.log('Book authors header clicked');
   }
 
 
@@ -93,18 +83,15 @@ class BookList extends React.Component {
   }
 
 
-  handleSubjectsHeaderClick(evt) {
-    console.log('Book subjects header clicked');
-  }
-
-
   handleYearClick(evt) {
     console.log('year clicked: ', evt.target.getAttribute('book-id'));
   }
 
 
-  handleYearHeaderClick(evt) {
-    console.log('Book year header clicked');
+  handleHeaderClicked(columnName) {
+    PubSub.broadcast(ClientEvents.REQUEST_SORT, {
+      columnName: columnName
+    })
   }
 
 
