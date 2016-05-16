@@ -59,6 +59,7 @@ class Library extends React.Component {
     return (
       <BookList
         books = {state.books}
+        sort = {state.sortModel}
       />
     );
   }

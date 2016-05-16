@@ -6,7 +6,7 @@
 const PubSub   = require('../util/pubsub.js');
 const Net      = require('../util/net.js');
 const autobind = require('autobind-decorator');
-const {PagerModel} = require('../../../app/model/library-model.js');
+const {SortModel, PagerModel} = require('../../../app/model/library-model.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('../../../app/events.js');
 const {applySequence} = require('./transforms.js');
 
@@ -33,7 +33,8 @@ class Store {
       books             : [],
       selectedBookIdMap : {},
       selectedBooks     : [],
-      notifications     : []
+      notifications     : [],
+      sortModel         : new SortModel('title', true)
     };
   }
 
@@ -81,7 +82,7 @@ class Store {
       return;
 
     this.setBusy(true);
-    Net.getBooks(new PagerModel(from, from + numItems))
+    Net.getBooks(new PagerModel(from, from + numItems), this._state.sortModel)
     .then(this._onGetBooksResponse)
     .catch(this._handleError);
   }

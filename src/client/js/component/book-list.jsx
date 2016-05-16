@@ -112,7 +112,7 @@ class BookList extends React.Component {
   render() {
     let props = this.props;
     let rows  = props.books.map((b) => BookHTML.getRowMarkup(b, b.isSelected) );
-    let headerRowMarkup = BookHTML.getHeaderRowMarkup();
+    let headerRowMarkup = BookHTML.getHeaderRowMarkup(props.sort.columnName, props.sort.isAscending);
     return (
       <div className = {StyleClass.ROOT}>
         <div className = {StyleClass.INNERWRAPPER}>

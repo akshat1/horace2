@@ -19,6 +19,9 @@ $_book-grid-total-width: 1430px;
 
   .header {
     background: #6AB2FF;
+    .h-book-list-cell > div {
+      cursor: pointer;
+    }
   }
 
 

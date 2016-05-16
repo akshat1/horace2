@@ -2,6 +2,22 @@
 
 const _ = require('lodash');
 
+const ColumnName = {
+  Title: 'title'
+};
+
+
+function getSortIndicatorMarkup (sortColumnName, isAscending, targetColumnName) {
+  if (sortColumnName === targetColumnName) {
+    let styleClass = isAscending ? 'fa-sort-asc' : 'fa-sort-desc';
+    return `
+      <div class='h-sort fa ${styleClass}'></div>
+    `
+  }
+  else
+    return '';
+}
+
 
 const BookHTML = {
   getSelectionControl: function(isChecked, bookId) {
@@ -23,27 +39,24 @@ const BookHTML = {
   },
 
 
-  getTitle: function(title, isHeader, bookId, sortClassName) {
-    let marker;
-    let bookIdAttr;
-    if (isHeader) {
-      marker = 'title-header';
-      bookIdAttr = '';
-    } else {
-      marker = 'title';
-      bookIdAttr = `book-id='${bookId}'`;
-    }
-
+  getTitle: function(title, bookId) {
     return `
-      <div class='h-book-list-title-cell h-book-list-cell ${sortClassName}' title='${title}' click-marker='${marker}' ${bookIdAttr}>
+      <div class='h-book-list-title-cell h-book-list-cell' title='${title}' click-marker='${title}' book-id='${bookId}'>
         ${title}
       </div>
     `;
   },
 
 
-  getTitleColumnHeader: function() {
-    return BookHTML.getTitle('Title', true);
+  getTitleColumnHeader: function(sortColumnName, isAscending) {
+    return `
+      <div class='h-book-list-title-cell h-book-list-cell' title='Title' click-marker='title-header'>
+        <div>
+          Title
+          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'title')}
+        </div>
+      </div>
+    `;
   },
 
 
@@ -77,10 +90,13 @@ const BookHTML = {
   },
 
 
-  getAuthorsColumnHeader: function() {
+  getAuthorsColumnHeader: function(sortColumnName, isAscending) {
     return `
       <div class='h-book-list-authors-cell h-book-list-cell' click-marker='authors-header'>
-        Author
+        <div>
+          Author
+          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'authors')}
+        </div>
       </div>
     `;
   },
@@ -96,35 +112,36 @@ const BookHTML = {
   },
 
 
-  getSubjectsColumnHeader: function() {
+  getSubjectsColumnHeader: function(sortColumnName, isAscending) {
     return `
       <div class='h-book-list-subjects-cell h-book-list-cell' title='Subjects' click-marker='subjects-header'>
-        Subjects
+        <div>
+          Subjects
+          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'subjects')}
+        </div>
       </div>
     `;
   },
 
 
   getYear: function(year, isHeader, bookId) {
-    let marker, bookIdAttr;
-    if (isHeader) {
-      marker = 'year-header';
-      bookIdAttr = '';
-    } else {
-      marker = 'year';
-      bookIdAttr = `book-id='${bookId}'`;
-    };
-
     return `
-      <div class='h-book-list-year-cell h-book-list-cell' click-marker='${marker}'>
+      <div class='h-book-list-year-cell h-book-list-cell' click-marker='year' book-id='${bookId}'>
         ${year}
       </div>
     `;
   },
 
 
-  getYearColumnHeader: function() {
-    return BookHTML.getYear('Year', true);
+  getYearColumnHeader: function(sortColumnName, isAscending) {
+    return `
+      <div class='h-book-list-year-cell h-book-list-cell' click-marker='year-header'>
+        <div>
+          Year
+          ${getSortIndicatorMarkup(sortColumnName, isAscending, 'year')}
+        </div>
+      </div>
+    `;
   },
 
 
@@ -150,14 +167,13 @@ const BookHTML = {
 // We would want to keep an eye on memory usage by this guy.
 BookHTML.getRowMarkup = _.memoize(BookHTML.getRowMarkupInner, BookHTML.getMemoCacheKey);
 BookHTML.getHeaderRowMarkup = function(sortColumnName, isAscending) {
-  let sortClassName = '';
   return {
     __html: `
         ${BookHTML.getSelectAllColumnHeader()}
-        ${BookHTML.getTitleColumnHeader()}
-        ${BookHTML.getAuthorsColumnHeader()}
-        ${BookHTML.getYearColumnHeader()}
-        ${BookHTML.getSubjectsColumnHeader()}
+        ${BookHTML.getTitleColumnHeader(sortColumnName, isAscending)}
+        ${BookHTML.getAuthorsColumnHeader(sortColumnName, isAscending)}
+        ${BookHTML.getYearColumnHeader(sortColumnName, isAscending)}
+        ${BookHTML.getSubjectsColumnHeader(sortColumnName, isAscending)}
       `
   };
 }
