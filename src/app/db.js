@@ -107,7 +107,7 @@ function getBooks(params) {
       var includeHidden = !!params.includeHidden;
       var filter   = params.filter ? Book.mongoFilter(params.filter, includeHidden) : {};
       var sortOpts = {};
-      sortOpts[sort.columnName] = sort.isAscending ? 1 : -1;
+      sortOpts[Book.getSortColumnName(sort.columnName)] = sort.isAscending ? 1 : -1;
       var cur = collectionBooks.find(filter).sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){

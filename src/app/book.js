@@ -28,7 +28,7 @@ class Book {
 
     this.id          = Utils.getHash(path);
     this.path        = path;
-    this.title       = title;
+    this.title       = title.trim();
     this.authors     = authors.map(Book.mapToLowerCase).sort();
     this.sizeInBytes = isNaN(sizeInBytes) ? -1 : parseInt(sizeInBytes);
     this.year        = isNaN(year) ? -1 : parseInt(year);
@@ -46,6 +46,7 @@ class Book {
 
 
   setUpSortProperties() {
+    this.sortStringTitle = this.title.toLowerCase();
     this.sortStringAuthors = this.authors.reduce(Book.reduceToSortString, '');
     this.sortStringSubjects = this.subjects.reduce(Book.reduceToSortString, '');
   }
@@ -111,6 +112,16 @@ class Book {
 
   static displayYearToYear(displayYear) {
     return displayYear === 'Unknown' ? -1 : parseInt(displayYear);
+  }
+
+
+  static getSortColumnName(columnName) {
+    switch (columnName) {
+      case 'title'    : return 'sortStringTitle';
+      case 'authors'  : return 'sortStringAuthors';
+      case 'subjects' : return 'sortStringSubjects';
+      default         : return columnName;
+    }
   }
 }
 
