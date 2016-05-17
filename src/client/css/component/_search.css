@@ -1,0 +1,12 @@
+.h-search-box {
+  @mixin flexBox row;
+  width: 320px;
+
+  .h-search-go-button {
+    @mixin flexItem 0, 0;
+  }
+
+  .h-search-box-text-input {
+    @mixin flexItem 1, 1;
+  }
+}

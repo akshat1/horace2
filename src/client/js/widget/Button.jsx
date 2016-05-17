@@ -7,7 +7,12 @@ const {WidgetStyleClass} = require('./WidgetBase.js');
 const StyleClass = {
   Button: 'h-widget-button',
   Primary: 'h-button-primary',
-  Indicator: 'h-button-indicator'
+  Indicator: 'h-button-indicator',
+  Size: {
+    Small: 'h-widget-button-small',
+    Medium: 'h-widget-button-medium',
+    Large: 'h-widget-button-large'
+  }
 };
 
 
@@ -15,6 +20,14 @@ const ButtonType = {
   Normal    : 0,
   Indicator : 1
 };
+
+
+const ButtonSize = {
+  Small: 'Small',
+  Medium: 'Medium',
+  Large: 'Large'
+};
+ButtonSize.Default = ButtonSize.Medium;
 
 
 class Button extends React.Component {
@@ -30,7 +43,13 @@ class Button extends React.Component {
       StyleClass.Button
     ];
     let icon = null;
-    let buttonType = props.type || ButtonType.Normal;
+    let {
+      type: buttonType = ButtonType.Normal,
+      size: buttonSize = ButtonSize.Default,
+      disabled,
+      label,
+      onClick = _.noop
+    } = props;
     if (buttonType === ButtonType.Indicator)
       classNames.push(StyleClass.Indicator);
 
@@ -40,17 +59,20 @@ class Button extends React.Component {
     if (props.primary)
       classNames.push(StyleClass.Primary);
 
+    classNames.push(StyleClass.Size[buttonSize]);
+
     if (props.faIconName) {
-      icon = <div className = {`fa fa-${props.faIconName}`}/>
+      icon = <div className = {`fa fa-${props.faIconName.toLowerCase()}`}/>
     }
 
     return (
       <button
         className = {`${classNames.join(' ')}`}
-        disabled = {props.disabled}
+        disabled  = {disabled}
+        onClick   = {onClick}
         >
         {icon}
-        {props.label}
+        {label}
       </button>
     );
   }
@@ -58,6 +80,7 @@ class Button extends React.Component {
 
 
 module.exports = {
-  Button: Button,
-  ButtonType: ButtonType
+  Button,
+  ButtonType,
+  ButtonSize
 };

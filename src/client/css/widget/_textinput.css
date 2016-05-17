@@ -1,0 +1,12 @@
+@define-mixin single-line-text-input {
+  height: 34px;
+  box-shadow: $box-shadow-inset-base;
+  border-radius: 2px;
+  box-sizing: border-box;
+  padding: 0 $space-M;
+}
+
+
+input[type="text"] {
+  @mixin single-line-text-input;
+}

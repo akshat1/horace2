@@ -5,7 +5,7 @@ const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
 const Notifications = require('./notifications.jsx');
 const {ToolbarGroupFloat, Toolbar, ToolbarGroup, ToolbarSeparator} = require('../widget/Toolbar.jsx');
-const {TextField} = require('../widget/TextInput.jsx');
+const SearchBox = require('./searchbox.jsx');
 const {Button} = require('../widget/Button.jsx');
 
 const StyleClass = {
@@ -99,7 +99,7 @@ class HToolbar extends React.Component {
   renderSearchControls() {
     return (
       <ToolbarGroup className = {StyleClass.TGSEARCH}>
-        <TextField hintText = 'Search'/>
+        <SearchBox value = {this.props.searchString}/>
       </ToolbarGroup>
     );
   }

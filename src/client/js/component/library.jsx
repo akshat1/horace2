@@ -49,6 +49,7 @@ class Library extends React.Component {
       <Toolbar
         selectedBooks = {state.selectedBooks}
         notifications = {state.notifications}
+        searchString  = {state.searchString}
         />
     );
   }

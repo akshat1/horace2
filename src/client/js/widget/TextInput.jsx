@@ -1,6 +1,7 @@
 'use strict';
 const React = require('react');
 const {WidgetStyleClass} = require('./WidgetBase.js');
+const _ = require('lodash');
 
 
 const StyleClass = {
@@ -8,12 +9,37 @@ const StyleClass = {
 };
 
 
-const TextField = (props) =>
-  <input
-    type = 'text'
-    className = {`${WidgetStyleClass.Widget} ${StyleClass.TextField}`}
-    placeholder = {props.hintText || ''}
-    />
+class TextField extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+
+  render() {
+    let {
+      disabled,
+      className: incomingStyleClassName = '',
+      placeholder = '',
+      value = '',
+      onChange = _.noop,
+      onFocus = _.noop,
+      onBlur = _.noop
+    } = this.props;
+
+    return (
+      <input
+        type        = 'text'
+        className   = {`${WidgetStyleClass.Widget} ${StyleClass.TextField} ${incomingStyleClassName}`}
+        placeholder = {placeholder}
+        value       = {value}
+        onChange    = {onChange}
+        onFocus     = {onFocus}
+        onBlur      = {onBlur}
+        disabled    = {disabled}
+        />
+    );
+  }
+}
 
 
 module.exports = {

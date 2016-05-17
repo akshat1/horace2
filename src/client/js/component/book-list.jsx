@@ -89,7 +89,7 @@ class BookList extends React.Component {
 
 
   handleHeaderClicked(columnName) {
-    PubSub.broadcast(ClientEvents.REQUEST_SORT, {
+    PubSub.broadcast(ClientEvents.SORT_CHANGED, {
       columnName: columnName
     })
   }

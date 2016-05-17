@@ -35,7 +35,8 @@ class Store {
       selectedBookIdMap : {},
       selectedBooks     : [],
       notifications     : [],
-      sortModel         : new SortModel('title', true)
+      sortModel         : new SortModel('title', true),
+      searchString      : ''
     };
   }
 
@@ -48,10 +49,13 @@ class Store {
 
 
   _wirePubSub() {
-    PubSub.subscribe(ClientEvents.REQUEST_SERVER_STATUS, this._handleRequestServerStatus);
-    PubSub.subscribe(ClientEvents.REQUEST_BOOKS, this._handleRequestBooks);
-    PubSub.subscribe(ClientEvents.BOOK_SELECTION_CHANGED, this._handleBookSelectionChanged);
-    PubSub.subscribe(ClientEvents.REQUEST_SORT, this._handleRequestSort);
+    let handlers = {};
+    handlers[ClientEvents.REQUEST_SERVER_STATUS]  = this._handleRequestServerStatus;
+    handlers[ClientEvents.REQUEST_BOOKS]          = this._handleRequestBooks;
+    handlers[ClientEvents.BOOK_SELECTION_CHANGED] = this._handleBookSelectionChanged;
+    handlers[ClientEvents.SORT_CHANGED]           = this._handleSortChanged;
+    handlers[ClientEvents.SEARCH_CHANGED]         = this._handleSearchChanged;
+    PubSub.subscribeWithMap(handlers);
   }
 
 
@@ -78,7 +82,7 @@ class Store {
 
 
   @autobind
-  _handleRequestSort(payload) {
+  _handleSortChanged(payload) {
     let oldSortModel = this._state.sortModel;
     let sortModel;
     if (payload.columnName === oldSortModel.columnName) {
@@ -156,6 +160,12 @@ class Store {
     this._setState({
       selectedBookIdMap: currentIdMap
     });
+  }
+
+
+  @autobind
+  _handleSearchChanged(searchString) {
+    console.log('Search string changed: ', searchString);
   }
 
 

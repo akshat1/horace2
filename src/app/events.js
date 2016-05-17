@@ -2,11 +2,11 @@
 
 /* istanbul ignore next */
 const Client = {
-  REQUEST_BOOKS: 'client.action.fetch.books',
-  REQUEST_SERVER_STATUS: 'client.action.fetch.serverStatus',
-  BOOK_SELECTION_CHANGED: 'client.event.bookSelectionChanged',
-  // Payload will be {columnName: <column to sort by>}. Direction will be inferred from current direction.
-  REQUEST_SORT: 'client.action.sort'
+  REQUEST_BOOKS          : 'client.action.fetch.books',
+  REQUEST_SERVER_STATUS  : 'client.action.fetch.serverStatus',
+  BOOK_SELECTION_CHANGED : 'client.event.bookSelectionChanged',
+  SORT_CHANGED           : 'client.action.sort',
+  SEARCH_CHANGED         : 'client.action.search'
 };
 
 
