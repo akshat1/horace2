@@ -4,6 +4,12 @@
   border-radius: 2px;
   box-sizing: border-box;
   padding: 0 $space-M;
+
+  &.h-text-input-lowpro {
+    box-shadow: none;
+    background: transparent;
+    border-color: transparent transparent $border-color transparent;
+  }
 }
 
 

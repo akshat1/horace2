@@ -23,11 +23,15 @@ class Store {
 
 
   static buildFullTextSearchFilter(searchString) {
-    return {
-      '$text': {
-        '$search': searchString
-      }
-    };
+    if (searchString && searchString.trim())
+      return {
+        '$text': {
+          '$search': searchString
+        }
+      };
+
+    else
+      return null;
   }
 
 
@@ -117,7 +121,6 @@ class Store {
 
   @autobind
   _handleSearchChanged(searchString) {
-    console.log('Search string changed: ', searchString);
     PubSub.broadcast(ClientEvents.REQUEST_BOOKS, {
       filter: Store.buildFullTextSearchFilter(searchString),
       replaceBooks: true

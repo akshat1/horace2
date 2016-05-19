@@ -2,6 +2,7 @@
 const React       = require('react');
 const autobind    = require('autobind-decorator');
 const PubSub      = require('./../util/pubsub.js');
+const _ = require('lodash');
 const {TextField} = require('../widget/TextInput.jsx');
 const {WidgetStyleClass} = require('../widget/WidgetBase.js');
 const {Client: ClientEvents} = require('../../../app/events.js');
@@ -13,24 +14,28 @@ const {
 
 
 const RefName = {
-  ROOT: 'ROOT'
+  ROOT: 'ROOT',
+  TEXTFIELD: 'TEXTFIELD'
 };
 
 
 const StyleClass = {
   ROOT: 'h-search-box',
-  TEXTFIELD: 'h-search-box-text-input',
+  TEXTFIELD: 'h-search-box-text-input h-text-input-lowpro',
   GOBUTTON: 'h-search-go-button',
   Indicator: 'h-search-indicator'
 };
 
 
 class SearchBox extends React.Component {
+  static SearchDebounceInterval = 500;
+
   constructor(props) {
     super(props);
     this.state = {
       value: props.value || ''
     };
+    this.performSearch = _.debounce(this.performSearch, SearchBox.SearchDebounceInterval);
   }
 
 
@@ -39,12 +44,28 @@ class SearchBox extends React.Component {
     this.setState({
       value: evt.target.value
     });
+    this.performSearch();
   }
 
 
   @autobind
-  _handleGo() {
+  performSearch() {
     PubSub.broadcast(ClientEvents.SEARCH_CHANGED, this.state.value);
+  }
+
+
+  @autobind
+  expand() {
+    this.refs[RefName.TEXTFIELD].focus();
+  }
+
+
+  @autobind
+  clearSearchBox() {
+    this.setState({
+      value: ''
+    });
+    this.performSearch();
   }
 
 
@@ -56,9 +77,33 @@ class SearchBox extends React.Component {
         buttonSize = {ButtonSize.Small}
         disabled   = {this.props.isBusy}
         className  = {StyleClass.GOBUTTON}
-        onClick    = {this._handleGo}
+        onClick    = {this.performSearch}
         />
     );
+  }
+
+
+  renderIcon() {
+    if (this.state.value && this.state.value.trim()) {
+      return (
+        <Button
+          label = ''
+          faIconName = 'times-circle-o'
+          type = {ButtonType.Indicator}
+          onClick = {this.clearSearchBox}
+          />
+      );
+
+    } else {
+      return (
+        <Button
+          label = ''
+          faIconName = 'search'
+          type = {ButtonType.Indicator}
+          onClick = {this.expand}
+          />
+      );
+    }
   }
 
 
@@ -79,8 +124,9 @@ class SearchBox extends React.Component {
           onChange    = {this._handleChange}
           disabled    = {this.props.isBusy}
           className   = {StyleClass.TEXTFIELD}
+          ref         = {RefName.TEXTFIELD}
           />
-        {this.renderButton()}
+        {this.renderIcon()}
       </div>
     );
   }

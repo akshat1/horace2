@@ -4,6 +4,11 @@ const {WidgetStyleClass} = require('./WidgetBase.js');
 const _ = require('lodash');
 
 
+const RefName = {
+  INPUT: 'INPUT'
+};
+
+
 const StyleClass = {
   TextField: 'h-widget-textfield'
 };
@@ -12,6 +17,11 @@ const StyleClass = {
 class TextField extends React.Component {
   constructor(props) {
     super(props);
+  }
+
+
+  focus() {
+    this.refs[RefName.INPUT].focus();
   }
 
 
@@ -36,6 +46,7 @@ class TextField extends React.Component {
         onFocus     = {onFocus}
         onBlur      = {onBlur}
         disabled    = {disabled}
+        ref         = {RefName.INPUT}
         />
     );
   }
