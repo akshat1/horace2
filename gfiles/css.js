@@ -37,7 +37,6 @@ module.exports = function() {
     }),
     require('postcss-simple-vars'),
     require('postcss-nested'),
-    require('postcss-sass-colors')(),
     require('postcss-functions')(require('../postcss/functions.js'))
   ];
 

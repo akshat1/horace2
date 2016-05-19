@@ -109,12 +109,13 @@ class BookList extends React.Component {
             headerRow        = {headerRowMarkup}
             rows             = {rows}
             onMoreRowsNeeded = {this.askForMoreBooks}
-            numTotalRows     = {7190}
+            numTotalRows     = {props.totalBooksInSystem}
             columnDefinition = {ColumnDefinition}
             rowHeight        = {40}
             pageSize         = {200}
             numBufferRows    = {20}
             noTable          = {true}
+            rowNumber        = {props.bookListStartRowNumber}
           />
         </div>
       </div>

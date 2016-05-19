@@ -73,7 +73,7 @@
     "postcss-mixins": "^4.0.1",
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^1.2.0",
-    "simian-grid": "^0.2.35",
+    "simian-grid": "^0.2.36",
     "sinon": "^1.17.3",
     "vinyl-source-stream": "^1.1.0"
   }

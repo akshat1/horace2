@@ -59,8 +59,10 @@ class Library extends React.Component {
     let state = this.state;
     return (
       <BookList
-        books = {state.books}
-        sort = {state.sortModel}
+        books                  = {state.books}
+        sort                   = {state.sortModel}
+        totalBooksInSystem     = {state.totalBooksInSystem}
+        bookListStartRowNumber = {state.bookListStartRowNumber}
       />
     );
   }

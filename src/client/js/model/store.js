@@ -9,6 +9,7 @@ const autobind = require('autobind-decorator');
 const {SortModel, PagerModel} = require('../../../app/model/library-model.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('../../../app/events.js');
 const {applySequence} = require('./transforms.js');
+const _ = require('lodash');
 
 
 class Store {
@@ -21,6 +22,21 @@ class Store {
   }
 
 
+  static buildFullTextSearchFilter(searchString) {
+    return {
+      '$text': {
+        '$search': searchString
+      }
+    };
+  }
+
+
+  static getSearchStringFromFullTextSearchFilter(filter) {
+    if (filter['$text'])
+      return filter['$text']['$search'];
+  }
+
+
   _setState(addendum) {
     this._state = applySequence(Object.assign(this._state, addendum));
     this._emitChange();
@@ -29,14 +45,16 @@ class Store {
 
   _getInitialState() {
     return {
-      isScanning        : false,
-      isBusy            : false,
-      books             : [],
-      selectedBookIdMap : {},
-      selectedBooks     : [],
-      notifications     : [],
-      sortModel         : new SortModel('title', true),
-      searchString      : ''
+      totalBooksInSystem     : 0,
+      bookListStartRowNumber : 0,
+      isScanning             : false,
+      isBusy                 : false,
+      books                  : [],
+      selectedBookIdMap      : {},
+      selectedBooks          : [],
+      notifications          : [],
+      sortModel              : new SortModel('title', true),
+      searchString           : ''
     };
   }
 
@@ -91,39 +109,57 @@ class Store {
       sortModel = new SortModel(payload.columnName, true);
     }
     PubSub.broadcast(ClientEvents.REQUEST_BOOKS, {
-      sortModel: sortModel
+      sortModel: sortModel,
+      replaceBooks: true
     });
   }
 
 
   @autobind
-  _handleRequestBooks({from, numItems, sortModel} = {}) {
+  _handleSearchChanged(searchString) {
+    console.log('Search string changed: ', searchString);
+    PubSub.broadcast(ClientEvents.REQUEST_BOOKS, {
+      filter: Store.buildFullTextSearchFilter(searchString),
+      replaceBooks: true
+    });
+  }
+
+
+  @autobind
+  _handleRequestBooks({from, numItems, sortModel, filter, replaceBooks} = {}) {
     let state = this._state;
     if (state.isBusy)
       return;
 
     this.setBusy(true);
     sortModel = sortModel || state.sortModel;
-    if (!_.isEqual(sortModel, state.sortModel)) {
-      numItems = state.books.length + (numItems || 0);
-      from = 0;
-    }
-    Net.getBooks(new PagerModel(from, from + numItems), sortModel)
+    Net.getBooks(new PagerModel(from, from + numItems), sortModel, filter, replaceBooks)
     .then(this._onGetBooksResponse)
     .catch(this._handleError);
   }
 
 
   @autobind
-  _onGetBooksResponse({books, bookSort: sortModel}) {
+  _onGetBooksResponse({books, sort, pager, filter, replaceBooks}) {
     let state = this._state;
-    sortModel = sortModel || state.sortModel;
-    books = _.isEqual(sortModel, state.sortModel) ? state.books.concat(books) : books
-    this._setState({
-      books: books,
-      sortModel: sortModel || state.sortModel,
+    sort = sort || state.sortModel;
+    let res = {
+      totalBooksInSystem: pager.totalBooksInSystem,
+      sortModel: sort,
+      searchString: Store.getSearchStringFromFullTextSearchFilter(filter),
       isBusy: false
-    });
+    };
+
+    if (replaceBooks) {
+      res.books = books;
+      res.bookListStartRowNumber = 0;
+
+    } else {
+      res.books = state.books.concat(books);
+      res.bookListStartRowNumber = undefined;
+    }
+
+    this._setState(res);
   }
 
 
@@ -133,6 +169,7 @@ class Store {
   }
 
 
+  @autobind
   _handleError(err) {
     console.error(err.stack);
     alert(err.message);
@@ -160,12 +197,6 @@ class Store {
     this._setState({
       selectedBookIdMap: currentIdMap
     });
-  }
-
-
-  @autobind
-  _handleSearchChanged(searchString) {
-    console.log('Search string changed: ', searchString);
   }
 
 

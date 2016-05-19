@@ -79,6 +79,9 @@ class Book {
       };
     }
 
+    if (opts['$text'])
+      filter['$text'] = opts['$text'];
+
     return filter;
   }
 
