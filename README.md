@@ -15,28 +15,26 @@ Unfortunately there is no simple install for Horace at the moment, as it is stil
 
 1. Checkout this repository
 2. Run npm install
-3. Install Haml (sudo gem install haml)
-4. Install bower (sudo npm install bower -g)
-5. Install gulp (sudo npm install gulp -g)
-6. Install mongodb
-7. Create a config.json file in the project root with path to your books folder
-8. Build the front-end by running gulp
+3. Install bower (sudo npm install bower -g)
+4. Install gulp (sudo npm install gulp -g)
+5. Install mongodb
+6. Create a config.json file in the project root (see sample config later in this readme file)
+7. Build the front-end by running `gulp build`
+8. Build the app by running `gulp build-app`
 9. Run npm start
 10. Point your browser to localhost:8080
 
 ### Configuration
-Configuration options for Horace can be seen in app/config.coffee. One may create a config.json file in the project root to override these settings.
-
-The most important setting is 'horace.folders'. This is a string array containing paths to all the folders that you want to monitor and that may contain books. Folders are scanned recursively.
-
 Here's a sample config.json file
 
 ```
 {
-	"horace.folders": "~/AllBooks",
-	"horace.adapters": [
-		"./adapters/pdf-adapter.coffee"
-	]
+  "horace.port" : 8080,
+  "horace.scan.serverstart": true,
+  "horace.folders": [
+    "/path/to/yourBooksFolder"
+  ],
+  "horace.adapters": []
 }
 ```
 
@@ -49,16 +47,3 @@ Contributions to Horace are welcome. If you would like to contribute code then
 
 ### More Information
 Horace uses the beautiful taiga.io for project management. Visit our wiki at https://tree.taiga.io/project/speedysan-horace-2/wiki/home to know more about Horace including its architecture and other details. If you have a question which is not answered in the wiki then feel free to drop me a line and I will respond as soon as I can.
-
-### Debugging
-To debug with the wonderful node-inspector, run
-
-```
-node-inspector & coffee --nodejs --debug-brk ./app/index.coffee
-```
-
-To stop the debugger, run
-
-```
-killall node
-```
