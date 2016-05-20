@@ -3,7 +3,6 @@ const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
 const ClientEvents = require('./../../../app/events.js').Client;
-const _ = require('lodash');
 const BookHTML = require('./book-html.js');
 const SimianGrid = require('simian-grid');
 
@@ -29,7 +28,7 @@ class BookList extends React.Component {
 
 
   askForMoreBooks(from, numItems) {
-    PubSub.broadcast(ClientEvents.LOAD_MORE_BOOKS, {
+    PubSub.broadcast(ClientEvents.REQUEST_BOOKS, {
       from: from,
       numItems: numItems
     });
@@ -42,22 +41,22 @@ class BookList extends React.Component {
       case 'select'          : return this.handleCheckboxClick(evt);
       case 'select-all'      : return this.handleSelectAllClick(evt);
       case 'title'           : return this.handleTitleClick(evt);
-      case 'title-header'    : return this.handleTitleHeaderClick(evt);
-      case 'authors'         : return this.handleAuthorsClick(evt);
-      case 'authors-header'  : return this.handleAuthorsHeaderClick(evt);
       case 'subjects'        : return this.handleSubjectsClick(evt);
-      case 'subjects-header' : return this.handleSubjectsHeaderClick(evt);
       case 'year'            : return this.handleYearClick(evt);
-      case 'year-header'     : return this.handleYearHeaderClick(evt);
+      case 'authors'         : return this.handleAuthorsClick(evt);
+      case 'title-header'    : return this.handleHeaderClicked('title');
+      case 'authors-header'  : return this.handleHeaderClicked('authors');
+      case 'subjects-header' : return this.handleHeaderClicked('subjects');
+      case 'year-header'     : return this.handleHeaderClicked('year');
     }
-    console.warn('Could not identify what was clicked');
+    console.warn('Could not identify what was clicked >', evt.target.getAttribute('click-marker'), '<');
   }
 
 
   handleCheckboxClick(evt) {
     let checkbox = evt.target;
     let bookId = checkbox.getAttribute('book-id');
-    console.log('Book selection changed: ', {
+    PubSub.broadcast(ClientEvents.BOOK_SELECTION_CHANGED, {
       id: bookId,
       isSelected: checkbox.checked
     });
@@ -74,18 +73,8 @@ class BookList extends React.Component {
   }
 
 
-  handleTitleHeaderClick(evt) {
-    console.log('Book title header clicked');
-  }
-
-
   handleAuthorsClick(evt) {
     console.log('authors clicked: ', evt.target.getAttribute('book-id'));
-  }
-
-
-  handleAuthorsHeaderClick(evt) {
-    console.log('Book authors header clicked');
   }
 
 
@@ -94,26 +83,23 @@ class BookList extends React.Component {
   }
 
 
-  handleSubjectsHeaderClick(evt) {
-    console.log('Book subjects header clicked');
-  }
-
-
   handleYearClick(evt) {
     console.log('year clicked: ', evt.target.getAttribute('book-id'));
   }
 
 
-  handleYearHeaderClick(evt) {
-    console.log('Book year header clicked');
+  handleHeaderClicked(columnName) {
+    PubSub.broadcast(ClientEvents.SORT_CHANGED, {
+      columnName: columnName
+    })
   }
 
 
   @autobind
   render() {
     let props = this.props;
-    let rows  = props.books.map(BookHTML.getRowMarkup);
-    let headerRowMarkup = BookHTML.getHeaderRowMarkup(props.sortColumn, props.sortAscending);
+    let rows  = props.books.map((b) => BookHTML.getRowMarkup(b, b.isSelected) );
+    let headerRowMarkup = BookHTML.getHeaderRowMarkup(props.sort.columnName, props.sort.isAscending);
     return (
       <div className = {StyleClass.ROOT}>
         <div className = {StyleClass.INNERWRAPPER}>
@@ -123,12 +109,13 @@ class BookList extends React.Component {
             headerRow        = {headerRowMarkup}
             rows             = {rows}
             onMoreRowsNeeded = {this.askForMoreBooks}
-            numTotalRows     = {7190}
+            numTotalRows     = {props.totalBooksInSystem}
             columnDefinition = {ColumnDefinition}
             rowHeight        = {40}
             pageSize         = {200}
             numBufferRows    = {20}
             noTable          = {true}
+            rowNumber        = {props.bookListStartRowNumber}
           />
         </div>
       </div>

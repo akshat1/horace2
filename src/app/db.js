@@ -4,12 +4,12 @@
  * @module db
  */
 
-var MongoDB = require('mongodb');
-var Winston = require('winston');
+const MongoDB = require('mongodb');
+const Winston = require('winston');
 
-var PagerModel = require('./model/library-model.js').PagerModel;
-var Config = require('./config.js');
-var Book = require('./book.js');
+const PagerModel = require('./model/library-model.js').PagerModel;
+const Config = require('./config.js');
+const Book = require('./book.js');
 
 const Collection = {
   Books: 'books'
@@ -27,20 +27,9 @@ const logger = new Winston.Logger({
 });
 
 
-/*
-// Keep tingoDB code around for now
-dbLocation = $Config 'horace.db.location'
-throw new Error 'dbLocation not defined' unless dbLocation
-logger.info "Ensure #{dbLocation}"
-$FSExtra.ensureDir dbLocation
-
-logger.info 'Create db instance'
-Engine = $Tingo()
-database = new Engine.Db dbLocation, {}
-*/
-
 const client = MongoDB.MongoClient;
 const url = 'mongodb://localhost:27017/horace?maxPoolSize=10';
+const TEXT_INDEX_NAME = 'BOOKS_TEXT_INDEX';
 
 var collectionBooks = null;
 
@@ -52,9 +41,39 @@ var ConnectPromise = new Promise(function(resolve, reject) {
       reject(connectErr);
     } else {
       collectionBooks = db.collection(Collection.Books);
-      resolve();
+      resolve(collectionBooks);
     }
   });
+});
+
+
+function makeTextIndex() {
+  return collectionBooks.createIndex({ '$**': 'text' },{ name: TEXT_INDEX_NAME });
+}
+
+
+(function initialiseCollection() {
+  return ConnectPromise
+  .then(function(x) {
+    return x.indexes();
+  })
+  .then(function(indexes) {
+    let textIndexFound = false;
+    for (let index of indexes) {
+      if (index.name === TEXT_INDEX_NAME) {
+        textIndexFound = true;
+        break;
+      }
+    }
+    if (!textIndexFound)
+      return makeTextIndex();
+  });
+})()
+.then(function() {
+  console.log('Books collection initialised');
+})
+.catch(function(err) {
+  console.error('Error initialising collection.', err);
 });
 
 
@@ -107,29 +126,23 @@ function getBooks(params) {
       var includeHidden = !!params.includeHidden;
       var filter   = params.filter ? Book.mongoFilter(params.filter, includeHidden) : {};
       var sortOpts = {};
-      sortOpts[sort.columnName] = sort.isAscending ? 1 : -1;
+      sortOpts[Book.getSortColumnName(sort.columnName)] = sort.isAscending ? 1 : -1;
+      console.log('Going to find using ...\n', filter);
       var cur = collectionBooks.find(filter).sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){
           logger.error('Error converting to array', curErr);
-          return reject(curErr);
+          reject(curErr);
+
         } else {
-          //var currentPage = pager.currentPage;
-          //var pageSize = pager.pageSize;
-          var from = pager.from;
-          var to = pager.to;
-          //var maxPages = books.length ? Math.ceil(books.length / pageSize) : 0;
-          books = books.slice(from, to);
-          resolve(collectionBooks.count()
-            .then(function(totalBooksInSystem) {
-              return {
-                books  : books,
-                pager  : new PagerModel(from, to, totalBooksInSystem),
-                sort   : sort,
-                filter : params.filter || {}
-              };
-            }));
-        }
+          let {from, to} = pager;
+          resolve({
+            books  : books.slice(from, to),
+            pager  : new PagerModel(from, to, books.length),
+            sort   : sort,
+            filter : params.filter || {}
+          });
+        }// if (curErr)
       });//cur.toArray
     });
   });

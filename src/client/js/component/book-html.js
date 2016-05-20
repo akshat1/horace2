@@ -1,10 +1,29 @@
 'use strict';
 
+const _ = require('lodash');
+
+const ColumnName = {
+  Title: 'title'
+};
+
+
+function getSortIndicatorMarkup (sortColumnName, isAscending, targetColumnName, clickMarker) {
+  if (sortColumnName === targetColumnName) {
+    let styleClass = isAscending ? 'fa-sort-asc' : 'fa-sort-desc';
+    return `
+      <div class = 'h-sort fa ${styleClass}' click-marker = '${clickMarker}'></div>
+    `
+  }
+  else
+    return '';
+}
+
+
 const BookHTML = {
   getSelectionControl: function(isChecked, bookId) {
     return `
       <div class='h-book-list-selection-cell h-book-list-cell'>
-        <input type='checkbox' ${isChecked ? 'selected' : ''} click-marker='select' book-id='${bookId}'/>
+        <input type='checkbox' ${isChecked ? 'checked' : ''} click-marker='select' book-id='${bookId}'/>
       </div>
     `;
   },
@@ -20,37 +39,32 @@ const BookHTML = {
   },
 
 
-  getTitle: function(title, isHeader, bookId, sortClassName) {
-    let marker;
-    let bookIdAttr;
-    if (isHeader) {
-      marker = 'title-header';
-      bookIdAttr = '';
-    } else {
-      marker = 'title';
-      bookIdAttr = `book-id='${bookId}'`;
-    }
-
+  getTitle: function(title, bookId) {
     return `
-      <div class='h-book-list-title-cell h-book-list-cell ${sortClassName}' title='${title}' click-marker='${marker}' ${bookIdAttr}>
+      <div class='h-book-list-title-cell h-book-list-cell' title='${title}' click-marker='${title}' book-id='${bookId}'>
         ${title}
       </div>
     `;
   },
 
 
-  getTitleColumnHeader: function() {
-    return BookHTML.getTitle('Title', true);
+  getTitleColumnHeader: function(sortColumnName, isAscending) {
+    return `
+      <div class='h-book-list-title-cell h-book-list-cell' title='Title' click-marker='title-header'>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'title', 'title-header')}
+        Title
+      </div>
+    `;
   },
 
 
   getArray: function(items) {
-    let firstItem = items[0];
+    let firstItem = items[0] || '';
     let badge = '';
     let tooltip = firstItem;
     if (items.length > 1) {
       badge = `<span class='h-book-list-more-badge'>+${items.length - 1}</span>`;
-      tooltip = `${firstItem} and ${items.length - 1} more.`
+      tooltip = `${firstItem} and ${items.length - 1} more.`;
     }
 
 
@@ -67,16 +81,17 @@ const BookHTML = {
   getAuthors: function(authors, bookId) {
     let {markup, tooltip} = BookHTML.getArray(authors);
     return `
-      <div class='h-book-authors-cell h-book-list-cell' title='${tooltip}' click-marker='authors' book-id='${bookId}'>
+      <div class='h-book-list-authors-cell h-book-list-cell' title='${tooltip}' click-marker='authors' book-id='${bookId}'>
         ${markup}
       </div>
     `;
   },
 
 
-  getAuthorsColumnHeader: function() {
+  getAuthorsColumnHeader: function(sortColumnName, isAscending) {
     return `
-      <div class='h-book-authors-cell h-book-list-cell' click-marker='authors-header'>
+      <div class='h-book-list-authors-cell h-book-list-cell' click-marker='authors-header'>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'authors', 'authors-header')}
         Author
       </div>
     `;
@@ -86,16 +101,17 @@ const BookHTML = {
   getSubjects: function(subjects, bookId) {
     let {markup, tooltip} = BookHTML.getArray(subjects);
     return `
-      <div class='h-book-subjects-cell h-book-list-cell' title='${tooltip}' click-marker='subjects' book-id='${bookId}'>
+      <div class='h-book-list-subjects-cell h-book-list-cell' title='${tooltip}' click-marker='subjects' book-id='${bookId}'>
         ${markup}
       </div>
     `;
   },
 
 
-  getSubjectsColumnHeader: function() {
+  getSubjectsColumnHeader: function(sortColumnName, isAscending) {
     return `
-      <div class='h-book-subjects-cell h-book-list-cell' title='Subjects' click-marker='subjects-header'>
+      <div class='h-book-list-subjects-cell h-book-list-cell' title='Subjects' click-marker='subjects-header'>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'subjects', 'subjects-header')}
         Subjects
       </div>
     `;
@@ -103,25 +119,21 @@ const BookHTML = {
 
 
   getYear: function(year, isHeader, bookId) {
-    let marker, bookIdAttr;
-    if (isHeader) {
-      marker = 'year-header';
-      bookIdAttr = '';
-    } else {
-      marker = 'year';
-      bookIdAttr = `book-id='${bookId}'`;
-    };
-
     return `
-      <div class='h-book-list-year-cell h-book-list-cell' click-marker='${marker}'>
+      <div class='h-book-list-year-cell h-book-list-cell' click-marker='year' book-id='${bookId}'>
         ${year}
       </div>
     `;
   },
 
 
-  getYearColumnHeader: function() {
-    return BookHTML.getYear('Year', true);
+  getYearColumnHeader: function(sortColumnName, isAscending) {
+    return `
+      <div class='h-book-list-year-cell h-book-list-cell' click-marker='year-header'>
+        ${getSortIndicatorMarkup(sortColumnName, isAscending, 'year', 'year-header')}
+        Year
+      </div>
+    `;
   },
 
 
@@ -132,7 +144,7 @@ const BookHTML = {
           ${BookHTML.getSelectionControl(isSelected, bookId)}
           ${BookHTML.getTitle(book.title, false, bookId)}
           ${BookHTML.getAuthors(book.authors, bookId)}
-          ${BookHTML.getYear(book.year, false, bookId)}
+          ${BookHTML.getYear(book.displayYear, false, bookId)}
           ${BookHTML.getSubjects(book.subjects, bookId)}
         `
     };
@@ -144,16 +156,16 @@ const BookHTML = {
   }
 }
 
+// We would want to keep an eye on memory usage by this guy.
 BookHTML.getRowMarkup = _.memoize(BookHTML.getRowMarkupInner, BookHTML.getMemoCacheKey);
 BookHTML.getHeaderRowMarkup = function(sortColumnName, isAscending) {
-  let sortClassName = '';
   return {
     __html: `
         ${BookHTML.getSelectAllColumnHeader()}
-        ${BookHTML.getTitleColumnHeader()}
-        ${BookHTML.getAuthorsColumnHeader()}
-        ${BookHTML.getYearColumnHeader()}
-        ${BookHTML.getSubjectsColumnHeader()}
+        ${BookHTML.getTitleColumnHeader(sortColumnName, isAscending)}
+        ${BookHTML.getAuthorsColumnHeader(sortColumnName, isAscending)}
+        ${BookHTML.getYearColumnHeader(sortColumnName, isAscending)}
+        ${BookHTML.getSubjectsColumnHeader(sortColumnName, isAscending)}
       `
   };
 }

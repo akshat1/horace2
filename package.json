@@ -45,6 +45,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "babelify": "^7.2.0",
     "chai": "^3.5.0",
+    "css-color-converter": "^1.0.2",
     "eslint-plugin-react": "^5.0.0",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
@@ -67,11 +68,12 @@
     "jsdoc": "^3.4.0",
     "mocha": "^2.4.5",
     "mockery": "^1.6.2",
+    "postcss-functions": "^2.1.0",
     "postcss-import": "^8.1.0",
     "postcss-mixins": "^4.0.1",
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^1.2.0",
-    "simian-grid": "^0.2.34",
+    "simian-grid": "^0.2.36",
     "sinon": "^1.17.3",
     "vinyl-source-stream": "^1.1.0"
   }

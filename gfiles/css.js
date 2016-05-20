@@ -36,7 +36,8 @@ module.exports = function() {
       mixins: _.extend({}, flexBoxMixins)
     }),
     require('postcss-simple-vars'),
-    require('postcss-nested')
+    require('postcss-nested'),
+    require('postcss-functions')(require('../postcss/functions.js'))
   ];
 
 
@@ -45,13 +46,6 @@ module.exports = function() {
       .pipe(sourcemaps.init())
       .pipe(postCSS(pcPlugins))
       .pipe(sourcemaps.write('.'))
-      .pipe(gulp.dest(Paths.css));
-  });
-
-
-  gulp.task('sass', function() {
-    return gulp.src(['src/client/sass/*.scss'])
-      .pipe(require('gulp-sass')())
       .pipe(gulp.dest(Paths.css));
   });
 

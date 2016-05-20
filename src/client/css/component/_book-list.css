@@ -1,0 +1,155 @@
+$_book-list-row-height: 40px;
+$_book-col-width-selection: 40px;
+$_book-col-width-title: 930px;
+$_book-col-width-authors: 200px;
+$_book-col-width-year: 80px;
+$_book-col-width-subjects: 150px;
+$_book-grid-total-width: 1430px;
+
+
+.h-book-list {
+  @mixin flexItem 1, 1;
+  position: relative;
+
+
+  .h-book-list-inner-wrapper {
+    @mixin position absolute, 0, 0, 0, 0;
+  }
+
+
+  .header {
+    background: #6AB2FF;
+    cursor: pointer;
+  }
+
+
+  .simian-grid-list-row {
+    font-size: 0;
+    &.odd {
+      background: #F2F2F2;
+    }
+  }
+
+
+  .h-book-list-cell {
+    @mixin text-overflow;
+    font-size: $base-font-size;
+    border-right: 1px solid $border-color;
+    display: inline-block;
+    padding: 0 $space-M;
+    height: $_book-list-row-height;
+    line-height: $_book-list-row-height;
+    box-sizing: border-box;
+
+    &:last-child {
+      border: none;
+    }
+  }
+
+
+  .h-book-list-selection-cell {
+    width: $_book-col-width-selection;
+  }
+
+
+  .h-book-list-title-cell {
+    width: $_book-col-width-title;
+  }
+
+
+  .h-book-list-authors-cell {
+    width: $_book-col-width-authors;
+  }
+
+
+  .h-book-list-subjects-cell {
+    width: $_book-col-width-subjects;
+  }
+
+
+  .h-book-list-year-cell {
+    width: $_book-col-width-year;
+    text-align: center;
+  }
+
+
+  .h-book-list-more-badge {
+    background: red;
+    color: white;
+    border-radius: 30px;
+    height: 25px;
+    width: 25px;
+    line-height: 25px;
+    text-align: center;
+    float: right;
+    margin-top: 5px;
+  }
+}
+
+
+@media screen and (min-width: 1250px) and (max-width: 1436px) {
+  .h-book-list {
+    .h-book-list-subjects-cell {
+      display: none;
+    }
+  }
+}
+
+
+@media screen and (min-width: 1170px) and (max-width: 1250px) {
+  .h-book-list {
+    .h-book-list-subjects-cell {
+      display: none;
+    }
+
+    .h-book-list-year-cell {
+      display: none;
+    }
+  }
+}
+
+
+@media screen and (min-width: 986px) and (max-width: 1170px) {
+  .h-book-list {
+    .h-book-list-subjects-cell {
+      display: none;
+    }
+
+    .h-book-list-year-cell {
+      display: none;
+    }
+
+    .h-book-list-authors-cell {
+      display: none;
+    }
+  }
+}
+
+
+@media screen and (max-width: 970px) {
+  .h-book-list {
+    .simian-grid-list-container {
+      width: 100%;
+    }
+
+    .h-book-list-subjects-cell {
+      display: none;
+    }
+
+    .h-book-list-year-cell {
+      display: none;
+    }
+
+    .h-book-list-authors-cell {
+      display: none;
+    }
+
+    .h-book-list-selection-cell {
+      display: none;
+    }
+
+    .h-book-list-title-cell {
+      width: 100%;
+    }
+  }
+}

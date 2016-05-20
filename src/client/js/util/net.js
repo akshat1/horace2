@@ -63,7 +63,7 @@ function downloadFile(url) {
 }
 
 
-function getBooks(pager, sort, filter) {
+function getBooks(pager = {}, sort = {}, filter = {}, replaceBooks) {
   return Http.post({
     url          : getUrl(ClientURLMap['Books']()),
     responseType : Http.ResponseType.JSON,
@@ -74,10 +74,11 @@ function getBooks(pager, sort, filter) {
     }
   }).then(function(res) {
     return {
-      books     : res.books,
-      bookPager : res.pager,
-      bookSort  : res.sort,
-      filter    : res.filter
+      books        : res.books,
+      pager        : res.pager,
+      sort         : res.sort,
+      filter       : res.filter,
+      replaceBooks : replaceBooks
     };
   });
 }

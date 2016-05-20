@@ -2,15 +2,11 @@
 
 /* istanbul ignore next */
 const Client = {
-  TABLE_SET_SORT         : 'table.set.sort',
-  BOOKS_SET_FILTER       : 'books.filter.set',
-  BOOKS_SHOW_FILTER      : 'books.filter.show',
-  BOOK_DOWNLOAD          : 'book.download',
-  BOOK_HIDE              : 'book.hide',
-  BOOK_EDIT              : 'book.edit',
-  BOOK_SELECTION_CHANGED : 'book.selection.changed',
-  SELECTION_CLEAR        : 'selection.clear',
-  NOTIFICATION_DISMISS   : 'notification.dismiss'
+  REQUEST_BOOKS          : 'client.action.fetch.books',
+  REQUEST_SERVER_STATUS  : 'client.action.fetch.serverStatus',
+  BOOK_SELECTION_CHANGED : 'client.event.bookSelectionChanged',
+  SORT_CHANGED           : 'client.action.sort',
+  SEARCH_CHANGED         : 'client.action.search'
 };
 
 

@@ -1,0 +1,19 @@
+.h-search-box {
+  @mixin flexBox row;
+
+  .h-search-go-button {
+    @mixin flexItem 0, 0;
+  }
+
+  .h-search-box-text-input {
+    @mixin flexItem 1, 1;
+    width: 0;
+    padding: 0;
+    transition: all 0.25s;
+
+    &:focus {
+      width: 200px;
+      padding: 0 $space-M;
+    };
+  }
+}

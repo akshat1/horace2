@@ -1,0 +1,55 @@
+/* ******************* Native ******************* */
+html {
+  height: 100%;
+  font-size: $base-font-size;
+}
+
+body{
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  font-size: $base-font-size;
+  font-family: Roboto, Sans-Serif;
+}
+
+select {
+  border-radius: 2px;
+}
+
+input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"], textarea, select {
+  border-radius: 0px;
+  border: 1px solid $border-color;
+  box-shadow: none;
+  outline: none;
+}
+
+th {
+  font-weight: normal;
+}
+
+a {
+  color: $link-color;
+}
+
+/* ******************* /Native ******************* */
+
+#libraryRoot {
+  @mixin position absolute, 0, 0, 0, 0;
+}
+
+
+.h-library {
+  @mixin flexBox '', '','flex-start';
+  font-size: 0.9em;
+  height: 100%;
+}
+
+
+.h-trigger {
+  cursor: pointer;
+}
+
+
+.h-trigger + .h-trigger {
+  margin-left: $space-M;
+}

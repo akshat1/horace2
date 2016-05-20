@@ -18,7 +18,24 @@ function getListenerArray(eventName) {
 
 
 function subscribe(eventName, fn) {
+  if (typeof eventName !== 'string')
+    throw new Error(`PubSub.subscribe: Expected eventName to be a string but it was ${typeof eventName}`);
+
+  if (typeof fn !== 'function')
+    throw new Error(`PubSub.subscribe: Expected fn to be a function but it was ${typeof fn}`);
+
   getListenerArray(eventName).push(fn);
+}
+
+
+/**
+ * Subscribe using a map<String: eventName, Function: handler>
+ * @param {Object} map
+ */
+function subscribeWithMap(map) {
+  for(let eventName in map) {
+    subscribe(eventName, map[eventName]);
+  }
 }
 
 
@@ -30,8 +47,7 @@ function unsubscribe(eventName, fn) {
 
 function broadcast(eventName, payload) {
   var arr = getListenerArray(eventName);
-  for(let i = 0; i < arr.length; i++) {
-    let fn = arr[i];
+  for (let fn of arr) {
     let returnValue = fn(payload);
     // Stop execution if a broadcast listener returns false
     if(returnValue === false) {
@@ -41,10 +57,11 @@ function broadcast(eventName, payload) {
 }
 
 const PubSub = {
-  getListenerArray : getListenerArray,
-  subscribe        : subscribe,
-  unsubscribe      : unsubscribe,
-  broadcast        : broadcast
+  getListenerArray,
+  subscribe,
+  subscribeWithMap,
+  unsubscribe,
+  broadcast
 };
 
 module.exports = PubSub;

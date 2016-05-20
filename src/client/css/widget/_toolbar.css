@@ -1,0 +1,39 @@
+.h-widget-toolbar {
+  @mixin flexBox row, '', space-between, center;
+  height: 60px;
+  box-sizing: border-box;
+  border: 1px solid $border-color;
+  padding: 0 $space-M;
+  > * {
+    @mixin flexItem 0, 0;
+  }
+}
+
+
+.h-widget-toolbar-group {
+  @mixin flexBox row, '', space-between, center;
+  > * {
+    @mixin flexItem 0, 0;
+  }
+}
+
+
+.h-widget-toolbar-separator {
+  width: 1px;
+  height: 1.1em;
+  background: color(lighten($border-color, 50%));
+  border-right: 1px solid $border-color;
+}
+
+
+.h-left {
+  .h-widget + .h-widget {
+    margin-left: $space-M;
+  }
+}
+
+.h-right {
+  .h-widget + .h-widget {
+    margin-right: $space-M;
+  }
+}
