@@ -42,20 +42,12 @@ class HToolbar extends React.Component {
   }
 
 
-  renderIndicators() {
-    return [
-      <Notifications notifications = {this.props.notifications} key = 'h.toolbar.indicator.notifications'/>
-    ];
-  }
-
-
   renderBookGroupControls() {
     let isNothingSelected = this.props.selectedBooks.length === 0;
     let isMultipleBookControlsDisabled = this.props.selectedBooks.length < 2;
 
     return (
       <ToolbarGroup className = {StyleClass.TGSECONDARY}>
-        {this.renderIndicators()}
         <Button
           label      = 'Hide'
           disabled   = {isNothingSelected}
