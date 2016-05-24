@@ -98,12 +98,6 @@ class Store {
 
 
   @autobind
-  _handleBookReadyForDownload() {
-    //console.log('Book ready for download');
-  }
-
-
-  @autobind
   _handleSortChanged(payload) {
     let oldSortModel = this._state.sortModel;
     let sortModel;
@@ -179,6 +173,20 @@ class Store {
     this._setState({
       isBusy: false
     })
+  }
+
+
+  @autobind
+  _handleBookReadyForDownload(payload) {
+    let n = {
+      id: Date.now(),
+      type: 'INFO',
+      message: `${payload.title} ready for download.`,
+      timeout: 15000
+    };
+    this._setState({
+      notifications: this._state.notifications.concat([n])
+    });
   }
 
 

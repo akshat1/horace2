@@ -53,6 +53,13 @@ function offWebSocket(eventName, callback) {
 
 
 // ----------------- End Point ------------------
+function requestBookDownload(bookId) {
+  emitWebSocket(ServerEvents.REQUEST_BOOK_DOWNLOAD, {
+    bookId
+  });
+}
+
+
 function downloadFile(url) {
   var frame = document.createElement('iframe');
   frame.className = 'h-download-frame';
@@ -141,5 +148,6 @@ module.exports = {
   getDistinctBookAttribute: getDistinctBookAttribute,
   requestDownload: requestDownload,
   isServerScanningForBooks: isServerScanningForBooks,
-  doStartScanning: doStartScanning
+  doStartScanning: doStartScanning,
+  requestBookDownload: requestBookDownload
 };

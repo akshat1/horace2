@@ -2,7 +2,11 @@
 const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
-const ClientEvents = require('./../../../app/events.js').Client;
+const Net = require('./../util/net.js');
+const {
+  ClientEvents,
+  ServerEvents
+} = require('./../../../app/events.js');
 const BookHTML = require('./book-html.js');
 const SimianGrid = require('simian-grid');
 
@@ -70,6 +74,7 @@ class BookList extends React.Component {
 
   handleTitleClick(evt) {
     console.log('book clicked: ', evt.target.getAttribute('book-id'));
+    Net.requestBookDownload(evt.target.getAttribute('book-id'));
   }
 
 

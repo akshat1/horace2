@@ -3,7 +3,6 @@ const React = require('react');
 const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
-const Notifications = require('./notifications.jsx');
 const {ToolbarGroupFloat, Toolbar, ToolbarGroup, ToolbarSeparator} = require('../widget/Toolbar.jsx');
 const SearchBox = require('./searchbox.jsx');
 const {Button} = require('../widget/Button.jsx');

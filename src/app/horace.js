@@ -89,7 +89,10 @@ function requestDownload(id) {
 
           tmpFileWStream.on('close', function() {
             logger.info('Finished writing book to tmp location.');
-            resolve(tmpFilePath);
+            resolve({
+              tmpFilePath: tmpFilePath,
+              title: book.title
+            });
           });
 
         } catch (err2) {

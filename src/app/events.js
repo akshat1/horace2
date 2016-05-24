@@ -6,7 +6,8 @@ const Client = {
   REQUEST_SERVER_STATUS  : 'client.action.fetch.serverStatus',
   BOOK_SELECTION_CHANGED : 'client.event.bookSelectionChanged',
   SORT_CHANGED           : 'client.action.sort',
-  SEARCH_CHANGED         : 'client.action.search'
+  SEARCH_CHANGED         : 'client.action.search',
+  GROWL                  : 'client.event.growl'
 };
 
 

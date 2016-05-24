@@ -41,8 +41,10 @@ const BookHTML = {
 
   getTitle: function(title, bookId) {
     return `
-      <div class='h-book-list-title-cell h-book-list-cell' title='${title}' click-marker='${title}' book-id='${bookId}'>
-        ${title}
+      <div class='h-book-list-title-cell h-book-list-cell'>
+        <a href='#' click-marker='title' book-id='${bookId}' title='${title}'>
+          ${title}
+        </a>
       </div>
     `;
   },
@@ -118,7 +120,7 @@ const BookHTML = {
   },
 
 
-  getYear: function(year, isHeader, bookId) {
+  getYear: function(year, bookId) {
     return `
       <div class='h-book-list-year-cell h-book-list-cell' click-marker='year' book-id='${bookId}'>
         ${year}
@@ -142,9 +144,9 @@ const BookHTML = {
     return {
       __html: `
           ${BookHTML.getSelectionControl(isSelected, bookId)}
-          ${BookHTML.getTitle(book.title, false, bookId)}
+          ${BookHTML.getTitle(book.title, bookId)}
           ${BookHTML.getAuthors(book.authors, bookId)}
-          ${BookHTML.getYear(book.displayYear, false, bookId)}
+          ${BookHTML.getYear(book.displayYear, bookId)}
           ${BookHTML.getSubjects(book.subjects, bookId)}
         `
     };

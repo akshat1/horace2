@@ -2,6 +2,7 @@
 
 const React = require('react');
 const autobind = require('autobind-decorator');
+const Growl = require('./growl.jsx');
 const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
 const Store = require('../model/store.js');
@@ -24,6 +25,7 @@ class Library extends React.Component {
   constructor(props) {
     super(props);
     window._Library = this;
+    window.PubSub = PubSub;
     this._store     = Store.getInstance();
     this.state      = this._store.getState();
     this._store.subscribe(this._handleStoreChanged);
@@ -41,6 +43,15 @@ class Library extends React.Component {
     PubSub.broadcast(ClientEvents.REQUEST_SERVER_STATUS);
     PubSub.broadcast(ClientEvents.REQUEST_BOOKS);
   }
+
+
+  /*renderNotifications() {
+    return (
+      <Notifications
+        items = {this.state.notifications}
+      />
+    );
+  }*/
 
 
   renderBookToolbar() {
@@ -73,6 +84,7 @@ class Library extends React.Component {
       <div className = {StyleClass.ROOT} ref = {RefName.ROOT}>
         {this.renderBookToolbar()}
         {this.renderBookList()}
+        <Growl />
       </div>
     );
   }//render

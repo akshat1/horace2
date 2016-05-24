@@ -1,0 +1,48 @@
+.h-growl {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+
+
+.h-growl-item {
+  padding: $space-L;
+  background: rgb(150, 150, 150);
+  width: 0;
+  margin: $space-L 0 0 0;
+  box-shadow: $box-shadow-raised;
+  height: 0px;
+  overflow: hidden;
+  opacity: 0;
+  transition: all 1s;
+  box-sizing: border-box;
+  border-radius: 2px;
+
+  &:first-item {
+    margin-top: 0;
+  };
+}
+
+
+.h-growl-item-active {
+  width: 50vw;
+  height: 60px;
+  opacity: 1;
+  margin: $space-L 25vw 0 25vw;
+}
+
+
+.h-growl-item-info {
+  background: #1B98E0;
+}
+
+
+.h-growl-item-warn {
+  background: #FFE66A;
+}
+
+
+.h-growl-item-error {
+  background: #FF8C6A;
+}

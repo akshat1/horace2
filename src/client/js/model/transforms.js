@@ -32,6 +32,22 @@ function transformBooks(state) {
 }
 
 
+function transformNotifications(state) {
+  let notifications = [];
+  for (fD in state.filesToDownload) {
+    notifications.push({
+      id: Date.now(),
+      type: 'info',
+      message: 'Download ready'
+    });
+  }
+  state.notifications = notifications.sort();
+}
+
+
+// ---------------------------------------------------------------------------------
+
+
 const sequence = [
   listSelectedBooks,
   transformBooks

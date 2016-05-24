@@ -97,10 +97,11 @@ io.on('connection', function(socket) {
   socket.on(ServerEvents.REQUEST_BOOK_DOWNLOAD, function(query) {
     logger.debug('BOOK DOWNLOAD REQUESTED // %o', query);
     return Horace.requestDownload(parseInt(query.bookId))
-      .then(function(tmpFilePath) {
+      .then(function({tmpFilePath, title}) {
         logger.debug(`\n$$$$$\nsend message that the download is ready at ${tmpFilePath}.`);
         let fileName = Path.basename(tmpFilePath);
         return socket.emit(ServerEvents.BOOK_READY_FOR_DOWNLOAD, {
+          title: title,
           path: ServerUrlMap.fileDownload(fileName)
         });
       })
