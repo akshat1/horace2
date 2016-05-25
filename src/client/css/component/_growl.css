@@ -18,10 +18,24 @@
   transition: all 1s;
   box-sizing: border-box;
   border-radius: 2px;
+  position: relative;
 
   &:first-item {
     margin-top: 0;
   };
+}
+
+
+button.h-widget-button.h-button-close.h-growl-item-close-button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+  padding: 0 0 0 6px;
+}
+
+
+.h-growl-message {
+  @mixin text-overflow;
 }
 
 

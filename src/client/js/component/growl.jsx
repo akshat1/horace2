@@ -3,12 +3,14 @@ const autobind = require('autobind-decorator');
 const _        = require('lodash');
 const PubSub   = require('./../util/pubsub.js');
 const { Client: ClientEvents } = require('./../../../app/events.js');
+const { Button, ButtonType }   = require('../widget/Button.jsx');
 
 const StyleClass = {
   ROOT       : 'h-growl',
   ITEMROOT   : 'h-growl-item',
   MESSAGE    : 'h-growl-message',
   ITEMACTIVE : 'h-growl-item-active',
+  ITEMCLOSEBUTTON: 'h-growl-item-close-button',
 
   ItemType: {
     INFO  : 'h-growl-item-info',
@@ -30,8 +32,9 @@ const GrowlType = {
 };
 
 
-const DEFAULT_TIMEOUT = 5000;
-const ANIM_WAIT       = 5000;
+const DEFAULT_TIMEOUT  = 5000;
+const ANIM_WAIT        = 5000;
+const INFINITE_TIMEOUT = -1;
 
 
 class GrowlItem extends React.Component {
@@ -58,16 +61,27 @@ class GrowlItem extends React.Component {
       element.classList.add(StyleClass.ITEMACTIVE);
     }, 0);
 
-    setTimeout(function() {
-      element.classList.remove(StyleClass.ITEMACTIVE);
-    }, timeout);
+    if (timeout !== INFINITE_TIMEOUT) {
+      this.hideTimeout = setTimeout(this.hideItem, timeout);
+    }
+  }
+
+
+  @autobind
+  hideItem() {
+    if (this.hideTimeout)
+      clearTimeout(this.hideTimeout);
+
+    this.refs[RefName.ITEMROOT].classList.remove(StyleClass.ITEMACTIVE);
+    this.mayHide = true;
   }
 
 
   @autobind
   handleTransitionEnd(evt) {
-    if (evt.target.classList.contains(StyleClass.ITEMACTIVE))
+    if (!this.mayHide)
       return;
+
     let {
       id,
       onHide
@@ -78,18 +92,44 @@ class GrowlItem extends React.Component {
   }
 
 
-  render() {
+  renderMessage() {
     let {
-      onClick = _.noop,
-      type
+      message,
+      onClick = _.noop
     } = this.props;
-    let className = `${StyleClass.ITEMROOT} ${StyleClass.ItemType[type]}`;
+    if (typeof message === 'string')
+      message = (
+        <div className = {StyleClass.MESSAGE}>
+          {message}
+        </div>
+      );
+
+    return (
+      <div className = {StyleClass.MESSAGE} onClick = {onClick}>
+        {message}
+      </div>
+    );
+  }
+
+
+  renderCloseButton() {
+    return (
+      <Button
+        type      = {ButtonType.Close}
+        className = {StyleClass.ITEMCLOSEBUTTON}
+        onClick   = {this.hideItem}
+      />
+    );
+  }
+
+
+  render() {
+    let className = `${StyleClass.ITEMROOT} ${StyleClass.ItemType[this.props.type]}`;
 
     return (
       <div className = {className} ref = {RefName.ITEMROOT}>
-        <div className = {StyleClass.MESSAGE} onClick = {onClick}>
-          {props.message}
-        </div>
+        {this.renderMessage()}
+        {this.renderCloseButton()}
       </div>
     );
   }
@@ -115,6 +155,9 @@ class Growl extends React.Component {
 
   @autobind
   handleGrowl(payload) {
+    if (payload.dispose)
+      return this.disposeItem(payload.id);
+
     let defaults = {
       id      : Date.now(),
       timeout : DEFAULT_TIMEOUT,
@@ -130,6 +173,8 @@ class Growl extends React.Component {
 
   @autobind
   disposeItem(id) {
+    if (!id)
+      throw new Error('id not specified to dispose growled item');
     let items = this.state.items.filter(function(i) {
       return i.id !== id;
     });
@@ -174,4 +219,7 @@ class Growl extends React.Component {
 }
 
 
-module.exports = Growl;
+module.exports = {
+  Growl,
+  GrowlType
+};

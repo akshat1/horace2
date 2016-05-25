@@ -2,8 +2,9 @@
 
 const React = require('react');
 const autobind = require('autobind-decorator');
-const Growl = require('./growl.jsx');
+const {Growl, GrowlType} = require('./growl.jsx');
 const PubSub = require('./../util/pubsub.js');
+const Net = require('./../util/net.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
 const Store = require('../model/store.js');
 
@@ -28,13 +29,26 @@ class Library extends React.Component {
     window.PubSub = PubSub;
     this._store     = Store.getInstance();
     this.state      = this._store.getState();
-    this._store.subscribe(this._handleStoreChanged);
+    this._store.subscribe(this.handleStoreChanged);
+    Net.onWebSocket(ServerEvents.BOOK_READY_FOR_DOWNLOAD, this.handleBookReadyForDownload);
   }
 
 
   @autobind
-  _handleStoreChanged(newState) {
+  handleStoreChanged(newState) {
     this.setState(newState);
+  }
+
+
+  @autobind
+  handleBookReadyForDownload({tmpFilePath, title} = payload) {
+    console.log('growl about file');
+    PubSub.broadcast(ClientEvents.GROWL, {
+      id: Date.now(),
+      message: `Download ${title}`,
+      type: GrowlType.INFO,
+      timeout: 15000
+    });
   }
 
 
@@ -43,15 +57,6 @@ class Library extends React.Component {
     PubSub.broadcast(ClientEvents.REQUEST_SERVER_STATUS);
     PubSub.broadcast(ClientEvents.REQUEST_BOOKS);
   }
-
-
-  /*renderNotifications() {
-    return (
-      <Notifications
-        items = {this.state.notifications}
-      />
-    );
-  }*/
 
 
   renderBookToolbar() {

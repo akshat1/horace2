@@ -56,7 +56,7 @@ class Store {
       books                  : [],
       selectedBookIdMap      : {},
       selectedBooks          : [],
-      notifications          : [],
+      booksReadyForDownload  : [],
       sortModel              : new SortModel('title', true),
       searchString           : ''
     };
@@ -178,14 +178,8 @@ class Store {
 
   @autobind
   _handleBookReadyForDownload(payload) {
-    let n = {
-      id: Date.now(),
-      type: 'INFO',
-      message: `${payload.title} ready for download.`,
-      timeout: 15000
-    };
     this._setState({
-      notifications: this._state.notifications.concat([n])
+      booksReadyForDownload: this._state.booksReadyForDownload.concat([payload])
     });
   }
 
