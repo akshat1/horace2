@@ -4,8 +4,8 @@ const autobind = require('autobind-decorator');
 const PubSub = require('./../util/pubsub.js');
 const Net = require('./../util/net.js');
 const {
-  ClientEvents,
-  ServerEvents
+  Client: ClientEvents,
+  Server: ServerEvents
 } = require('./../../../app/events.js');
 const BookHTML = require('./book-html.js');
 const SimianGrid = require('simian-grid');
