@@ -1,7 +1,7 @@
 # horace2
 
 ### Introduction
-Horace is an e-book management software. Horace is intended to be
+Horace is a tool to manage your e-books. Horace is intended to be
 - Free and Open Source
 - Easy to set-up and use
 - Extensible
@@ -9,20 +9,19 @@ Horace is an e-book management software. Horace is intended to be
 - Web enabled
 
 ### Current Status
-Horace is under development at the moment. Currently it can identify pdf files, but eventually it will recognize other common ebook formats.
+Horace is under development at the moment. Currently it can identify pdf and text files, but eventually it will recognize other common ebook formats.
 
 Unfortunately there is no simple install for Horace at the moment, as it is still in the early stages of development. However, if you would like to check it out then follow these steps
 
 1. Checkout this repository
 2. Run npm install
-3. Install bower (sudo npm install bower -g)
-4. Install gulp (sudo npm install gulp -g)
-5. Install mongodb
-6. Create a config.json file in the project root (see sample config later in this readme file)
-7. Build the front-end by running `gulp build`
-8. Build the app by running `gulp build-app`
-9. Run npm start
-10. Point your browser to localhost:8080
+3. Install gulp (sudo npm install gulp -g)
+4. Install mongodb
+5. Create a config.json file in the project root (see sample config later in this readme file)
+6. Build the front-end by running `gulp build`
+7. Build the app by running `gulp build-app`
+8. Run npm start
+9. Point your browser to localhost:8080
 
 ### Configuration
 Here's a sample config.json file
