@@ -8,6 +8,7 @@
 @import 'widget/_button.css';
 @import 'widget/_textinput.css';
 @import 'widget/_toolbar.css';
+@import 'widget/_modal.css';
 
 @import 'component/_search.css';
 @import 'component/_book-list.css';

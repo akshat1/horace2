@@ -11,6 +11,8 @@ const Store = require('../model/store.js');
 const BookList = require('./book-list.jsx')
 const Toolbar  = require('./toolbar.jsx');
 
+const Modal = require('../widget/Modal.jsx');
+
 
 const StyleClass = {
   ROOT: 'h-library'
@@ -110,6 +112,9 @@ class Library extends React.Component {
         {this.renderBookToolbar()}
         {this.renderBookList()}
         <Growl />
+        <Modal>
+          Hello Modal
+        </Modal>
       </div>
     );
   }//render

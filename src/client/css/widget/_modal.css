@@ -1,0 +1,22 @@
+.h-modal {
+  @mixin position absolute, 0, 0, 0, 0;
+  background: rgba(0, 0, 0, 0.7);
+}
+
+
+.h-modal-wrapper-1 {
+  @mixin position absolute, 50%, 50%;
+}
+
+
+.h-modal-wrapper-2 {
+  @mixin position relative, -50%, -50%;
+}
+
+
+.h-modal-content {
+  padding: $space-L;
+  background: #FFF;
+  box-shadow: $box-shadow-base-solid;
+  border-radius: $border-radius-S;
+}
