@@ -56,7 +56,7 @@ class Store {
       books                  : [],
       selectedBookIdMap      : {},
       selectedBooks          : [],
-      notifications          : [],
+      booksReadyForDownload  : [],
       sortModel              : new SortModel('title', true),
       searchString           : ''
     };
@@ -94,12 +94,6 @@ class Store {
     this._setState({
       isScanning: false
     });
-  }
-
-
-  @autobind
-  _handleBookReadyForDownload() {
-    //console.log('Book ready for download');
   }
 
 
@@ -179,6 +173,14 @@ class Store {
     this._setState({
       isBusy: false
     })
+  }
+
+
+  @autobind
+  _handleBookReadyForDownload(payload) {
+    this._setState({
+      booksReadyForDownload: this._state.booksReadyForDownload.concat([payload])
+    });
   }
 
 

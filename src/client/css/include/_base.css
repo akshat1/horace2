@@ -29,6 +29,11 @@ th {
 
 a {
   color: $link-color;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  };
 }
 
 /* ******************* /Native ******************* */
@@ -45,11 +50,9 @@ a {
 }
 
 
-.h-trigger {
-  cursor: pointer;
-}
-
-
-.h-trigger + .h-trigger {
-  margin-left: $space-M;
+.h-download-frame {
+  border: none;
+  height: 0;
+  width: 0;
+  opacity: 0;
 }

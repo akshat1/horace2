@@ -2,7 +2,9 @@
 
 const React = require('react');
 const autobind = require('autobind-decorator');
+const {Growl, GrowlType} = require('./growl.jsx');
 const PubSub = require('./../util/pubsub.js');
+const Net = require('./../util/net.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
 const Store = require('../model/store.js');
 
@@ -24,15 +26,49 @@ class Library extends React.Component {
   constructor(props) {
     super(props);
     window._Library = this;
+    window.PubSub = PubSub;
     this._store     = Store.getInstance();
     this.state      = this._store.getState();
-    this._store.subscribe(this._handleStoreChanged);
+    this._store.subscribe(this.handleStoreChanged);
+    Net.onWebSocket(ServerEvents.BOOK_READY_FOR_DOWNLOAD, this.handleBookReadyForDownload);
   }
 
 
   @autobind
-  _handleStoreChanged(newState) {
+  handleStoreChanged(newState) {
     this.setState(newState);
+  }
+
+
+  @autobind
+  handleBookReadyForDownload(payload) {
+    let {path: fileLocation, title, bookId} = payload;
+    let downloadBook = function() {
+      Net.downloadFile(fileLocation);
+      PubSub.broadcast(ClientEvents.GROWL, {
+        id: `${bookId}-ready`,
+        dispose: true
+      });
+    }
+
+    let message = (
+      <span>
+        <a href = '#' onClick = {downloadBook}>Download</a>
+        &nbsp;
+        {title}
+      </span>
+    );
+    // Hide the previous growl
+    PubSub.broadcast(ClientEvents.GROWL, {
+      id: `preparing-${bookId}`,
+      dispose: true
+    });
+    PubSub.broadcast(ClientEvents.GROWL, {
+      id: `${bookId}-ready`,
+      message: message,
+      type: GrowlType.INFO,
+      timeout: 15000
+    });
   }
 
 
@@ -73,6 +109,7 @@ class Library extends React.Component {
       <div className = {StyleClass.ROOT} ref = {RefName.ROOT}>
         {this.renderBookToolbar()}
         {this.renderBookList()}
+        <Growl />
       </div>
     );
   }//render

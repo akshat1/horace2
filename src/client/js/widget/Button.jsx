@@ -8,6 +8,7 @@ const StyleClass = {
   Button: 'h-widget-button',
   Primary: 'h-button-primary',
   Indicator: 'h-button-indicator',
+  Close: 'h-button-close',
   Size: {
     Small: 'h-widget-button-small',
     Medium: 'h-widget-button-medium',
@@ -18,7 +19,8 @@ const StyleClass = {
 
 const ButtonType = {
   Normal    : 0,
-  Indicator : 1
+  Indicator : 1,
+  Close     : 2
 };
 
 
@@ -48,21 +50,30 @@ class Button extends React.Component {
       size: buttonSize = ButtonSize.Default,
       disabled,
       label,
-      onClick = _.noop
+      onClick = _.noop,
+      faIconName,
+      className,
+      primary
     } = props;
     if (buttonType === ButtonType.Indicator)
       classNames.push(StyleClass.Indicator);
 
-    if (props.className)
-      classNames.push(props.className);
+    else if (buttonType === ButtonType.Close) {
+      faIconName = 'close';
+      buttonSize = ButtonSize.Small;
+      classNames.push(StyleClass.Close);
+    }
 
-    if (props.primary)
+    if (className)
+      classNames.push(className);
+
+    if (primary)
       classNames.push(StyleClass.Primary);
 
     classNames.push(StyleClass.Size[buttonSize]);
 
-    if (props.faIconName) {
-      icon = <div className = {`fa fa-${props.faIconName.toLowerCase()}`}/>
+    if (faIconName) {
+      icon = <div className = {`fa fa-${faIconName.toLowerCase()}`}/>
     }
 
     return (
