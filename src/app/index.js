@@ -102,7 +102,8 @@ io.on('connection', function(socket) {
         let fileName = Path.basename(tmpFilePath);
         return socket.emit(ServerEvents.BOOK_READY_FOR_DOWNLOAD, {
           title: title,
-          path: ServerUrlMap.fileDownload(fileName)
+          path: ServerUrlMap.fileDownload(fileName),
+          bookId: query.bookId
         });
       })
       .catch(function(err) {

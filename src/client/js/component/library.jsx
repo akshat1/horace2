@@ -41,11 +41,31 @@ class Library extends React.Component {
 
 
   @autobind
-  handleBookReadyForDownload({tmpFilePath, title} = payload) {
-    console.log('growl about file');
+  handleBookReadyForDownload(payload) {
+    let {path: fileLocation, title, bookId} = payload;
+    let downloadBook = function() {
+      Net.downloadFile(fileLocation);
+      PubSub.broadcast(ClientEvents.GROWL, {
+        id: `${bookId}-ready`,
+        dispose: true
+      });
+    }
+
+    let message = (
+      <span>
+        <a href = '#' onClick = {downloadBook}>Download</a>
+        &nbsp;
+        {title}
+      </span>
+    );
+    // Hide the previous growl
     PubSub.broadcast(ClientEvents.GROWL, {
-      id: Date.now(),
-      message: `Download ${title}`,
+      id: `preparing-${bookId}`,
+      dispose: true
+    });
+    PubSub.broadcast(ClientEvents.GROWL, {
+      id: `${bookId}-ready`,
+      message: message,
       type: GrowlType.INFO,
       timeout: 15000
     });

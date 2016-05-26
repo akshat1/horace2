@@ -49,6 +49,10 @@ button.h-widget-button.h-button-close.h-growl-item-close-button {
 
 .h-growl-item-info {
   background: #1B98E0;
+
+  a {
+    color: $text-lightest;
+  }
 }
 
 

@@ -73,8 +73,14 @@ class BookList extends React.Component {
 
 
   handleTitleClick(evt) {
-    console.log('book clicked: ', evt.target.getAttribute('book-id'));
-    Net.requestBookDownload(evt.target.getAttribute('book-id'));
+    let bookId = evt.target.getAttribute('book-id');
+    PubSub.broadcast(ClientEvents.GROWL, {
+      id: `preparing-${bookId}`,
+      message: 'Preparing your book for download',
+      timeout: 5000,
+      type: 'INFO'
+    });
+    Net.requestBookDownload(bookId);
   }
 
 
