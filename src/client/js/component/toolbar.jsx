@@ -36,8 +36,8 @@ class HToolbar extends React.Component {
   }
 
 
-  doDownload() {
-    console.log('Download');
+  doDownloadAs() {
+    console.log('Download As ...');
   }
 
 
@@ -65,7 +65,6 @@ class HToolbar extends React.Component {
           faIconName = 'object-group'
           onClick    = {this.doGroup}
           />
-        <ToolbarSeparator/>
       </ToolbarGroup>
     );
   }
@@ -76,11 +75,11 @@ class HToolbar extends React.Component {
     return (
       <ToolbarGroup className = {StyleClass.TGPRIMARY}>
         <Button
-          label      = 'Download'
+          label      = 'Download As ...'
           primary    = {true}
-          disabled   = {isSingleBookControlsDisabled}
+          disabled   = {true} //{isSingleBookControlsDisabled}
           faIconName = 'download'
-          onClick    = {this.doDownload}
+          onClick    = {this.doDownloadAs}
           />
       </ToolbarGroup>
     );
@@ -98,11 +97,11 @@ class HToolbar extends React.Component {
 
   render() {
     return (
+      //{this.renderBookControls()}
       <div className = {StyleClass.ROOT}>
         <Toolbar>
           <ToolbarGroup float = {ToolbarGroupFloat.LEFT}>
             {this.renderBookGroupControls()}
-            {this.renderBookControls()}
           </ToolbarGroup>
           {this.renderSearchControls()}
         </Toolbar>
