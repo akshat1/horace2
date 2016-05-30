@@ -62,17 +62,19 @@ class GrowlItem extends React.Component {
     }, 0);
 
     if (timeout !== INFINITE_TIMEOUT) {
-      this.hideTimeout = setTimeout(this.hideItem, timeout);
+      this.hideTimeout = setTimeout(function() {
+        this.hideItem(element);
+      }.bind(this), timeout);
     }
   }
 
 
   @autobind
-  hideItem() {
+  hideItem(el) {
     if (this.hideTimeout)
       clearTimeout(this.hideTimeout);
 
-    this.refs[RefName.ITEMROOT].classList.remove(StyleClass.ITEMACTIVE);
+    (el || this.refs[RefName.ITEMROOT]).classList.remove(StyleClass.ITEMACTIVE);
     this.mayHide = true;
   }
 
