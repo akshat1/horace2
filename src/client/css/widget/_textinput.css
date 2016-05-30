@@ -1,7 +1,7 @@
 @define-mixin single-line-text-input {
   height: 34px;
   box-shadow: $box-shadow-inset-base;
-  border-radius: 2px;
+  border-radius: $border-radius-S;
   box-sizing: border-box;
   padding: 0 $space-M;
 

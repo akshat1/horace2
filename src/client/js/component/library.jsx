@@ -11,6 +11,14 @@ const Store = require('../model/store.js');
 const BookList = require('./book-list.jsx')
 const Toolbar  = require('./toolbar.jsx');
 
+const {
+  ModalDialog,
+  ModalDialogTitle,
+  ModalDialogBody,
+  ModalDialogButtons,
+  ModalDialogFooter
+} = require('../widget/ModalDialog.jsx');
+
 
 const StyleClass = {
   ROOT: 'h-library'
@@ -112,7 +120,7 @@ class Library extends React.Component {
         <Growl />
       </div>
     );
-  }//render
-}//Library
+  }
+}
 
 module.exports = Library;

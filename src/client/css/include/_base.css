@@ -13,7 +13,7 @@ body{
 }
 
 select {
-  border-radius: 2px;
+  border-radius: $border-radius-S;
 }
 
 input[type="email"], input[type="number"], input[type="search"], input[type="text"], input[type="tel"], input[type="url"], input[type="password"], textarea, select {

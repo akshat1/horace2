@@ -1,0 +1,54 @@
+$_title-height: 30px;
+
+.h-modal-dialog {
+  @mixin position absolute, 0, 0, 0, 0;
+
+  .h-modal-content {
+    @mixin flexBox column;
+    padding: 0;
+  }
+}
+
+.h-modal-dialog-title {
+  @mixin flexItem 0, 0;
+  @mixin flexBox row, ,space-between, , space-between;
+  height: $_title-height;
+  border-bottom: 1px solid $border-color;
+  background: $background-dark;
+}
+
+
+.h-modal-dialog-title-contents {
+  @mixin flexItem 0, 0;
+  padding: $space-S $space-S 0 $space-S;
+}
+
+
+.h-modal-dialog-title-close-button {
+  @mixin flexItem 0, 0;
+}
+
+
+.h-modal-dialog-body {
+  @mixin flexItem 1, 1;
+  padding: $space-M;
+}
+
+.h-modal-dialog-footer {
+  @mixin flexItem 0, 0;
+  height: $_title-height;
+  border-top: 1px solid $border-color;
+  background: $background-dark;
+}
+
+
+.h-modal-dialog-buttons {
+  @mixin flexItem 0, 1;
+  border-top: 1px solid $border-color;
+  background: $background-dark;
+  padding: $space-M;
+
+  &:empty {
+    display: none;
+  };
+}
