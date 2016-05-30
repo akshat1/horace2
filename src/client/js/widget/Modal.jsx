@@ -1,6 +1,5 @@
 'use strict';
 const React = require('react');
-const {WidgetStyleClass} = require('./WidgetBase.js');
 
 
 const StyleClass = {
@@ -11,16 +10,22 @@ const StyleClass = {
 };
 
 
-const Modal = (props) =>
-  <div className = {StyleClass.ROOT}>
-    <div className = {StyleClass.W1}>
-      <div className = {StyleClass.W2}>
-        <div className = {StyleClass.CONTENT}>
-          {props.children}
+const Modal = function(props) {
+  let {
+    className = ''
+  } = props;
+
+  return (
+    <div className = {`${StyleClass.ROOT} ${className}`}>
+      <div className = {StyleClass.W1}>
+        <div className = {StyleClass.W2}>
+          <div className = {StyleClass.CONTENT}>
+            {props.children}
+          </div>
         </div>
       </div>
     </div>
-  </div>
-
+  );
+}
 
 module.exports = Modal;
