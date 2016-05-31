@@ -10,14 +10,7 @@ const Store = require('../model/store.js');
 
 const BookList = require('./book-list.jsx')
 const Toolbar  = require('./toolbar.jsx');
-
-const {
-  ModalDialog,
-  ModalDialogTitle,
-  ModalDialogBody,
-  ModalDialogButtons,
-  ModalDialogFooter
-} = require('../widget/ModalDialog.jsx');
+const BookEditor = require('./book-editor.jsx');
 
 
 const StyleClass = {
@@ -112,11 +105,22 @@ class Library extends React.Component {
   }
 
 
+  renderBookEditor() {
+    if (this.state.isEditingBooks)
+      return (
+        <BookEditor
+          books = {this.state.selectedBooks}
+        />
+      );
+  }
+
+
   render() {
     return (
       <div className = {StyleClass.ROOT} ref = {RefName.ROOT}>
         {this.renderBookToolbar()}
         {this.renderBookList()}
+        {this.renderBookEditor()}
         <Growl />
       </div>
     );

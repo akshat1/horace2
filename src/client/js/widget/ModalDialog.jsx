@@ -1,6 +1,8 @@
 'use strict';
-const React = require('react');
-const Modal = require('./Modal.jsx');
+const React    = require('react');
+const Modal    = require('./Modal.jsx');
+const _        = require('lodash');
+const autobind = require('autobind-decorator');
 const {
   Button,
   ButtonType
@@ -9,6 +11,7 @@ const {
 
 const StyleClass = {
   ROOT             : 'h-modal-dialog',
+  HIDDEN           : 'h-modal-dialog-hidden',
   TITLE            : 'h-modal-dialog-title',
   TITLECONTENTS    : 'h-modal-dialog-title-contents',
   TITLECLOSEBUTTON : 'h-modal-dialog-title-close-button',
@@ -18,50 +21,95 @@ const StyleClass = {
 };
 
 
+const findElement = (children, searchTarget) =>
+  children.find((c) => c.type === searchTarget);
+
+
 class ModalDialog extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      isVisible: true
+    };
+    window._md = this;
   }
 
 
-  render() {
+  @autobind
+  handleCloseButtonClicked() {
+    let {
+      onBeforeClose = _.noop,
+      onClose = _.noop
+    } = this.props;
+
+    onBeforeClose();
+    this.setState({
+      isVisible: false
+    });
+    onClose();
+  }
+
+
+  renderVisible() {
     let props = this.props;
     let {
-      className
+      className = '',
+      children
     } = props;
+    let title   = findElement(children, ModalDialogTitle);
+    let body    = findElement(children, ModalDialogBody);
+    let buttons = findElement(children, ModalDialogButtons);
+    let footer  = findElement(children, ModalDialogFooter);
+
     return (
       <div className = {`${StyleClass.ROOT} ${className}`}>
         <Modal>
-          {props.children}
+          <ModalDialogTitle
+            onClose = {this.handleCloseButtonClicked}
+          >
+            {title.props.children}
+          </ModalDialogTitle>
+          {body}
+          {buttons}
+          {footer}
         </Modal>
       </div>
     );
   }
-}
-
-
-class ModalDialogTitle extends React.Component {
-  constructor(props) {
-    super(props);
-  }
 
 
   render() {
-    let props = this.props;
-    return (
-      <div className = {StyleClass.TITLE}>
-        <div className = {StyleClass.TITLECONTENTS}>
-          {props.children}
+    if (this.state.isVisible) {
+      return this.renderVisible();
+    } else {
+      return (
+        <div className = {`${StyleClass.ROOT} ${this.props.className} ${StyleClass.HIDDEN}`}>
         </div>
-        <Button
-          className = {StyleClass.TITLECLOSEBUTTON}
-          type      = {ButtonType.Close}
-        />
-      </div>
-    );
+      );
+    }
   }
 }
+
+
+ModalDialog.propTypes = {
+  onBeforeClose : React.PropTypes.func,
+  onClose       : React.PropTypes.func,
+  className     : React.PropTypes.string
+};
+
+
+
+const ModalDialogTitle = (props) =>
+  <div className = {StyleClass.TITLE}>
+    <div className = {StyleClass.TITLECONTENTS}>
+      {props.children}
+    </div>
+    <Button
+      className = {StyleClass.TITLECLOSEBUTTON}
+      type      = {ButtonType.Close}
+      onClick   = {props.onClose}
+    />
+  </div>
 
 
 const ModalDialogBody = (props) =>

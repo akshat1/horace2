@@ -1,0 +1,7 @@
+$_book-editor-width: 50vw;
+$_book-editor-height: 20vh;
+
+.h-book-editor .h-modal-content {
+  width: $_book-editor-width;
+  min-height: $_book-editor-height;
+}

@@ -69,6 +69,7 @@ $primary-button-background-color: orange;
     min-width: 0;
     width: 25px;
     height: 25px;
+    padding: 0 6px 0 6px;
   }
 
 
@@ -80,6 +81,10 @@ $primary-button-background-color: orange;
 
 button.h-widget-button {
   @mixin button;
+
+  + .h-widget-button {
+    margin-left: $space-M;
+  }
 }
 
 

@@ -27,7 +27,9 @@ class HToolbar extends React.Component {
 
 
   doEdit() {
-    console.log('Edit');
+    PubSub.broadcast(ClientEvents.EDIT_BOOK, {
+      invoked: true
+    });
   }
 
 

@@ -7,6 +7,7 @@ const Client = {
   BOOK_SELECTION_CHANGED : 'client.event.bookSelectionChanged',
   SORT_CHANGED           : 'client.action.sort',
   SEARCH_CHANGED         : 'client.action.search',
+  EDIT_BOOK              : 'client.action.edit',
   GROWL                  : 'client.event.growl'
 };
 

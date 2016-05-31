@@ -6,8 +6,25 @@ $_title-height: 30px;
   .h-modal-content {
     @mixin flexBox column;
     padding: 0;
+
+
+    div {
+      &:first-child {
+        border-radius: $border-radius-S $border-radius-S 0 0;
+      }
+
+      &:last-of-type {
+        border-radius: 0 0 $border-radius-S $border-radius-S;
+      }
+    }
   }
 }
+
+
+.h-modal-dialog-hidden {
+  display: none;
+}
+
 
 .h-modal-dialog-title {
   @mixin flexItem 0, 0;
@@ -15,12 +32,12 @@ $_title-height: 30px;
   height: $_title-height;
   border-bottom: 1px solid $border-color;
   background: $background-dark;
+  padding: $space-S $space-S 0 $space-S;
 }
 
 
 .h-modal-dialog-title-contents {
   @mixin flexItem 0, 0;
-  padding: $space-S $space-S 0 $space-S;
 }
 
 
@@ -33,6 +50,7 @@ $_title-height: 30px;
   @mixin flexItem 1, 1;
   padding: $space-M;
 }
+
 
 .h-modal-dialog-footer {
   @mixin flexItem 0, 0;
@@ -47,6 +65,7 @@ $_title-height: 30px;
   border-top: 1px solid $border-color;
   background: $background-dark;
   padding: $space-M;
+  text-align: right;
 
   &:empty {
     display: none;
