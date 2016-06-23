@@ -14,6 +14,7 @@ var FSExtra = require('fs-extra');
 var _ = require('lodash');
 var Mime = require('mime');
 
+const Utils = require('./utils.js');
 var ServerEvents = require('./events.js').Server;
 var UrlMap = require('./urls.js').UrlMap;
 var Config = require('./config.js');
@@ -165,6 +166,25 @@ apiRouter.post(ServerUrlMap['Books'], function(request, response) {
       logger.error('Error fetching books from Horace %o', err);
       return response.status(500).send(err);
     });
+});
+
+
+apiRouter.post(ServerUrlMap['Books.Update'], function(request, response) {
+  let books = request.body.books;
+  function dbUpdateSucceeded() {
+    return response.json(books);
+  }
+
+  function dbUpdateFailed(err) {
+    console.error(err);
+    return response.status(500).send(err);
+  }
+
+  return Utils.forEachPromise(books, function(book) {
+      return Horace.updateBook(book);
+    })
+    .then(dbUpdateSucceeded)
+    .catch(dbUpdateFailed);
 });
 
 

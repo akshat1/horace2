@@ -83,8 +83,9 @@ gulp.task('esdoc', function() {
 
 
 /* ********************************* Top Level *********************************** */
-gulp.task('build', ['js', 'style', 'html', 'resources', 'css-lib', 'js-lib']);
+gulp.task('build-fe', ['js', 'style', 'html', 'resources', 'css-lib', 'js-lib']);
 gulp.task('micro', ['js', 'style']);
+gulp.task('build-all', ['build-fe', 'build-app']);
 gulp.task('default', ['micro']);
 /* ******************************** /Top Level *********************************** */
 

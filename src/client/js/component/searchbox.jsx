@@ -10,7 +10,7 @@ const {
   Button,
   ButtonSize,
   ButtonType
-} = require('../widget/Button.jsx');
+} = require('simian-react-button');
 
 
 const RefName = {
@@ -21,7 +21,7 @@ const RefName = {
 
 const StyleClass = {
   ROOT: 'h-search-box',
-  TEXTFIELD: 'h-search-box-text-input h-text-input-lowpro',
+  TEXTFIELD: 'h-search-box-text-input h-text-input-low-profile',
   GOBUTTON: 'h-search-go-button',
   Indicator: 'h-search-indicator'
 };
@@ -74,7 +74,7 @@ class SearchBox extends React.Component {
       <Button
         label      = 'Go'
         faIconName = 'search'
-        buttonSize = {ButtonSize.Small}
+        buttonSize = {ButtonSize.SMALL}
         disabled   = {this.props.isBusy}
         className  = {StyleClass.GOBUTTON}
         onClick    = {this.performSearch}
@@ -89,7 +89,7 @@ class SearchBox extends React.Component {
         <Button
           label = ''
           faIconName = 'times-circle-o'
-          type = {ButtonType.Indicator}
+          type = {ButtonType.INDICATOR}
           onClick = {this.clearSearchBox}
           />
       );
@@ -99,7 +99,7 @@ class SearchBox extends React.Component {
         <Button
           label = ''
           faIconName = 'search'
-          type = {ButtonType.Indicator}
+          type = {ButtonType.INDICATOR}
           onClick = {this.expand}
           />
       );

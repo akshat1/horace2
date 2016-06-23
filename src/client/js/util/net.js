@@ -134,6 +134,16 @@ function doStartScanning() {
     url: getUrl(ClientURLMap['Command.StartScan']())
   });
 }
+
+
+function updateBooks(books) {
+  return Http.post({
+    url: getUrl(ClientURLMap['Books.Update']()),
+    data: {books}
+  }).then(function(updatedBooks) {
+    return updatedBooks;
+  });
+}
 // ---------------- /End Point ------------------
 
 
@@ -149,5 +159,6 @@ module.exports = {
   requestDownload: requestDownload,
   isServerScanningForBooks: isServerScanningForBooks,
   doStartScanning: doStartScanning,
-  requestBookDownload: requestBookDownload
+  requestBookDownload: requestBookDownload,
+  updateBooks: updateBooks
 };

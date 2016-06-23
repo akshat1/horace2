@@ -42,7 +42,7 @@ const BookHTML = {
   getTitle: function(title, bookId) {
     return `
       <div class='h-book-list-title-cell h-book-list-cell'>
-        <a href='#' click-marker='title' book-id='${bookId}' title='${title}'>
+        <a href='#' click-marker='title' book-id='${bookId}' title='${title}' class='subdued'>
           ${title}
         </a>
       </div>

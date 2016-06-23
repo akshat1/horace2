@@ -70,13 +70,16 @@ function makeTextIndex() {
   });
 })()
 .then(function() {
-  console.log('Books collection initialised');
+  logger.debug('Books collection initialised');
 })
 .catch(function(err) {
   console.error('Error initialising collection.', err);
 });
 
 
+// TODO: Don't upsert unless upsert flag present among
+// arguments to avoid overwriting user edits while
+// re-scanning.
 function saveBook(book) {
   logger.info('saveBook(%o)', book.id);
   return ConnectPromise.then(function() {
@@ -127,7 +130,7 @@ function getBooks(params) {
       var filter   = params.filter ? Book.mongoFilter(params.filter, includeHidden) : {};
       var sortOpts = {};
       sortOpts[Book.getSortColumnName(sort.columnName)] = sort.isAscending ? 1 : -1;
-      console.log('Going to find using ...\n', filter);
+      logger.debug('Going to find using ...\n', filter);
       var cur = collectionBooks.find(filter).sort(sortOpts);
       cur.toArray(function(curErr, books) {
         if(curErr){
@@ -177,14 +180,14 @@ function getBook(id) {
         var qre = {
           id: id
         };
-        console.log('query is: ', qre);
+        logger.info('query is: ', qre);
         cur = collectionBooks.find(qre);
         return cur.toArray(function(curErr, books) {
           if (curErr) {
             return reject(curErr);
           } else {
             logger.info('(from db) resolve');
-            console.log('got result: ', books);
+            logger.info('got result: ', books);
             return resolve(books[0]);
           }
         });
@@ -204,12 +207,12 @@ function hideBook(id) {
     return getBook(id)
       .then(function(book) {
         if(book) {
-          console.log('got book for id: ', id);
+          logger.debug('got book for id: ', id);
           book.isHidden = true;
           return saveBook(book);
         } //else -- ignore requests to hide unknown books
         else {
-          console.log('Book not found for id: ', id);
+          logger.debug('Book not found for id: ', id);
         }
       });
   });

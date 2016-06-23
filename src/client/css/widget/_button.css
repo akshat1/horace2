@@ -3,7 +3,7 @@ $primary-button-background-color: orange;
 @define-mixin button {
   border-radius: $border-radius-S;
   border: 1px solid $border-color;
-  background: $background-light;
+  background: $background-dark;
   color: $text-base;
   box-shadow: $box-shadow-base;
   height: 35px;
@@ -12,20 +12,21 @@ $primary-button-background-color: orange;
   text-align: left;
   padding: 0 $space-M;
 
-  &.h-widget-button-small {
+  &.simian-small {
     min-width: 50px;
   }
 
-  &.h-widget-button-medium {
+  &.simian-medium {
     min-width: 100px;
   }
 
-  &.h-widget-button-large {
+  &.simian-large {
     min-width: 150px;
   }
 
   .fa {
     margin-right: $space-S;
+    font-size: 1.2em;
   }
 
   &:hover {
@@ -40,13 +41,13 @@ $primary-button-background-color: orange;
 
   &[disabled] {
     border-color: $border-color-light;
-    background: darken($background-light, 5%);
+    background: $background-dark;
     color: opacity($text-light, 25%);
     box-shadow: none;
   }
 
 
-  &.h-button-primary {
+  &.simian-modifier-primary {
     background: orange;
 
     &[disabled] {
@@ -55,7 +56,7 @@ $primary-button-background-color: orange;
   }
 
 
-  &.h-button-indicator {
+  &.simian-button-type-indicator {
     background: transparent;
     border: none;
     box-shadow: none;
@@ -65,39 +66,24 @@ $primary-button-background-color: orange;
   }
 
 
-  &.h-button-close {
+  &.simian-button-type-close {
     min-width: 0;
     width: 25px;
     height: 25px;
-    padding: 0 6px 0 6px;
-  }
+    padding: 0;
+    text-align: center;
 
-
-  &.fa:before {
-    margin-left: 2px;
+    .fa {
+      margin-right: 0;
+    }
   }
 }
 
 
-button.h-widget-button {
+.simian-button {
   @mixin button;
 
-  + .h-widget-button {
+  + .simian-button {
     margin-left: $space-M;
   }
-}
-
-
-input[type="submit"].h-widget-button {
-  @mixin button;
-}
-
-
-input[type="reset"].h-widget-button {
-  @mixin button;
-}
-
-
-input[type="button"].h-widget-button {
-  @mixin button;
 }

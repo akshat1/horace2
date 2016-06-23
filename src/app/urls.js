@@ -38,6 +38,7 @@ function doRegistrations(api, serverMap, clientMap) {
   register('fileDownload', getClientFunction('', '/download/:fileName'), '', serverMap, clientMap);
   register('Book.Hide', '/hide/:bookIds', api, serverMap, clientMap);
   register('Books.Unhide', '/unhide', api, serverMap, clientMap);
+  register('Books.Update', '/books/update', api, serverMap, clientMap);
 }
 
 

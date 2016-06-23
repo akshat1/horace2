@@ -1,14 +1,16 @@
-$_title-height: 30px;
+$_title-height: 40px;
 
 .h-modal-dialog {
   @mixin position absolute, 0, 0, 0, 0;
+  overflow: hidden;
 
   .h-modal-content {
     @mixin flexBox column;
+    border-radius: $border-radius-S;
     padding: 0;
 
 
-    div {
+    > div {
       &:first-child {
         border-radius: $border-radius-S $border-radius-S 0 0;
       }
@@ -28,11 +30,12 @@ $_title-height: 30px;
 
 .h-modal-dialog-title {
   @mixin flexItem 0, 0;
-  @mixin flexBox row, ,space-between, , space-between;
+  @mixin flexBox row, , space-between, center, space-between;
   height: $_title-height;
   border-bottom: 1px solid $border-color;
-  background: $background-dark;
-  padding: $space-S $space-S 0 $space-S;
+  background: $background-darker;
+  padding: 0 $space-M;
+  font-size: 1.4em;
 }
 
 
@@ -49,6 +52,7 @@ $_title-height: 30px;
 .h-modal-dialog-body {
   @mixin flexItem 1, 1;
   padding: $space-M;
+  overflow: auto;
 }
 
 
@@ -56,14 +60,14 @@ $_title-height: 30px;
   @mixin flexItem 0, 0;
   height: $_title-height;
   border-top: 1px solid $border-color;
-  background: $background-dark;
+  background: $background-darker;
 }
 
 
 .h-modal-dialog-buttons {
   @mixin flexItem 0, 1;
   border-top: 1px solid $border-color;
-  background: $background-dark;
+  background: $background-darker;
   padding: $space-M;
   text-align: right;
 

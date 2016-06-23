@@ -89,10 +89,12 @@ class Store {
       this._setState({
         isEditingBooks: true
       });
-    else if (payload.closed)
+    else if (payload.closed) {
+      this.doRefresh();
       this._setState({
         isEditingBooks: false
       });
+    }
   }
 
 
@@ -222,6 +224,11 @@ class Store {
 
   _emitChange() {
     this._listeners.forEach((fn) => fn(this._state));
+  }
+
+
+  doRefresh() {
+    console.log('REFRESH. TODO.');
   }
 
 

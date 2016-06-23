@@ -6,7 +6,10 @@ const autobind = require('autobind-decorator');
 const {
   Button,
   ButtonType
-} = require('../widget/Button.jsx');
+} = require('simian-react-button');
+const {
+  findElement
+} = require('../util/react-utils.js');
 
 
 const StyleClass = {
@@ -21,8 +24,6 @@ const StyleClass = {
 };
 
 
-const findElement = (children, searchTarget) =>
-  children.find((c) => c.type === searchTarget);
 
 
 class ModalDialog extends React.Component {
@@ -106,7 +107,7 @@ const ModalDialogTitle = (props) =>
     </div>
     <Button
       className = {StyleClass.TITLECLOSEBUTTON}
-      type      = {ButtonType.Close}
+      type      = {ButtonType.CLOSE}
       onClick   = {props.onClose}
     />
   </div>

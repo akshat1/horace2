@@ -13,7 +13,9 @@ Store will call transforms one after. The order of transforms matters.
 
 
 function listSelectedBooks(state) {
-  state.selectedBooks = Object.keys(state.selectedBookIdMap);
+  state.selectedBooks = state.books.filter(function(f) {
+    return state.selectedBookIdMap[f.id];
+  });
   return state;
 }
 

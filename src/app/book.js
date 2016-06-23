@@ -126,6 +126,11 @@ class Book {
       default         : return columnName;
     }
   }
+
+
+  static clone({path, title, authors, sizeInBytes, year, subjects, publisher, adapterId}) {
+    return new Book(path, title, authors, sizeInBytes, year, subjects, publisher, adapterId);
+  }
 }
 
 

@@ -14,6 +14,12 @@ const StyleClass = {
 };
 
 
+const TextFieldType = {
+  TEXT   : 'text',
+  NUMBER : 'number'
+};
+
+
 class TextField extends React.Component {
   constructor(props) {
     super(props);
@@ -25,6 +31,11 @@ class TextField extends React.Component {
   }
 
 
+  getValue() {
+    this.refs[RefName.INPUT].value;
+  }
+
+
   render() {
     let {
       disabled,
@@ -33,7 +44,8 @@ class TextField extends React.Component {
       value = '',
       onChange = _.noop,
       onFocus = _.noop,
-      onBlur = _.noop
+      onBlur = _.noop,
+      type = 'text'
     } = this.props;
 
     return (
@@ -47,6 +59,7 @@ class TextField extends React.Component {
         onBlur      = {onBlur}
         disabled    = {disabled}
         ref         = {RefName.INPUT}
+        type        = {type}
         />
     );
   }
@@ -54,5 +67,6 @@ class TextField extends React.Component {
 
 
 module.exports = {
-  TextField: TextField
+  TextField: TextField,
+  TextFieldType: TextFieldType
 };
