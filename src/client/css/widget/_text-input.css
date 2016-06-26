@@ -5,7 +5,7 @@
   box-sizing: border-box;
   padding: 0 $space-M;
 
-  &.h-text-input-lowpro {
+  &.h-text-input-low-profile {
     box-shadow: none;
     background: transparent;
     border-color: transparent transparent $border-color transparent;
@@ -13,6 +13,6 @@
 }
 
 
-input[type="text"] {
+input[type="text"], input[type="number"] {
   @mixin single-line-text-input;
 }

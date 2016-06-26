@@ -1,26 +1,46 @@
-$_title-height: 30px;
+$_title-height: 40px;
 
 .h-modal-dialog {
   @mixin position absolute, 0, 0, 0, 0;
+  overflow: hidden;
 
   .h-modal-content {
     @mixin flexBox column;
+    border-radius: $border-radius-S;
     padding: 0;
+
+
+    > div {
+      &:first-child {
+        border-radius: $border-radius-S $border-radius-S 0 0;
+      }
+
+      &:last-of-type {
+        border-radius: 0 0 $border-radius-S $border-radius-S;
+      }
+    }
   }
 }
 
+
+.h-modal-dialog-hidden {
+  display: none;
+}
+
+
 .h-modal-dialog-title {
   @mixin flexItem 0, 0;
-  @mixin flexBox row, ,space-between, , space-between;
+  @mixin flexBox row, , space-between, center, space-between;
   height: $_title-height;
   border-bottom: 1px solid $border-color;
-  background: $background-dark;
+  background: $background-darker;
+  padding: 0 $space-M;
+  font-size: 1.4em;
 }
 
 
 .h-modal-dialog-title-contents {
   @mixin flexItem 0, 0;
-  padding: $space-S $space-S 0 $space-S;
 }
 
 
@@ -32,21 +52,24 @@ $_title-height: 30px;
 .h-modal-dialog-body {
   @mixin flexItem 1, 1;
   padding: $space-M;
+  overflow: auto;
 }
+
 
 .h-modal-dialog-footer {
   @mixin flexItem 0, 0;
   height: $_title-height;
   border-top: 1px solid $border-color;
-  background: $background-dark;
+  background: $background-darker;
 }
 
 
 .h-modal-dialog-buttons {
   @mixin flexItem 0, 1;
   border-top: 1px solid $border-color;
-  background: $background-dark;
+  background: $background-darker;
   padding: $space-M;
+  text-align: right;
 
   &:empty {
     display: none;

@@ -18,7 +18,7 @@ $_book-grid-total-width: 1430px;
 
 
   .header {
-    background: #6AB2FF;
+    background: $primary-color;
     cursor: pointer;
   }
 
@@ -26,7 +26,7 @@ $_book-grid-total-width: 1430px;
   .simian-grid-list-row {
     font-size: 0;
     &.odd {
-      background: #F2F2F2;
+      background: $background-dark;
     }
   }
 

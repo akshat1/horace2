@@ -19,4 +19,5 @@
   background: #FFF;
   box-shadow: $box-shadow-base-solid;
   border-radius: $border-radius-S;
+  max-height: 95vh;
 }

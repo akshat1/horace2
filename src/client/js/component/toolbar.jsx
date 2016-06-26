@@ -5,7 +5,7 @@ const PubSub = require('./../util/pubsub.js');
 const {Client: ClientEvents, Server: ServerEvents} = require('./../../../app/events.js');
 const {ToolbarGroupFloat, Toolbar, ToolbarGroup, ToolbarSeparator} = require('../widget/Toolbar.jsx');
 const SearchBox = require('./searchbox.jsx');
-const {Button} = require('../widget/Button.jsx');
+const {Button} = require('simian-react-button');
 
 const StyleClass = {
   ROOT        : 'h-toolbar',
@@ -27,7 +27,9 @@ class HToolbar extends React.Component {
 
 
   doEdit() {
-    console.log('Edit');
+    PubSub.broadcast(ClientEvents.EDIT_BOOK, {
+      invoked: true
+    });
   }
 
 

@@ -3,7 +3,7 @@ const autobind = require('autobind-decorator');
 const _        = require('lodash');
 const PubSub   = require('./../util/pubsub.js');
 const { Client: ClientEvents } = require('./../../../app/events.js');
-const { Button, ButtonType }   = require('../widget/Button.jsx');
+const { Button, ButtonType }   = require('simian-react-button');
 
 const StyleClass = {
   ROOT       : 'h-growl',
@@ -63,18 +63,20 @@ class GrowlItem extends React.Component {
 
     if (timeout !== INFINITE_TIMEOUT) {
       this.hideTimeout = setTimeout(function() {
-        this.hideItem(element);
+        this.hideItem(null, element);
       }.bind(this), timeout);
     }
   }
 
 
   @autobind
-  hideItem(el) {
+  hideItem(event, el) {
     if (this.hideTimeout)
       clearTimeout(this.hideTimeout);
 
-    (el || this.refs[RefName.ITEMROOT]).classList.remove(StyleClass.ITEMACTIVE);
+    el = el || this.refs[RefName.ITEMROOT];
+    if (el)
+      el.classList.remove(StyleClass.ITEMACTIVE);
     this.mayHide = true;
   }
 
@@ -117,7 +119,7 @@ class GrowlItem extends React.Component {
   renderCloseButton() {
     return (
       <Button
-        type      = {ButtonType.Close}
+        type      = {ButtonType.CLOSE}
         className = {StyleClass.ITEMCLOSEBUTTON}
         onClick   = {this.hideItem}
       />

@@ -1,0 +1,42 @@
+$_book-editor-width: 50vw;
+$_book-editor-height: 20vh;
+
+.h-book-editor {
+  .h-modal-content {
+    width: $_book-editor-width;
+    min-height: $_book-editor-height;
+  }
+}
+
+
+/*TODO reduce nesting with actual classnames*/
+.h-book-editor-book {
+  border: 1px solid $border-color;
+  background: darken($background-light, 5%);
+  display: table;
+  width: 100%;
+
+  > div {
+    display: table-row;
+
+    > div {
+      display: table-cell;
+      padding: $space-M;
+
+      &:first-child {
+        width: 150px;
+        padding: $space-M $space-M $space-M;
+      }
+
+      &:last-child .h-widget{
+        width: 100%;
+      };
+    }
+  }
+}
+
+
+.h-book-editor-book-title {
+  font-weight: bold;
+  margin-bottom: $space-M;
+}

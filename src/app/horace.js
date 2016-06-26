@@ -11,6 +11,7 @@ var ChildProcess = require('child_process');
 var _ = require('lodash');
 var Winston = require('winston');
 
+const Book = require('./book.js');
 var Config = require('./config.js');
 var IPCUtils = require('./ipc.js');
 var DB = require('./db.js');
@@ -135,11 +136,17 @@ function unHideAllBooks() {
 }
 
 
+function updateBook(book) {
+  return DB.saveBook(Book.clone(book));
+}
+
+
 var Horace = new Events.EventEmitter();
 _.extend(Horace, {
   startScan                : startScan,
   getBooks                 : getBooks,
   getBook                  : getBook,
+  updateBook               : updateBook,
   requestDownload          : requestDownload,
   isScanningForBooks       : isScanningForBooks,
   getDistinctBookAttribute : getDistinctBookAttribute,

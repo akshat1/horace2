@@ -52,6 +52,7 @@ class Store {
       totalBooksInSystem     : 0,
       bookListStartRowNumber : 0,
       isScanning             : false,
+      isEditingBooks         : false,
       isBusy                 : false,
       books                  : [],
       selectedBookIdMap      : {},
@@ -77,7 +78,23 @@ class Store {
     handlers[ClientEvents.BOOK_SELECTION_CHANGED] = this._handleBookSelectionChanged;
     handlers[ClientEvents.SORT_CHANGED]           = this._handleSortChanged;
     handlers[ClientEvents.SEARCH_CHANGED]         = this._handleSearchChanged;
+    handlers[ClientEvents.EDIT_BOOK]              = this._handleBookEdit;
     PubSub.subscribeWithMap(handlers);
+  }
+
+
+  @autobind
+  _handleBookEdit(payload) {
+    if (payload.invoked)
+      this._setState({
+        isEditingBooks: true
+      });
+    else if (payload.closed) {
+      this.doRefresh();
+      this._setState({
+        isEditingBooks: false
+      });
+    }
   }
 
 
@@ -207,6 +224,11 @@ class Store {
 
   _emitChange() {
     this._listeners.forEach((fn) => fn(this._state));
+  }
+
+
+  doRefresh() {
+    console.log('REFRESH. TODO.');
   }
 
 
