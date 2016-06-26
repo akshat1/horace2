@@ -73,6 +73,7 @@
     "postcss-nested": "^1.0.0",
     "postcss-simple-vars": "^1.2.0",
     "react-crouton": "^0.2.7",
+    "simian-color-functions": "^1.2.0",
     "simian-grid": "^0.3.24",
     "simian-react-button": "1.0.22",
     "sinon": "^1.17.3",
