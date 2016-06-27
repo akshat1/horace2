@@ -64,4 +64,5 @@ function _ipcServer() {
 _.merge(IPC.config, IPCConfig.Master);
 IPC.serve(_ipcServer);
 IPC.server.start();
+console.log('Forking');
 ChildProcess.fork('./app/scanner.js');
