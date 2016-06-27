@@ -2,18 +2,25 @@
 /**
  * @module scanner
  */
-var IPC = require('node-ipc');
-var Path = require('path');
-var FS = require('graceful-fs');
-var Winston = require('winston');
-var IPCEvents = require('./events.js').IPC;
-var IPCUtils = require('./ipc.js');
-var Config = require('./config.js');
-var Adapters = require('./adapter.js');
-var DB = require('./db.js');
-var Utils = require('./utils.js');
+const _ = require('lodash');
+const IPC = require('node-ipc');
+const {
+  ID,
+  Config: IPCConfig
+} = require('./ipc-utils.js');
+const {
+  IPC: IPCEvents
+} = require('./events.js');
+const Path = require('path');
+const FS = require('graceful-fs');
+const Winston = require('winston');
+const Config = require('./config.js');
+const Adapters = require('./adapter.js');
+const DB = require('./db.js');
+const Utils = require('./utils.js');
 const logLevel = Config('horace.scanner.logLevel');
-const logger   = new Winston.Logger({
+
+const logger = new Winston.Logger({
   transports: [
     new Winston.transports.Console({
       level: logLevel
@@ -22,6 +29,7 @@ const logger   = new Winston.Logger({
     })
   ]
 });
+
 
 /**
  * if path is a directory then contents of the directory, else empty array
@@ -84,35 +92,44 @@ function _scanSequentially(paths) {
 
 
 // ----------------- Start IPC ---------------------
-IPC.config.id     = IPCUtils.ID.SCANNER;
-IPC.config.silent = true;
-IPC.config.retry  = 1000;
+var _master = null;
+function _handleConnection() {
+  logger.info('Scanner connected to master');
+  _master.emit(IPCEvents.HELLOFROM_SCANNER);
+}
 
-IPC.connectTo(IPCUtils.ID.HORACE, function() {
-  logger.info('Scanner connecting to master');
-  var _master = IPC.of[IPCUtils.ID.HORACE];
-  _master.on('connect', function() {
-    logger.info('Scanner connected to master');
-    _master.emit(IPCEvents.HELLOFROM_SCANNER);
-  });
-  _master.on('disconnect', function() {
-    logger.info('Scanner disconnected from master');
-  });
-  _master.on(IPCEvents.SCANNER_DOSCAN, function(data) {
-    let paths = data.paths;
-    logger.info('MASTER WANTS THE SCANNER TO START SCANNING ON :', paths);
-    _master.emit(IPCEvents.SCANNER_SCANSTARTED);
-    return _scanSequentially(paths)
-      .then(function() {
-        logger.info('Done scanning all paths');
-        return _master.emit(IPCEvents.SCANNER_SCANSTOPPED);
-      }).catch(function(err) {
-        logger.error('Error scanning all paths. Going to emit error');
-        logger.error(err);
-        _master.emit(IPCEvents.ERROR_OCCURRED, {
-          error: err
-        });
-        return _master.emit(IPCEvents.SCANNER_SCANSTOPPED);
+
+function _handleDisconnection() {
+  logger.info('Scanner disconnected from master');
+}
+
+
+function _handleScanRequested(data) {
+  let paths = data.paths;
+  logger.info('MASTER WANTS THE SCANNER TO START SCANNING ON :', paths);
+  _master.emit(IPCEvents.SCANNER_SCANSTARTED);
+  return _scanSequentially(paths)
+    .then(function() {
+      logger.info('Done scanning all paths');
+      return _master.emit(IPCEvents.SCANNER_SCANSTOPPED);
+    })
+
+    .catch(function(err) {
+      logger.error('Error scanning all paths. Going to emit error');
+      logger.error(err);
+      _master.emit(IPCEvents.ERROR_OCCURRED, {
+        error: err
       });
-  });
+      return _master.emit(IPCEvents.SCANNER_SCANSTOPPED);
+    });
+}
+
+
+_.merge(IPC.config, IPCConfig.Worker);
+IPC.connectTo(ID.HORACE, function() {
+  logger.info('Scanner connecting to master');
+  _master = IPC.of[ID.HORACE];
+  _master.on('connect', _handleConnection);
+  _master.on('disconnect', _handleDisconnection);
+  _master.on(IPCEvents.SCANNER_DOSCAN, _handleScanRequested);
 });

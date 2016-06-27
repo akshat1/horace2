@@ -62,7 +62,6 @@
     "gulp-postcss": "^6.1.0",
     "gulp-rename": "^1.2.2",
     "gulp-replace": "^0.5.4",
-    "gulp-ruby-haml": "0.0.9",
     "gulp-sourcemaps": "^1.6.0",
     "jsdoc": "^3.4.0",
     "mocha": "^2.4.5",

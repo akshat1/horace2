@@ -3,22 +3,16 @@
  * @module horace
  */
 
-var Path = require('path');
-var Events = require('events');
-var FS = require('fs');
-var IPC = require('node-ipc');
-var ChildProcess = require('child_process');
-var _ = require('lodash');
-var Winston = require('winston');
-
+const Path = require('path');
+const Events = require('events');
+const FS = require('fs');
+const _ = require('lodash');
+const Winston = require('winston');
 const Book = require('./book.js');
-var Config = require('./config.js');
-var IPCUtils = require('./ipc.js');
-var DB = require('./db.js');
-var Adapter = require('./adapter.js');
-var HoraceEvents = require('./events');
-var IPCEvents = HoraceEvents.IPC;
-var ServerEvents = HoraceEvents.Server;
+const Config = require('./config.js');
+const DB = require('./db.js');
+const Adapter = require('./adapter.js');
+const {Server: ServerEvents} = require('./events');
 
 const logger = new Winston.Logger({
   transports: [
@@ -121,6 +115,11 @@ function isScanningForBooks() {
 }
 
 
+function setScanningForBooks(bool) {
+  _isScanning = bool;
+}
+
+
 function getDistinctBookAttribute(columnName, query) {
   return DB.getDistinctBookAttribute(columnName, query);
 }
@@ -143,58 +142,18 @@ function updateBook(book) {
 
 var Horace = new Events.EventEmitter();
 _.extend(Horace, {
+  _emit                    : Horace.emit.bind(Horace),
   startScan                : startScan,
   getBooks                 : getBooks,
   getBook                  : getBook,
   updateBook               : updateBook,
   requestDownload          : requestDownload,
   isScanningForBooks       : isScanningForBooks,
+  setScanningForBooks      : setScanningForBooks,
   getDistinctBookAttribute : getDistinctBookAttribute,
   hideBook                 : hideBook,
   unHideAllBooks           : unHideAllBooks
 });
-
-
-// ------------------------------- IPC
-
-IPC.config.id     = IPCUtils.ID.HORACE;
-IPC.config.silent = true;
-IPC.config.retry  = 1500;
-
-function _ipcServer() {
-  IPC.server.on(IPCEvents.HELLOFROM_SCANNER, function() { //data, socket
-    if (Config('horace.scan.serverstart')) {
-      logger.info('horace.scan.serverstart set to true. Scanning now.');
-      return startScan();
-    }
-  });
-
-  IPC.server.on(IPCEvents.ERROR_OCCURRED, function(data) {
-    logger.error('Somebody had an error', data);
-    return console.error(data);
-  });
-
-  IPC.server.on(IPCEvents.SCANNER_SCANSTARTED, function() {
-    _isScanning = true;
-    Horace.emit(ServerEvents.SCANNER_SCANSTARTED);
-  });
-
-  return IPC.server.on(IPCEvents.SCANNER_SCANSTOPPED, function() {
-    logger.info('Scaning Finished');
-    _isScanning = false;
-    getBook();
-    Horace.emit(ServerEvents.SCANNER_SCANSTOPPED);
-  });
-}
-
-
-IPC.serve(_ipcServer);
-IPC.server.define.listen[IPCEvents.ERROR_OCCURRED] = 'Some error occurred';
-IPC.server.define.listen[IPCEvents.HELLOFROM_SCANNER] = 'Hello from scanner';
-IPC.server.define.listen[IPCEvents.SCANNER_SCANSTARTED] = 'The scanner has started scanning';
-IPC.server.define.listen[IPCEvents.SCANNER_SCANSTOPPED] = 'The scanner has stopped scanning';
-IPC.server.start();
-ChildProcess.fork('./app/scanner.js');
 
 
 module.exports = Horace;
