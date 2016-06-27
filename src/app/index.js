@@ -13,6 +13,7 @@ var SocketIO = require('socket.io');
 var FSExtra = require('fs-extra');
 var _ = require('lodash');
 var Mime = require('mime');
+const IPC = require('./ipc.js');
 
 const Utils = require('./utils.js');
 var ServerEvents = require('./events.js').Server;
